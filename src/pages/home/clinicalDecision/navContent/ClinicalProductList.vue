@@ -182,9 +182,10 @@
 </template>
 <script type="text/javascript">
 export default {
+  props:['product_type','queryName'],
     data() {
         return {
-            product_type: this.$route.query.clinicaltype,
+            //product_type: this.$route.query.clinicaltype,
 
             api_product_list:'/pmpheep/product/list',
             /*api_material_del:'/pmpheep/material/delete',
@@ -194,7 +195,7 @@ export default {
               pageNumber:1,
               //isMy:false,
               is_active:'',
-              product_type:this.$route.query.clinicaltype,
+              product_type:this.product_type,
               is_published:'',
              // contactUserName:'',
               product_name:'',
@@ -325,7 +326,7 @@ export default {
             this.$router.push({name:'设置选题号',params:{materialId:materialData.id}});
             break;*/
           case 'toProcess':
-            this.$router.push({name:'临床决策专家申报审核',query:{clinicalTabletype:prodcutData.product_type,product_id:prodcutData.id,queryName:'临床决策专家申报审核-'+prodcutData.product_name}});
+            this.$router.push({name:'临床决策专家申报审核',query:{clinicalTabletype:prodcutData.product_type,product_id:prodcutData.id,queryName:'临床决策专家申报审核'}});
             //this.$router.push({name:'申报表审核',params:{materialId:materialData.id}});
             break;
           case 'exportExcel':

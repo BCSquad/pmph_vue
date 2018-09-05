@@ -31,7 +31,7 @@
       breadName(item){
         if(item.name=='新建通知'){
            return this.$route.params.materialId=='new'?'新建通知':'修改通知';
-        }else if(item.name=='新建通知'){
+        }/*else if(item.name=='新建通知'){
           return this.$route.query.product_id=='new'?'新建通知':'修改通知';
         }else if(item.name=='临床决策专家申报审核'||item.name=='临床决策专家申报列表'){
           //alert(this.clinicalTableName[this.clinicalTabletype])
@@ -40,7 +40,7 @@
 
         }else{
 
-        }
+        }*/
         return item.meta.replaceName?item.meta.replaceName:item.name;
       }
     },

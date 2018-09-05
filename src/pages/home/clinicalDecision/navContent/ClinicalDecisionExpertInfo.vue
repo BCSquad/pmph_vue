@@ -23,7 +23,7 @@
         <el-button type="primary"  @click="login">
           {{'登录'}}
         </el-button>
-        <el-button type="primary"   icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>
+        <!--<el-button type="primary"   icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>-->
       </div>
       <div class="expert-info-box user-info-wrapper">
         <p class="info-box-title">专家信息</p>

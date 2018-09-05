@@ -109,14 +109,14 @@
         this.able=false;
       },
       back(){
-        let queryName = '';
+        //let queryName = '';
         switch (this.product_type) {
-          case '1' : queryName = '临床助手申报列表';break;
-          case '2' : queryName = '用药助手申报列表';break;
-          case '3' : queryName = '中医助手申报列表';break;
-          default: queryName = '';
+          case '1' : this.$router.push({name:'临床决策专家申报列表'});break;
+          case '2' : this.$router.push({name:'用药助手专家申报列表'});break;
+          case '3' : this.$router.push({name:'中医助手专家申报列表'});break;
+          default: this.$router.push({name:'临床决策专家申报列表'});
         }
-        this.$router.push({name:'临床决策专家申报列表',query:{clinicaltype:this.product_type,queryName:queryName}});
+        //this.$router.push({name:'临床决策专家申报列表',query:{clinicaltype:this.product_type,queryName:queryName}});
       },
       /**
        * 确认提交表单

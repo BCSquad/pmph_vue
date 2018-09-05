@@ -3,7 +3,7 @@
   <div class="ClinicalDecision_nav">
     <div class="tab_nav_outbox" >
       <div style="float:left;"><div class="div_img"><img :src="productImage" style="width: 20px;height: 20px;"/></div> <span type="text"  class="back_button">{{productName[ruleForm.product_type]}}</span></div>
-      <div class="div_publicInfo"  @click="$router.go(-1)">返回上一步</div>
+      <el-button type="text"  class="back_button2" icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>
       <!--<div class="div_publicInfo" v-if="!ruleForm.is_published">发布人：无，发布时间：无，状态：待发布</div>-->
     </div>
 
@@ -994,7 +994,14 @@ export default {
     font-size: 14px;
     line-height: 40px;
   }
-
+ .back_button2{
+   float:right;
+   margin-right:20px;
+   margin-left:20px;
+   line-height: 20px;
+   z-index: 1;
+   position: relative;
+ }
 
 
 
