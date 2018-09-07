@@ -250,11 +250,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" >
+        <el-table-column label="操作" align="center">
           <template scope="scope">
-            <p style="text-align: center"> <el-button type="text" v-if="scope.row.passbtn" @click="pressCheckOpt(1,scope.row.id)" >{{"通过"}} </el-button></p>
-
-            <p style="text-align: center"> <el-button type="text" v-if="scope.row.notPassbtn" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button></p>
+            <p style="text-align: center">
+              <el-button type="text" v-if="scope.row.passbtn" @click="pressCheckOpt(1,scope.row.id)" >{{"通过"}} </el-button>
+              <el-button type="text" v-if="scope.row.notPassbtn" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
+            </p>
 
             <p style="text-align: center"><el-button type="text" v-if="scope.row.recall" @click="pressCheckOpt(0,scope.row.id)" >{{"撤回"}} </el-button></p>
 
@@ -340,6 +341,9 @@
           label:'已发布'
         }],
         schoolStauts:[{
+          value:'',
+          label:'全部'
+        },{
           value:'0',
           label:'学校待审核'
         },{
@@ -350,6 +354,9 @@
           label:'学校已退回'
         }*/],
         pmphStauts:[{
+          value:'',
+          label:'全部'
+        },{
           value:'0',
           label:'出版社待审核'
         },{
@@ -420,7 +427,7 @@
           });
           }
         }).catch(e=>{
-          this.$confirm('登录失败，请稍后再试!', "提示",{
+          this.$confirm('操作失败，请稍后再试!', "提示",{
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             showCancelButton: false,

@@ -4,13 +4,16 @@
     <div class="info-wrapper">
       <!--操作按钮-->
       <div class="paddingB10 text-right print-none">
-        <el-button type="primary" :disabled="btn_Pass"  v-if="(isAdmin||amIAnAuditor)" @click="check(3)">
+        <el-button type="primary" :disabled="btn_Pass"  v-if="(isAdmin||amIAnAuditor)&&!recall" @click="check(3)">
           {{'通过'}}
         </el-button>
-        <el-button type="primary" :disabled="btn_notPass"  v-if="(isAdmin||amIAnAuditor)" @click="check(2)">
+        <el-button type="primary" :disabled="btn_notPass"  v-if="(isAdmin||amIAnAuditor)&&!recall" @click="check(2)">
           {{'不通过'}}
         </el-button>
-        <el-button type="danger"  :disabled="btn_back_school" @click="check(4)" v-if="(isAdmin||amIAnAuditor)&&(expertInfoData.org_id!=0)" >
+        <el-button type="primary" v-if="recall" @click="check(0)" >
+          {{"撤回"}}
+        </el-button>
+        <el-button type="danger"  :disabled="btn_back_school" @click="check(4)" v-if="(isAdmin||amIAnAuditor)&&(expertInfoData.org_id!=0 )" >
           {{'退回给学校'}}
         </el-button>
         <el-button type="danger"  :disabled="btn_back_person" @click="check(5)" v-if="(isAdmin||amIAnAuditor)">
@@ -464,6 +467,7 @@
         btn_back_school:false,
         btn_back:false,
         amIAnAuditor:true,
+        recall:false,
         isAdmin:'',
         decEduExpList:[],
         decWorkExpList: [],
@@ -515,8 +519,30 @@
             };
             this.onlineCheckPass(param,progress);
           })
-        }
-        else {
+        }else if(progress==0){
+          this.$axios.get('/pmpheep/expertation/changeStatus',{params:{status:progress,id:this.expertInfoId}
+          }).then(response=>{
+            let res = response.data;
+            if (res.code == 1) {
+              this.$message.success("操作成功");
+              this.getTableData();
+            } else {
+              this.$confirm(res.msg.msgTrim(), "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+            }
+          }).catch(e=>{
+            this.$confirm('操作失败，请稍后再试!', "提示",{
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
+            });
+          })
+        }else {
 
           //  title = "是否确认退回?"
           this.$prompt('请输入退回原因', '提示', {
@@ -649,8 +675,9 @@
               this.btn_Pass =!(res.data.finalResult == 0 && res.data.pmphAudit==0 && (res.data.online_progress == 1 || res.data.online_progress == 3) )
               this.btn_notPass =!(res.data.finalResult == 0 && res.data.pmphAudit==0 && (res.data.online_progress == 1 || res.data.online_progress == 3) )
               this.btn_back_person = !(res.data.finalResult == 0 && res.data.pmphAudit ==0 && ( res.data.online_progress == 1  ||res.data.online_progress==3 || res.data.online_progress==4))
-              this.btn_back_school = !(res.data.finalResult == 0 && res.data.pmphAudit ==0  && (res.data.online_progress == 1 ||res.data.online_progress==3))
+              this.btn_back_school = !(res.data.finalResult == 0 && res.data.pmphAudit ==0  && (res.data.online_progress==3)) /*res.data.online_progress == 1 ||*/
               //this.onlineProgressBtn_Back(res.data.online_progress);
+              this.recall = (res.data.finalResult == 0  && res.data.pmphAudit!=0);
 
             }else{
               this.$confirm(res.msg.msgTrim(), "提示",{

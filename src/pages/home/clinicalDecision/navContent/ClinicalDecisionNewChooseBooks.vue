@@ -268,7 +268,7 @@ export default {
         gmt_publish:'',
         actualDeadline:'',
         product_name:'',
-        is_active:false,
+        is_active:true,
       },
       editorConfig: {
         initialFrameWidth: null,
@@ -404,9 +404,9 @@ export default {
     var windowH = document.documentElement.clientHeight;
     this.contentH = windowH-100+'px';
     switch (this.$route.query.clinicaltype) {
-      case '1': this.productImage = '../../../../../static/static-image/rwej05.png';break;
-      case '2': this.productImage = '../../../../../static/static-image/rwej04.png';break;
-      case '3': this.productImage = '../../../../../static/static-image/rwej03.png';break;
+      case 1: this.productImage = '../../../../../static/static-image/rwej05.png';break;
+      case 2: this.productImage = '../../../../../static/static-image/rwej04.png';break;
+      case 3: this.productImage = '../../../../../static/static-image/rwej03.png';break;
       default: this.productImage = '../../../../../static/static-image/rwej03.png';break;
     }
   },
