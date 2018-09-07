@@ -253,13 +253,13 @@
         <el-table-column label="操作" align="center">
           <template scope="scope">
             <p style="text-align: center">
-              <el-button type="text" v-if="scope.row.passbtn" @click="pressCheckOpt(1,scope.row.id)" >{{"通过"}} </el-button>
-              <el-button type="text" v-if="scope.row.notPassbtn" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
+              <el-button type="text" v-if="scope.row.passbtn&&(isDirector||isAdmin||amIAnAuditor)" @click="pressCheckOpt(1,scope.row.id)" >{{"通过"}} </el-button>
+              <el-button type="text" v-if="scope.row.notPassbtn&&(isDirector||isAdmin||amIAnAuditor)" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
             </p>
 
-            <p style="text-align: center"><el-button type="text" v-if="scope.row.recall" @click="pressCheckOpt(0,scope.row.id)" >{{"撤回"}} </el-button></p>
+            <p style="text-align: center"><el-button type="text" v-if="scope.row.recall&&(isDirector||isAdmin||amIAnAuditor)" @click="pressCheckOpt(0,scope.row.id)" >{{"撤回"}} </el-button></p>
 
-            <p style="text-align: center"><el-button type="text"   @click="pressCheckOpt(4,scope.row.id)" v-if="scope.row.pubtn">{{"最终结果公布"}}</el-button></p>
+            <p style="text-align: center"><el-button type="text"   @click="pressCheckOpt(4,scope.row.id)" v-if="scope.row.pubtn&&(isDirector||isAdmin||amIAnAuditor)">{{"最终结果公布"}}</el-button></p>
 
             <p style="text-align: center"><el-button type="text"   @click="pressCheckOpt(5,scope.row.id)" v-if="(isDirector||isAdmin)&&scope.row.finalResult">{{"取消结果公布"}}</el-button></p>
           </template>
@@ -316,8 +316,10 @@
         // passbtn:true,
         // notPassbtn:true,
         //finalResult:'',
-        isDirector:'',
-        isAdmin:'',
+        isDirector:false,
+        loginId:'',
+        isAdmin:false,
+        amIAnAuditor:false,
         searchParams:{
           productId:'',
           pageNumber:1,
@@ -509,6 +511,20 @@
             if(res.code==1){
               this.totalNum = res.data.total;
               this.tableData = res.data.rows;
+              if(this.tableData.length>0){
+                let audit = res.data.rows[0].auditorArray.split(",");
+                audit.forEach(iterm=>{
+                    if( parseInt(iterm)== this.loginId){
+                        this.amIAnAuditor = true;  //我是产品的审核人
+                    }
+                })
+                let directorArray = res.data.rows[0].director.split(",");
+                directorArray.forEach(iterm=>{
+                  if(parseInt(iterm) == this.loginId){
+                    this.isDirector = true;  //我是产品审核人的主任
+                  }
+                })
+              }
               this.tableData.forEach(iterm=>{
                 debugger;
                     iterm["recall"] = (iterm["finalResult"]==false && iterm["pmphAudit"]!=0);
@@ -602,7 +618,8 @@
 
     },
     created() {
-      this.isDirector = this.$getUserData().userInfo.isDirector;
+     // this.isDirector = this.$getUserData().userInfo.isDirector;
+      this.loginId = this.$getUserData().userInfo.id;
       this.isAdmin = this.$getUserData().userInfo.isAdmin;
       //this.searchParams.productId = this.$route.query.product_id;
       this.getTableData();

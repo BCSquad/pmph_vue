@@ -4,19 +4,19 @@
     <div class="info-wrapper">
       <!--操作按钮-->
       <div class="paddingB10 text-right print-none">
-        <el-button type="primary" :disabled="btn_Pass"  v-if="(isAdmin||amIAnAuditor)&&!recall" @click="check(3)">
+        <el-button type="primary" :disabled="btn_Pass"  v-if="(isDirector||isAdmin||amIAnAuditor)&&!recall" @click="check(3)">
           {{'通过'}}
         </el-button>
-        <el-button type="primary" :disabled="btn_notPass"  v-if="(isAdmin||amIAnAuditor)&&!recall" @click="check(2)">
+        <el-button type="primary" :disabled="btn_notPass"  v-if="(isDirector||isAdmin||amIAnAuditor)&&!recall" @click="check(2)">
           {{'不通过'}}
         </el-button>
         <el-button type="primary" v-if="recall" @click="check(0)" >
           {{"撤回"}}
         </el-button>
-        <el-button type="danger"  :disabled="btn_back_school" @click="check(4)" v-if="(isAdmin||amIAnAuditor)&&(expertInfoData.org_id!=0 )" >
+        <el-button type="danger"  :disabled="btn_back_school" @click="check(4)" v-if="(isDirector||isAdmin||amIAnAuditor)&&(expertInfoData.org_id!=0 )" >
           {{'退回给学校'}}
         </el-button>
-        <el-button type="danger"  :disabled="btn_back_person" @click="check(5)" v-if="(isAdmin||amIAnAuditor)">
+        <el-button type="danger"  :disabled="btn_back_person" @click="check(5)" v-if="(isDirector||isAdmin||amIAnAuditor)">
           {{'退回给个人'}}
         </el-button>
 
@@ -467,6 +467,7 @@
         btn_back_school:false,
         btn_back:false,
         amIAnAuditor:true,
+        isDirector:false,
         recall:false,
         isAdmin:'',
         decEduExpList:[],
@@ -615,7 +616,21 @@
              // debugger;
               res.data.sex=res.data.sex=='2'?'女':'男';
               res.data.birthday = res.data.birthday;
-              this.amIAnAuditor = res.data.amIAnAuditor?true:false;
+              //this.amIAnAuditor = res.data.amIAnAuditor?true:false;
+              if(!this.$commonFun.Empty(res.data)){
+                let audit = res.data.auditorArray.split(",");
+                audit.forEach(iterm=>{
+                  if(parseInt(iterm) == this.loginId){
+                    this.amIAnAuditor = true;  //我是产品的审核人
+                  }
+                })
+                let directorArray = res.data.director.split(",");
+                directorArray.forEach(iterm=>{
+                  if(parseInt(iterm) == this.loginId){
+                    this.isDirector = true;  //我是产品审核人的主任
+                  }
+                })
+              }
               // 获取当前专家账号
               this.username = res.data.username;
               for(var i in res.data){

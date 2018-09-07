@@ -199,7 +199,7 @@ export default {
             },{
               label: "中医助手申报",
               id: 47
-            },{
+            },/*{
               label: "临床助手申报表",
               id: 49
             },{
@@ -208,7 +208,7 @@ export default {
             },{
               label: "中医助手申报表",
               id: 51
-            },{
+            },*/{
               label: "申报分类维护",
               id: 48
             }
