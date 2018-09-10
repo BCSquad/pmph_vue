@@ -133,6 +133,7 @@
         currentPage: 1, // 分页当前页
         tableData: [],
         materialId: '',
+        isProduct: false,
         msgId:'',
         pageNumber: 1,
         pageSize: 20,
@@ -165,7 +166,8 @@
       // 获取当前消息id
       this.materialId = this.$route.query.materialId
       this.msgId = this.$route.query.msgId
-      this.senderId = this.$route.query.senderId
+      this.senderId = this.$route.query.senderId;
+      this.isProduct = (this.$commonFun.Empty(this.$route.query.isProduct)||!this.$route.query.isProduct)?false:true;
       console.log(this.$route,this.msgId)
       this.getMessageState()
     },
@@ -184,7 +186,8 @@
             pageNumber: this.pageNumber,
             pageSize: this.pageSize,
             receiverType:this.personalOrOrg,
-            isRead: this.isRead==0?'':this.isRead==1?true:false
+            isRead: this.isRead==0?'':this.isRead==1?true:false,
+            isProduct:this.isProduct
           }
         }).then((response) => {
           let res = response.data

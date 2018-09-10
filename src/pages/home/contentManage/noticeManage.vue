@@ -90,7 +90,7 @@
         </el-table-column>
             <el-table-column
                 prop="gmtCreate"
-                label="创建时间"
+                label="发布时间"
                 width="175"
                 >
               <template scope="scope">
@@ -106,7 +106,7 @@
                 </template>
             </el-table-column>
             <el-table-column
-                label="发布时间"
+                label="再次发布时间"
                 width="175"
                 >
             <template scope="scope">

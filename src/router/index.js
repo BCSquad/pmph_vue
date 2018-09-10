@@ -48,6 +48,7 @@ const ClinicalDecisionExpertInfo = () => import('../pages/home/clinicalDecision/
 const ClinicalDecisionResult = () => import('../pages/home/clinicalDecision/navContent/Result/index')
 
 const DeclareTypeRepairsNav = () => import('../pages/home/clinicalDecision/DeclareTypeRepairsNav')
+const ClinicalProductList = () => import('../pages/home/clinicalDecision/navContent/ClinicalProductList.vue')
 
 
 /* 小组 */
@@ -230,15 +231,27 @@ export default new Router({
           component: ClinicalDecisionRouter,
           meta: {replaceName: '', authorityId: true},
           children: [
-            {path: 'clinicalAssistant', name: '临床助手申报', component: ClinicalAssistantRouter, meta: {replaceName: false, authorityId: 45}},
-            {path: 'medicineAssistant', name: '用药助手申报', component: MedicineAssistantRouter, meta: {replaceName: false, authorityId: 46}},
-            {path: 'chineseMedicineAssistant', name: '中医助手申报', component: ChineseMedicineAssistantRouter, meta: {replaceName: false, authorityId: 47}},
-
+            {path: 'clinicalAssistant', name: '临床助手申报', component: ClinicalAssistantRouter, meta: {replaceName: false, authorityId: 45},
+            children:[
+              {path: 'clinicalProductList', name: '临床决策专家申报列表', component: ClinicalProductList, meta: {isShowTags: true,authorityId:true}},
+            ]
+            },
+            {path: 'medicineAssistant', name: '用药助手申报', component: MedicineAssistantRouter, meta: {replaceName: false, authorityId: 46},
+              children:[
+                {path: 'clinicalProductList', name: '用药助手专家申报列表', component: ClinicalProductList, meta: {isShowTags: true,authorityId:true}},
+              ]},
+            {path: 'chineseMedicineAssistant', name: '中医助手申报', component: ChineseMedicineAssistantRouter, meta: {replaceName: false, authorityId: 47},
+              children:[
+                {path: 'clinicalProductList', name: '中医助手专家申报列表', component: ClinicalProductList, meta: {isShowTags: true,authorityId:true}},
+              ]
+            },
             {path: 'clinicalAssistantTable',name: '临床助手申报表', component: ClinicalAssistantTableRouter,meta: { authorityId: 49}},
             {path: 'medicineAssistantTable',name: '用药助手申报表', component: MedicineAssistantTableRouter,meta: { authorityId: 50}},
             {path: 'chineseMedicineAssistantTable',name: '中医助手申报表', component: ChineseMedicineAssistantTableRouter,meta: { authorityId: 51}},
+
             {path: 'clinicalDecisionNewChooseBooks', name: '临床决策专家申报', component: ClinicalDecisionNewChooseBooks, meta: {isShowTags: true,authorityId:true}},
             { path: 'clinicalschoolquery',name: '临床决策申报选择学校',component: ClinicalSchoolQuery, meta: {isShowTags: true}},
+
             {
               path: 'clinicalDecisionNav',
               name: '临床决策专家申报审核',
@@ -248,12 +261,44 @@ export default new Router({
             {path: 'clinicalDecisionResult', name: '临床决策专家结果统计', component: ClinicalDecisionResult, meta: {applicationName: 'clinicalDecisionResult',hideTabs: true}},
             {path: 'clinicalDecisionPressCheck', name: '临床决策专家申报表审核',component: ClinicalDecisionPressCheck,meta: {replaceName: false,applicationName: 'clinicalDecisionPressCheck',hideTabs: true}},
             {path: 'clinicalDecisionExpertInfo', name: '临床决策专家信息', component: ClinicalDecisionExpertInfo,meta: {hideTabs: false}},
+
             ]
+            },
+            {path: 'declareTypeRepairs', name: '申报分类维护', component: DeclareTypeRepairsNav, meta: {replaceName: '申报分类维护', authorityId: 48}},
+          ]
+        }
+
+        /*{
+          path: 'clinicalDecisionRouter',
+          name: '临床决策',
+          component: ClinicalDecisionRouter,
+          meta: {replaceName: '', authorityId: true},
+          children: [
+            {path: 'clinicalAssistant', name: '临床助手申报', component: ClinicalAssistantRouter, meta: {replaceName: false, authorityId: 45}},
+            {path: 'medicineAssistant', name: '用药助手申报', component: MedicineAssistantRouter, meta: {replaceName: false, authorityId: 46}},
+            {path: 'chineseMedicineAssistant', name: '中医助手申报', component: ChineseMedicineAssistantRouter, meta: {replaceName: false, authorityId: 47}},
+
+            {path: 'clinicalAssistantTable',name: '临床助手申报表', component: ClinicalAssistantTableRouter,meta: { authorityId: 49}},
+            {path: 'medicineAssistantTable',name: '用药助手申报表', component: MedicineAssistantTableRouter,meta: { authorityId: 50}},
+            {path: 'chineseMedicineAssistantTable',name: '中医助手申报表', component: ChineseMedicineAssistantTableRouter,meta: { authorityId: 51}},
+            {path: 'clinicalDecisionNewChooseBooks', name: '临床决策专家申报', component: ClinicalDecisionNewChooseBooks, meta: {isShowTags: true,authorityId:true}},
+            {path: 'clinicalProductList', name: '临床决策专家申报列表', component: ClinicalProductList, meta: {isShowTags: true,authorityId:true}},
+            { path: 'clinicalschoolquery',name: '临床决策申报选择学校',component: ClinicalSchoolQuery, meta: {isShowTags: true}},
+            {
+              path: 'clinicalDecisionNav',
+              name: '临床决策专家申报审核',
+              component: ClinicalDecisionNav,
+              meta: {replaceName: '临床决策专家申报审核'},
+              children: [
+                {path: 'clinicalDecisionResult', name: '临床决策专家结果统计', component: ClinicalDecisionResult, meta: {applicationName: 'clinicalDecisionResult',hideTabs: true}},
+                {path: 'clinicalDecisionPressCheck', name: '临床决策专家申报表审核',component: ClinicalDecisionPressCheck,meta: {replaceName: false,applicationName: 'clinicalDecisionPressCheck',hideTabs: true}},
+                {path: 'clinicalDecisionExpertInfo', name: '临床决策专家信息', component: ClinicalDecisionExpertInfo,meta: {hideTabs: false}},
+              ]
             },
 
             {path: 'declareTypeRepairs', name: '申报分类维护', component: DeclareTypeRepairsNav, meta: {replaceName: '申报分类维护', authorityId: 48}},
           ]
-        } ,
+        }*/,
         {
           path: 'bookerror',
           name: '图书纠错',

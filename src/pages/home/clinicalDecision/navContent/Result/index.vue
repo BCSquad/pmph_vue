@@ -190,7 +190,7 @@
 <script>
   import echarts from "../../../../../../static/echarts/echarts.common.min";
 	export default {
-    props:['productType'],
+    props:['productType','product_id'],
 		data() {
 			return {
         activeChilidName: 'subject',
@@ -212,14 +212,16 @@
         content:{
           pageNumber:1,
           pageSize:10,
-          type_name:''
+          type_name:'',
+          id:this.product_id,
       },
         contentTotal:1,
         contentTableData:[],
         subject:{
           pageNumber:1,
           pageSize:10,
-          type_name:''
+          type_name:'',
+          id:this.product_id
       },
         subjectTotal:1,
         subjectTableData:[],
@@ -227,11 +229,14 @@
         profession:{
           pageNumber:1,
           pageSize:10,
-          type_name:''
+          type_name:'',
+          id:this.product_id,
         },
 
         professionTotal:1,
         professionTableData:[],
+
+
 
         // subjectShow:true,
         // contentShow:true,
@@ -757,11 +762,11 @@
 
       professionSizeChange(val){
         //this.subject.pageSize=val;
-        this.subject.pageNumber=1;
+        this.profession.pageNumber=1;
         this.getProfessionTableData();
       },
       professionCurrentChange(val){
-        this.subject.pageNumber=val;
+        this.profession.pageNumber=val;
         this.getProfessionTableData();
       },
       /**

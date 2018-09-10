@@ -283,6 +283,7 @@
     /*padding: 15px 20px;*/
     transition: all .3s;
     overflow-y: scroll;
+    overflow-x:hidden;
     box-sizing: border-box;
   }
 
@@ -305,7 +306,7 @@
   .app-main-inner {
     min-height: 100%;
     float: left;
-    width: 100%;
+    width: 99%;
     box-sizing: border-box;
   }
 
