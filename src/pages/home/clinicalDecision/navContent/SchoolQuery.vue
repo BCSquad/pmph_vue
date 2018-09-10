@@ -8,7 +8,7 @@
         发布
         <span v-if="hasCheckedOrgList.length>0">({{hasCheckedOrgList.length}})</span>
       </el-button>
-      <el-button type="primary"   icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>
+      <el-button type="primary"   icon="arrow-left" @click="backHistory">返回上一步</el-button>
     </clinical-choose-school>
 
 
@@ -117,6 +117,9 @@
           default: this.$router.push({name:'临床决策专家申报列表'});
         }
         //this.$router.push({name:'临床决策专家申报列表',query:{clinicaltype:this.product_type,queryName:queryName}});
+      },
+      backHistory(){
+        this.$router.push({name:'临床决策专家申报',query:{product_id: this.productId,clinicaltype:this.product_type}})
       },
       /**
        * 确认提交表单

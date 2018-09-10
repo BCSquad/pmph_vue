@@ -75,7 +75,7 @@
                   </p>
               </template>
           </el-table-column>
-          <el-table-column label="创建部门" min-width="100" align="center">
+          <el-table-column label="创建部门" width="100" align="center">
             <template scope="scope">
               <p>
                 {{scope.row.founderDepartment}}
@@ -93,7 +93,7 @@
                 </template>
             </el-table-column>-->
 
-          <el-table-column label="是否当前公告" width="120">
+          <el-table-column label="是否当前公告" width="120" align="center">
             <template scope="scope">
               <div v-if="scope.row.is_active"><font color="red">是</font></div>
               <div v-else>否</div>
@@ -104,11 +104,11 @@
                 <template scope="scope">
                     <p class="operation_p">
                         <el-button type="text" class="op_button" @click="operation('edit',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">修改</el-button>
-                        <!--<span class="op_span">|</span>
-                        <el-button type="text" class="op_button" @click="operation('publish',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">通知发布</el-button>
                         <span class="op_span">|</span>
+                        <el-button type="text" class="op_button" @click="operation('publish',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">通知发布</el-button>
+                       <!-- <span class="op_span">|</span>
                         <el-button type="text" class="op_button" @click="operation('msg',scope.row)">通知详情</el-button>-->
-                        <!--<el-dropdown trigger="click">
+                        <el-dropdown trigger="click">
                             <span class="el-dropdown-link more_button">
                                 更多
                                 <i class="el-icon-caret-bottom el-icon&#45;&#45;right"></i>
@@ -117,23 +117,23 @@
                                 <el-dropdown-item>
                                   <el-button type="text" style="width: 100%" @click="operation('msgState',scope.row)" :disabled="!hasAccessAuthority(true,scope.row,true)">消息状态</el-button>
                                 </el-dropdown-item>
-                                <el-dropdown-item>
-                                  <el-button type="text"  style="width: 100%" @click="operation('setBookList',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">设置书目录</el-button>
-                                </el-dropdown-item>
-                                <el-dropdown-item>
-                                  <el-button type="text"  style="width: 100%" @click="operation('result',scope.row)" :disabled="!hasAccessAuthority(true,scope.row,true)">结果统计</el-button>
-                                </el-dropdown-item>
-                                <el-dropdown-item>
-                                  <el-button type="text"  style="width: 100%" @click="operation('setTopic',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">设置选题号</el-button>
-                                </el-dropdown-item>
-                                &lt;!&ndash;<el-dropdown-item>&ndash;&gt;
-                                  &lt;!&ndash;<el-button type="text" @click="operation('exportExcel',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">导出学校(Excel)</el-button>&ndash;&gt;
-                                &lt;!&ndash;</el-dropdown-item>&ndash;&gt;
-                                <el-dropdown-item>
-                                  <el-button type="text"  style="width: 100%" @click="operation('delete',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">删除</el-button>
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>-->
+                              <!--<el-dropdown-item>
+                                <el-button type="text"  style="width: 100%" @click="operation('setBookList',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">设置书目录</el-button>
+                              </el-dropdown-item>
+                              <el-dropdown-item>
+                                <el-button type="text"  style="width: 100%" @click="operation('result',scope.row)" :disabled="!hasAccessAuthority(true,scope.row,true)">结果统计</el-button>
+                              </el-dropdown-item>
+                              <el-dropdown-item>
+                                <el-button type="text"  style="width: 100%" @click="operation('setTopic',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">设置选题号</el-button>
+                              </el-dropdown-item>
+                              &lt;!&ndash;<el-dropdown-item>&ndash;&gt;
+                                &lt;!&ndash;<el-button type="text" @click="operation('exportExcel',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">导出学校(Excel)</el-button>&ndash;&gt;
+                              &lt;!&ndash;</el-dropdown-item>&ndash;&gt;
+                              <el-dropdown-item>
+                                <el-button type="text"  style="width: 100%" @click="operation('delete',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">删除</el-button>
+                              </el-dropdown-item>-->
+                          </el-dropdown-menu>
+                      </el-dropdown>
                     </p>
                 </template>
             </el-table-column>
@@ -300,23 +300,24 @@ export default {
             break;
           /*case 'delete':
             this.delete(materialData.id);
-            break;
+            break;*/
           case 'publish':
-            if(materialData.materialStep=="编辑通知详情"){
+            /*if(materialData.materialStep=="编辑通知详情"){
               this.$router.push({name:'编辑通知详情',params:{materialId:materialData.id}});
             }else if(materialData.materialStep=="设置书目录"){
               this.$router.push({name:'设置书目录',params:{materialId:materialData.id}});
             }else{
               this.$router.push({name:'教材申报选择学校',params:{materialId:materialData.id,type:'reEdit'}});
-            }
+            }*/
+            this.$router.push({name:'临床决策申报选择学校',query:{productId:prodcutData.id,product_type:prodcutData.product_type,type:'reEdit'}});
             break;
-          case 'msg':
+         /* case 'msg':
             this.$router.push({name:'通知详情',params:{materialId:materialData.id,type:'reEdit'}});
-            break;
+            break;*/
           case 'msgState':
-            this.$router.push({name:'消息状态',query:{materialId:materialData.id,senderId:materialData.founderId}});
+            this.$router.push({name:'消息状态',query:{materialId:prodcutData.id,senderId:prodcutData.founder_id,isProduct:true}});
             break;
-          case 'setBookList':
+         /* case 'setBookList':
             this.$router.push({name:'设置书目录',params:{materialId:materialData.id}});
             break;
           case 'result':
@@ -329,9 +330,9 @@ export default {
             this.$router.push({name:'临床决策专家申报审核',query:{clinicalTabletype:prodcutData.product_type,product_id:prodcutData.id,queryName:'临床决策专家申报审核'}});
             //this.$router.push({name:'申报表审核',params:{materialId:materialData.id}});
             break;
-          case 'exportExcel':
+          /*case 'exportExcel':
             this.exportExcel(prodcutData.id);
-            break;
+            break;*/
           default:
             throw new error('没有该类型操作');
         }

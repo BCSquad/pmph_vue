@@ -403,7 +403,7 @@ export default {
     //初始化页面高度，当页面内容很少时也要保证页面拉满整个屏幕
     var windowH = document.documentElement.clientHeight;
     this.contentH = windowH-100+'px';
-    switch (this.$route.query.clinicaltype) {
+    switch (parseInt(this.$route.query.clinicaltype)) {
       case 1: this.productImage = '../../../../../static/static-image/rwej05.png';break;
       case 2: this.productImage = '../../../../../static/static-image/rwej04.png';break;
       case 3: this.productImage = '../../../../../static/static-image/rwej03.png';break;
@@ -905,7 +905,9 @@ export default {
               // };
               // this.initEditData();
               // this.$message.success(type==0?'保存成功':'发布成功');
+              //this.$router.query.product_id = res.data.data.id;
               this.$router.push({name:'临床决策申报选择学校',query:{productId:res.data.data.id,product_type:this.ruleForm.product_type,type:'reEdit'}});
+
             }else{
               this.$confirm(res.data.msg.msgTrim(), "提示",{
                 confirmButtonText: "确定",

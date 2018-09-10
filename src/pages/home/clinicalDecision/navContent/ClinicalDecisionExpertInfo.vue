@@ -466,7 +466,7 @@
         btn_back_person:false,
         btn_back_school:false,
         btn_back:false,
-        amIAnAuditor:true,
+        amIAnAuditor:false,
         isDirector:false,
         recall:false,
         isAdmin:'',
