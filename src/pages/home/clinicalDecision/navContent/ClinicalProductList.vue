@@ -95,7 +95,8 @@
 
           <el-table-column label="是否当前公告" width="120" align="center">
             <template scope="scope">
-              <div v-if="scope.row.is_active"><font color="red">是</font></div>
+              <div v-if="scope.row.is_active&&scope.row.is_published"><font color="red">是</font></div>
+              <div v-else-if="scope.row.is_active&&!scope.row.is_published">是</div>
               <div v-else>否</div>
             </template>
 
