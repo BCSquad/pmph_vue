@@ -540,7 +540,7 @@
 
 
                 iterm["schoolStautsText"] = (iterm["org_id"] != 0 && iterm["online_progress"]==1)?"待审核"
-                :((iterm["org_id"] != 0 && iterm["online_progress"]==3)?"审核通过":
+                :((iterm["org_id"] != 0 && iterm["online_progress"]==3)?"通过":
                     (iterm["org_id"] !=0 && iterm["pmphAudit"] ==0  && (iterm["online_progress"]  == 4||iterm["online_progress"] == 5)?
                       "出版社退回":(iterm["org_id"]==0?"":"")));
 
