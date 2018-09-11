@@ -433,6 +433,7 @@
         positionList:['无','主编','副主编','编委'],
         rankList:['无','国际','国家','省部','市级'],
         rankList2:['无','国家','省部','市级'],
+        loginId:'',
         expertInfoData:{
           org_id:'',
           userId:'',
@@ -767,6 +768,7 @@
       this.getTableData();
       //alert(this.expertInfoId)
       this.isAdmin = this.$getUserData().userInfo.isAdmin;
+      this.loginId = this.$getUserData().userInfo.id;
 
     },
 
