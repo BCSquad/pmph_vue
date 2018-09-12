@@ -110,10 +110,10 @@
       },
       back(){
         //let queryName = '';
-        switch (this.product_type) {
-          case '1' : this.$router.push({name:'临床决策专家申报列表'});break;
-          case '2' : this.$router.push({name:'用药助手专家申报列表'});break;
-          case '3' : this.$router.push({name:'中医助手专家申报列表'});break;
+        switch (parseInt(this.product_type)) {
+          case 1 : this.$router.push({name:'临床决策专家申报列表'});break;
+          case 2 : this.$router.push({name:'用药助手专家申报列表'});break;
+          case 3 : this.$router.push({name:'中医助手专家申报列表'});break;
           default: this.$router.push({name:'临床决策专家申报列表'});
         }
         //this.$router.push({name:'临床决策专家申报列表',query:{clinicaltype:this.product_type,queryName:queryName}});

@@ -62,10 +62,10 @@
           </div>
         </div>
         <!--学校审核状态-->
-        <div class="searchBox-wrapper" >
-          <div class="searchName" >是否发布：<span></span></div>
-          <div class="searchInput" >
-            <el-select v-model="searchParams.schoolStauts" @change="handleSearchCLick"  placeholder="请选择" >
+        <div class="searchBox-wrapper" style="width: 300px;">
+          <div class="searchName" style="width: 120px">是否结果公布：<span></span></div>
+          <div class="searchInput" style="margin-left: 124px;" >
+            <el-select v-model="searchParams.finalResult" @change="handleSearchCLick"  placeholder="请选择" >
               <el-option
                 v-for="item in isFinalResultList"
                 :key="item.value"
@@ -77,8 +77,8 @@
         </div>
 
         <div class="searchBox-wrapper" style="width:550px;">
-          <div class="searchName">提交时间：<span></span></div>
-          <div class="searchInput">
+          <div class="searchName" style="width: 120px">提交时间：<span></span></div>
+          <div class="searchInput" tyle="margin-left: 124px;">
             <el-date-picker
               v-model="startCommitDate"
               type="datetime"
@@ -179,7 +179,7 @@
         </el-table-column>
         <el-table-column
           label="账号"
-          width="70">
+          width="100">
           <template scope="scope">
             {{scope.row.username}}
           </template>
@@ -196,31 +196,31 @@
         </el-table-column>-->
 
 
-        <el-table-column label="申报单位/工作单位" width="154">
+        <el-table-column label="申报单位/工作单位" min-width="154">
           <template scope="scope">
             <p><i class="fa fa-briefcase"></i>{{scope.row.unitName}}</p>
             <p><i class="fa fa-university"></i>{{scope.row.org_name}}</p>
 
           </template>
         </el-table-column>
-        <el-table-column label="职务/职称" width="100" >
+        <el-table-column label="职务/职称" min-width="100" >
           <template scope="scope">
             <p><i class="fa fa-tags"></i>{{scope.row.position}}</p>
             <p><i class="fa fa-graduation-cap"></i>{{scope.row.title}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="联系方式" width="100">
+        <el-table-column label="联系方式" width="180" >
           <template scope="scope">
             <p v-if="scope.row.handphone"><i class="fa fa-phone fa-fw"></i>{{scope.row.handphone}}</p>
             <p v-if="scope.row.email"><i class="fa fa-envelope fa-fw"></i>{{scope.row.email}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="提交时间" width="100">
+        <el-table-column label="提交时间" width="170">
           <template scope="scope">
             <p>{{$commonFun.formatDate(scope.row.commit_date)}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="学校审核/出版社审核" >
+        <el-table-column label="学校审核 / 出版社审核" width="130">
           <template scope="scope">
             <p><i class="fa fa-briefcase"></i>{{scope.row.schoolStautsText}}</p>
             <p><i class="fa fa-university"></i>{{scope.row.pmphStautsText}}</p>
@@ -244,24 +244,25 @@
         </el-table-column>
 
 
-        <el-table-column label="扫描附件" width="100">
+        <el-table-column label="扫描附件" min-width="100">
           <template scope="scope">
             <p><a href="javascript:void(0)" @click="downloadImage(scope.row.unit_advise)" style="margin-top:10px;color: #70BBC2;cursor: pointer;text-decoration: underline;" >{{scope.row.syllabus_name}}</a></p>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" min-width="150">
           <template scope="scope">
-            <p style="text-align: center">
-              <el-button type="text" v-if="scope.row.passbtn&&(isDirector||isAdmin||amIAnAuditor)" @click="pressCheckOpt(1,scope.row.id)" >{{"通过"}} </el-button>
-              <el-button type="text" v-if="scope.row.notPassbtn&&(isDirector||isAdmin||amIAnAuditor)" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
-            </p>
-
-            <p style="text-align: center"><el-button type="text" v-if="scope.row.recall&&(isDirector||isAdmin||amIAnAuditor)" @click="pressCheckOpt(0,scope.row.id)" >{{"撤回"}} </el-button></p>
-
-            <p style="text-align: center"><el-button type="text"   @click="pressCheckOpt(4,scope.row.id)" v-if="scope.row.pubtn&&(isDirector||isAdmin||amIAnAuditor)">{{"最终结果公布"}}</el-button></p>
-
-            <p style="text-align: center"><el-button type="text"   @click="pressCheckOpt(5,scope.row.id)" v-if="(isDirector||isAdmin)&&scope.row.finalResult">{{"取消结果公布"}}</el-button></p>
+            <div class="handle_btn">
+              <p style="text-align: center">
+                <el-button type="text"  :disabled="!(scope.row.passbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(1,scope.row.id)" >{{"通&emsp;过"}} </el-button>
+                <el-button type="text" :disabled="!(scope.row.notPassbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
+                <el-button type="text" :disabled="!(scope.row.recall&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(0,scope.row.id)" >{{"撤&emsp;回"}} </el-button>
+              </p>
+              <p style="text-align: center">
+                <el-button type="text"   @click="pressCheckOpt(4,scope.row.id)" :disabled="!(scope.row.pubtn&&(isDirector||isAdmin||amIAnAuditor))">{{"最终结果公布"}}</el-button>
+                <el-button type="text"   @click="pressCheckOpt(5,scope.row.id)" :disabled="!((isDirector||isAdmin)&&scope.row.finalResult)">{{"取消结果公布"}}</el-button>
+              </p>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -337,10 +338,10 @@
         endCommitDate:'',
         isFinalResultList:[{
           value:'0',
-          label:'未发布'
+          label:'未公布'
         },{
           value:'1',
-          label:'已发布'
+          label:'已公布'
         }],
         schoolStauts:[{
           value:'',
@@ -540,7 +541,7 @@
 
 
                 iterm["schoolStautsText"] = (iterm["org_id"] != 0 && iterm["online_progress"]==1)?"待审核"
-                :((iterm["org_id"] != 0 && iterm["online_progress"]==3)?"审核通过":
+                :((iterm["org_id"] != 0 && iterm["online_progress"]==3)?"通过":
                     (iterm["org_id"] !=0 && iterm["pmphAudit"] ==0  && (iterm["online_progress"]  == 4||iterm["online_progress"] == 5)?
                       "出版社退回":(iterm["org_id"]==0?"":"")));
 
@@ -635,4 +636,23 @@
   .searchBox-wrapper.powerSearch .searchInput{
     margin-left: 134px;
   }
+  div.handle_btn{
+    margin:0.5em ;
+  }
+  .handle_btn button.el-button {
+    background-color: #1ab194;
+    color: white !important;
+  }
+  .handle_btn button.el-button.is-disabled{
+    background-color: #d4d9dd !important;
+  }
+  .handle_btn p:nth-child(1) button.el-button {
+    padding: 0.35em 0.57em;
+    margin: 0.35em;
+  }
+  .handle_btn p:nth-child(2) button.el-button {
+    padding: 0.35em 0.35em;
+    margin: 0.35em;
+  }
+
 </style>

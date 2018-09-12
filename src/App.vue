@@ -32,7 +32,8 @@
     min-width: 1200px;
     height: 100%;
     margin: 0 auto;
-    overflow: hidden;
+    /*overflow: hidden;*/
+    overflow-y: hidden;
     font-family: "Helvetica Neue","PingFang SC",Arial,sans-serif;
   }
   .fade-enter-active, .fade-leave-active {
