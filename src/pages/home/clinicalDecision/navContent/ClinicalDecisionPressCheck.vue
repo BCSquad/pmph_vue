@@ -256,7 +256,7 @@
               <p style="text-align: center">
                 <el-button type="text"  :disabled="!(scope.row.passbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(1,scope.row.id)" >{{"通&emsp;过"}} </el-button>
                 <el-button type="text" :disabled="!(scope.row.notPassbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
-                <el-button type="text" :disabled="(!scope.row.recall&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(0,scope.row.id)" >{{"撤&emsp;回"}} </el-button>
+                <el-button type="text" :disabled="!(scope.row.recall&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(0,scope.row.id)" >{{"撤&emsp;回"}} </el-button>
               </p>
               <p style="text-align: center">
                 <el-button type="text"   @click="pressCheckOpt(4,scope.row.id)" :disabled="!(scope.row.pubtn&&(isDirector||isAdmin||amIAnAuditor))">{{"最终结果公布"}}</el-button>
