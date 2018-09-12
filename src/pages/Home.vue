@@ -285,6 +285,7 @@
     overflow-y: scroll;
     overflow-x:hidden;
     box-sizing: border-box;
+    min-width: 1000px;
   }
 
   .app-main .back_to_top {
@@ -306,7 +307,7 @@
   .app-main-inner {
     min-height: 100%;
     float: left;
-    width: 99%;
+    width: 100%;
     box-sizing: border-box;
   }
 

@@ -62,10 +62,10 @@
           </div>
         </div>
         <!--学校审核状态-->
-        <div class="searchBox-wrapper" >
-          <div class="searchName" >是否发布：<span></span></div>
-          <div class="searchInput" >
-            <el-select v-model="searchParams.schoolStauts" @change="handleSearchCLick"  placeholder="请选择" >
+        <div class="searchBox-wrapper" style="width: 300px;">
+          <div class="searchName" style="width: 120px">是否结果公布：<span></span></div>
+          <div class="searchInput" style="margin-left: 124px;" >
+            <el-select v-model="searchParams.finalResult" @change="handleSearchCLick"  placeholder="请选择" >
               <el-option
                 v-for="item in isFinalResultList"
                 :key="item.value"
@@ -77,8 +77,8 @@
         </div>
 
         <div class="searchBox-wrapper" style="width:550px;">
-          <div class="searchName">提交时间：<span></span></div>
-          <div class="searchInput">
+          <div class="searchName" style="width: 120px">提交时间：<span></span></div>
+          <div class="searchInput" tyle="margin-left: 124px;">
             <el-date-picker
               v-model="startCommitDate"
               type="datetime"
@@ -258,9 +258,6 @@
                 <el-button type="text" :disabled="!(scope.row.notPassbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
                 <el-button type="text" :disabled="(!scope.row.recall&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(0,scope.row.id)" >{{"撤&emsp;回"}} </el-button>
               </p>
-
-
-
               <p style="text-align: center">
                 <el-button type="text"   @click="pressCheckOpt(4,scope.row.id)" :disabled="!(scope.row.pubtn&&(isDirector||isAdmin||amIAnAuditor))">{{"最终结果公布"}}</el-button>
                 <el-button type="text"   @click="pressCheckOpt(5,scope.row.id)" :disabled="!((isDirector||isAdmin)&&scope.row.finalResult)">{{"取消结果公布"}}</el-button>
@@ -341,10 +338,10 @@
         endCommitDate:'',
         isFinalResultList:[{
           value:'0',
-          label:'未发布'
+          label:'未公布'
         },{
           value:'1',
-          label:'已发布'
+          label:'已公布'
         }],
         schoolStauts:[{
           value:'',
