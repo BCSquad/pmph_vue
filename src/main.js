@@ -110,8 +110,8 @@ axios.interceptors.request.use(function (config) {
     router.push({name:'登录',query:{f:currentLocation}});
 
   }
-    console.log(config);
-   console.log(router);
+    /*console.log(config);
+   console.log(router);*/
      /* 解决IE缓存添加一个随机时间戳 */
   if (config.params){
 

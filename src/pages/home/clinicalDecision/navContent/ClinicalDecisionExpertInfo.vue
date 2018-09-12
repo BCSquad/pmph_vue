@@ -4,13 +4,19 @@
     <div class="info-wrapper">
       <!--操作按钮-->
       <div class="paddingB10 text-right print-none">
-        <el-button type="primary" :disabled="btn_Pass"  v-if="(isAdmin||amIAnAuditor)" @click="check(3)">
-          {{'审核通过'}}
+        <el-button type="primary" :disabled="btn_Pass"  v-if="(isDirector||isAdmin||amIAnAuditor)&&!recall" @click="check(3)">
+          {{'通过'}}
         </el-button>
-        <el-button type="danger"  :disabled="btn_back||expertInfoData.org_id===0||(expertInfoData.org_id!=0&&(expertInfoData.online_progress===1||expertInfoData.online_progress===4))" @click="check(4)" v-if="(isAdmin||amIAnAuditor)&&(expertInfoData.org_id!=0)" >
+        <el-button type="primary" :disabled="btn_notPass"  v-if="(isDirector||isAdmin||amIAnAuditor)&&!recall" @click="check(2)">
+          {{'不通过'}}
+        </el-button>
+        <el-button type="primary" v-if="recall" @click="check(0)" >
+          {{"撤回"}}
+        </el-button>
+        <el-button type="danger"  :disabled="btn_back_school" @click="check(4)" v-if="(isDirector||isAdmin||amIAnAuditor)&&(expertInfoData.org_id!=0 )" >
           {{'退回给学校'}}
         </el-button>
-        <el-button type="danger"  :disabled="btn_back" @click="check(5)" v-if="(isAdmin||amIAnAuditor)">
+        <el-button type="danger"  :disabled="btn_back_person" @click="check(5)" v-if="(isDirector||isAdmin||amIAnAuditor)">
           {{'退回给个人'}}
         </el-button>
 
@@ -20,7 +26,7 @@
         <el-button type="primary"  @click="login">
           {{'登录'}}
         </el-button>
-        <el-button type="primary"   icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>
+        <!--<el-button type="primary"   icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>-->
       </div>
       <div class="expert-info-box user-info-wrapper">
         <p class="info-box-title">专家信息</p>
@@ -92,7 +98,7 @@
             <div>{{degree[expertInfoData.education]}}</div>
           </div>
           <div class="info-iterm-text2" style="width: 99%;">
-            <div style="width: 230px; ">专业特长（疾病诊治及研究方向）：<span></span></div>
+            <div style="width: 230px;display: inline-block;vertical-align: middle;float: left; text-align: justify; ">专业特长（疾病诊治及研究方向）：<span></span></div>
             <div>{{expertInfoData.expertise}}</div>
           </div>
           <div class="info-iterm-text"  style="width: 33%">
@@ -438,6 +444,7 @@
         positionList:['无','主编','副主编','编委'],
         rankList:['无','国际','国家','省部','市级'],
         rankList2:['无','国家','省部','市级'],
+        loginId:'',
         expertInfoData:{
           org_id:'',
           userId:'',
@@ -468,8 +475,13 @@
           remark:''
         },
         btn_Pass:false,
+        btn_notPass:false,
+        btn_back_person:false,
+        btn_back_school:false,
         btn_back:false,
-        amIAnAuditor:true,
+        amIAnAuditor:false,
+        isDirector:false,
+        recall:false,
         isAdmin:'',
         decEduExpList:[],
         decWorkExpList: [],
@@ -507,8 +519,8 @@
        */
       check(progress) {
         var title='';
-        if(progress==3) {
-          title = "是否确认通过?"
+        if(progress==3||progress==2) {
+          title = "是否确认"+(progress==3?'':'不')+"通过?"
           this.$confirm(title, "提示",{
             confirmButtonText: "确定",
             cancelButtonText: "取消",
@@ -521,8 +533,30 @@
             };
             this.onlineCheckPass(param,progress);
           })
-        }
-        else {
+        }else if(progress==0){
+          this.$axios.get('/pmpheep/expertation/changeStatus',{params:{status:progress,id:this.expertInfoId}
+          }).then(response=>{
+            let res = response.data;
+            if (res.code == 1) {
+              this.$message.success("操作成功");
+              this.getTableData();
+            } else {
+              this.$confirm(res.msg.msgTrim(), "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+            }
+          }).catch(e=>{
+            this.$confirm('操作失败，请稍后再试!', "提示",{
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
+            });
+          })
+        }else {
 
           //  title = "是否确认退回?"
           this.$prompt('请输入退回原因', '提示', {
@@ -555,8 +589,8 @@
           .then(response=>{
             var res = response.data;
             if(res.code==1){
-              this.$set(this.expertInfoData,"online_progress",type);
-              this.$message.success(type==3?'已通过！':'已退回！')
+             // this.$set(this.expertInfoData,"online_progress",type);
+              this.$message.success('操作成功');
               this.getTableData();
             }else{
               this.$confirm(res.msg.msgTrim(), "提示",{
@@ -595,7 +629,21 @@
              // debugger;
               res.data.sex=res.data.sex=='2'?'女':'男';
               res.data.birthday = res.data.birthday;
-              this.amIAnAuditor = res.data.amIAnAuditor?true:false;
+              //this.amIAnAuditor = res.data.amIAnAuditor?true:false;
+              if(!this.$commonFun.Empty(res.data)){
+                let audit = res.data.auditorArray.split(",");
+                audit.forEach(iterm=>{
+                  if(parseInt(iterm) == this.loginId){
+                    this.amIAnAuditor = true;  //我是产品的审核人
+                  }
+                })
+                let directorArray = res.data.director.split(",");
+                directorArray.forEach(iterm=>{
+                  if(parseInt(iterm) == this.loginId){
+                    this.isDirector = true;  //我是产品审核人的主任
+                  }
+                })
+              }
               // 获取当前专家账号
               this.username = res.data.username;
               for(var i in res.data){
@@ -651,9 +699,13 @@
               // 本专业获奖情况
               this.decProfessionAwardList = res.data.decProfessionAwardList||[];
 
-              this.onlineProgressBtn_Pass(res.data.online_progress);
-
-              this.onlineProgressBtn_Back(res.data.online_progress);
+              //this.onlineProgressBtn_Pass(res.data.online_progress);
+              this.btn_Pass =!(res.data.finalResult == 0 && res.data.pmphAudit==0 && (res.data.online_progress == 1 || res.data.online_progress == 3) )
+              this.btn_notPass =!(res.data.finalResult == 0 && res.data.pmphAudit==0 && (res.data.online_progress == 1 || res.data.online_progress == 3) )
+              this.btn_back_person = !(res.data.finalResult == 0 && res.data.pmphAudit ==0 && ( res.data.online_progress == 1  ||res.data.online_progress==3 || res.data.online_progress==4))
+              this.btn_back_school = !(res.data.finalResult == 0 && res.data.pmphAudit ==0  && (res.data.online_progress==3)) /*res.data.online_progress == 1 ||*/
+              //this.onlineProgressBtn_Back(res.data.online_progress);
+              this.recall = (res.data.finalResult == 0  && res.data.pmphAudit!=0);
 
             }else{
               this.$confirm(res.msg.msgTrim(), "提示",{
@@ -728,6 +780,7 @@
       this.getTableData();
       //alert(this.expertInfoId)
       this.isAdmin = this.$getUserData().userInfo.isAdmin;
+      this.loginId = this.$getUserData().userInfo.id;
 
     },
 
