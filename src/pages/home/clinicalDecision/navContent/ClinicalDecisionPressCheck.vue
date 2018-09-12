@@ -196,7 +196,7 @@
         </el-table-column>-->
 
 
-        <el-table-column label="申报单位/工作单位" width="154">
+        <el-table-column label="申报单位/工作单位" min-width="154">
           <template scope="scope">
             <p><i class="fa fa-briefcase"></i>{{scope.row.unitName}}</p>
             <p><i class="fa fa-university"></i>{{scope.row.org_name}}</p>
