@@ -260,7 +260,7 @@
               </p>
               <p style="text-align: center">
                 <el-button type="text"   @click="pressCheckOpt(4,scope.row.id)" :disabled="!(scope.row.pubtn&&(isDirector||isAdmin||amIAnAuditor))">{{"最终结果公布"}}</el-button>
-                <el-button type="text"   @click="pressCheckOpt(5,scope.row.id)" :disabled="!((isDirector||isAdmin)&&scope.row.finalResult)">{{"取消结果公布"}}</el-button>
+                  <el-button type="text"   @click="pressCheckOpt(5,scope.row.id)" :disabled="!((isDirector||isAdmin)&&scope.row.finalResult)">{{"取消结果公布"}}</el-button>
               </p>
             </div>
           </template>
