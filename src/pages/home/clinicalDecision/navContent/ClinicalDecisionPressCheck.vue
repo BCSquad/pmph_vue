@@ -337,6 +337,9 @@
         startCommitDate:'',
         endCommitDate:'',
         isFinalResultList:[{
+          value:'',
+          label:'全部'
+        },{
           value:'0',
           label:'未公布'
         },{
