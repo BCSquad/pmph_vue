@@ -179,7 +179,7 @@
         </el-table-column>
         <el-table-column
           label="账号"
-          width="100">
+          min-width="50">
           <template scope="scope">
             {{scope.row.username}}
           </template>
@@ -215,7 +215,7 @@
             <p v-if="scope.row.email"><i class="fa fa-envelope fa-fw"></i>{{scope.row.email}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="提交时间" width="170">
+        <el-table-column label="提交时间" width="110">
           <template scope="scope">
             <p>{{$commonFun.formatDate(scope.row.commit_date)}}</p>
           </template>
@@ -244,7 +244,7 @@
         </el-table-column>
 
 
-        <el-table-column label="扫描附件" min-width="100">
+        <el-table-column label="扫描附件" min-width="50">
           <template scope="scope">
             <p><a href="javascript:void(0)" @click="downloadImage(scope.row.unit_advise)" style="margin-top:10px;color: #70BBC2;cursor: pointer;text-decoration: underline;" >{{scope.row.syllabus_name}}</a></p>
           </template>
@@ -256,7 +256,7 @@
               <p style="text-align: center">
                 <el-button type="text"  :disabled="!(scope.row.passbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(1,scope.row.id)" >{{"通&emsp;过"}} </el-button>
                 <el-button type="text" :disabled="!(scope.row.notPassbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
-                <el-button type="text" :disabled="(!scope.row.recall&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(0,scope.row.id)" >{{"撤&emsp;回"}} </el-button>
+                <el-button type="text" :disabled="!(scope.row.recall&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(0,scope.row.id)" >{{"撤&emsp;回"}} </el-button>
               </p>
 
 
