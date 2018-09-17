@@ -790,17 +790,17 @@
       },
       /** 导出Excel */
       exportSubjectExcel(){
-        let url = '/pmpheep/expertation/exportExpertationCount/?ptype='+ this.productType + '&type_name=' + this.subject.type_name + '&productId=' +this.product_id;
+        let url = '/pmpheep/expertation/exportExpertationCount/?ptype='+ this.productType + '&type_name=' + this.subject.type_name+"&productId="+this.product_id;
         // //console.log(url)
         this.$commonFun.downloadFile(url);
       },
       exportContentExcel(){
-        let url = '/pmpheep/expertation/exportExpertationCount/?ptype='+ this.productType + '&type_name=' + this.content.type_name  + '&productId=' +this.product_id;
+        let url = '/pmpheep/expertation/exportExpertationCount/?ptype='+ this.productType + '&type_name=' + this.content.type_name +"&productId="+this.product_id ;
         // //console.log(url)
         this.$commonFun.downloadFile(url);
       },
       exportProfessionExcel(){
-        let url = '/pmpheep/expertation/exportExpertationCount/?ptype='+ this.productType + '&type_name=' + this.profession.type_name  + '&productId=' +this.product_id;
+        let url = '/pmpheep/expertation/exportExpertationCount/?ptype='+ this.productType + '&type_name=' + this.profession.type_name  +"&productId="+this.product_id;
         // //console.log(url)
         this.$commonFun.downloadFile(url);
       }

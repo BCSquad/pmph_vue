@@ -460,7 +460,8 @@
           bankaddress:'',
           declare_name:'',
           expertise:'',
-          unit_advise_online:''
+          unit_advise_online:'',
+          unit_advise:''
         },
         btn_Pass:false,
         btn_notPass:false,
@@ -616,7 +617,7 @@
               //初始化专家身份信息
              // debugger;
               res.data.sex=res.data.sex=='2'?'女':'男';
-              res.data.birthday = res.data.birthday;
+              //res.data.birthday = res.data.birthday;
               //this.amIAnAuditor = res.data.amIAnAuditor?true:false;
               if(!this.$commonFun.Empty(res.data)){
                 let audit = res.data.auditorArray.split(",");
