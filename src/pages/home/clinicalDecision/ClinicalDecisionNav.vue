@@ -127,6 +127,14 @@ export default {
     //this.showTabsFun();
 
   },
+  watch:{
+    $route(to,from){
+      if(to.path!='/clinicalDecisionRouter/clinicalDecisionNav/clinicalDecisionExpertInfo'){
+        this.isShow = true;
+      }
+
+    }
+  },
   components:{
     ClinicalDecisionExpertInfo,
     ClinicalDecisionPressCheck,result
