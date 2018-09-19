@@ -268,7 +268,7 @@
             <tr v-for="(iterm,index) in decMonographList">
               <td><div>{{iterm.monographName}}</div></td>
               <td><div>{{$commonFun.formatDate(iterm.monographDate,'yyyy.MM.dd').substring(0,10)}}</div></td>
-              <td><div>{{iterm.isSelfPaid?'公费':'自费'}}</div></td>
+              <td><div>{{iterm.isSelfPaid?'自费':'公费'}}</div></td>
               <td><div>{{iterm.publisher}}</div></td>
               <td><div>{{$commonFun.formatDate(iterm.publishDate,'yyyy.MM.dd')}}</div></td>
               <td><div>{{iterm.note}}</div></td>
