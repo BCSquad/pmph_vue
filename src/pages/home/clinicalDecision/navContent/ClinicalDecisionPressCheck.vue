@@ -179,7 +179,7 @@
         </el-table-column>
         <el-table-column
           label="账号"
-          width="100">
+          min-width="50">
           <template scope="scope">
             {{scope.row.username}}
           </template>
@@ -215,7 +215,7 @@
             <p v-if="scope.row.email"><i class="fa fa-envelope fa-fw"></i>{{scope.row.email}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="提交时间" width="170">
+        <el-table-column label="提交时间" width="110">
           <template scope="scope">
             <p>{{$commonFun.formatDate(scope.row.commit_date)}}</p>
           </template>
@@ -244,7 +244,7 @@
         </el-table-column>
 
 
-        <el-table-column label="扫描附件" min-width="100">
+        <el-table-column label="扫描附件" min-width="50">
           <template scope="scope">
             <p><a href="javascript:void(0)" @click="downloadImage(scope.row.unit_advise)" style="margin-top:10px;color: #70BBC2;cursor: pointer;text-decoration: underline;" >{{scope.row.syllabus_name}}</a></p>
           </template>
@@ -260,7 +260,7 @@
               </p>
               <p style="text-align: center">
                 <el-button type="text"   @click="pressCheckOpt(4,scope.row.id)" :disabled="!(scope.row.pubtn&&(isDirector||isAdmin||amIAnAuditor))">{{"最终结果公布"}}</el-button>
-                <el-button type="text"   @click="pressCheckOpt(5,scope.row.id)" :disabled="!((isDirector||isAdmin)&&scope.row.finalResult)">{{"取消结果公布"}}</el-button>
+                  <el-button type="text"   @click="pressCheckOpt(5,scope.row.id)" :disabled="!((isDirector||isAdmin)&&scope.row.finalResult)">{{"取消结果公布"}}</el-button>
               </p>
             </div>
           </template>
@@ -337,6 +337,9 @@
         startCommitDate:'',
         endCommitDate:'',
         isFinalResultList:[{
+          value:'',
+          label:'全部'
+        },{
           value:'0',
           label:'未公布'
         },{

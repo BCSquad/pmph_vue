@@ -472,6 +472,7 @@
           declare_name:'',
           expertise:'',
           unit_advise_online:'',
+          unit_advise:'',
           remark:''
         },
         btn_Pass:false,
