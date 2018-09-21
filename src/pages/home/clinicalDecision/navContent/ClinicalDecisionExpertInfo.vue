@@ -386,7 +386,7 @@
       </div>
 
       <!--备注-->
-      <div class="expert-info-box" v-if="!$commonFun.Empty(expertInfoData.unit_advise_online)">
+      <div class="expert-info-box" v-if="!$commonFun.Empty(expertInfoData.remark)">
         <p class="info-box-title">备注</p>
         <div class="no-padding">
           <table class="expert-info-table" border="1" style="padding: 20px 10px;" >
