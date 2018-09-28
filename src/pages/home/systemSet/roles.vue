@@ -268,8 +268,16 @@ export default {
               label: "微视频管理",
               id: 41
             },{
-              label: "读书反馈",
+              label: "读者反馈",
               id: 43
+            },
+            {
+              label: "图书纠错审核",
+              id: 23
+            },
+            {
+              label: "图书纠错跟踪",
+              id: 24
             }
           ]
         },
@@ -287,20 +295,20 @@ export default {
             }
           ]
         },
-        {
-          label: "图书纠错",
-          id: 8,
-          children:[
-            {
-              label: "图书纠错审核",
-              id: 23
-            },
-            {
-              label: "图书纠错跟踪",
-              id: 24
-            }
-          ]
-        },
+        // {
+        //   label: "图书纠错",
+        //   id: 8,
+        //   children:[
+        //     {
+        //       label: "图书纠错审核",
+        //       id: 23
+        //     },
+        //     {
+        //       label: "图书纠错跟踪",
+        //       id: 24
+        //     }
+        //   ]
+        // },
         {
           label: "积分管理",
           id: 9,

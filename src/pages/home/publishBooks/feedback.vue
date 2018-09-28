@@ -51,7 +51,7 @@
           </el-table-column>-->
           <el-table-column label="操作" width="80" align="center">
             <template scope="scope">
-              <router-link type="text" class="link" size="small" :to="{name:'读书反馈详情',query:{id: scope.row.id,type:scope.row.result?'detail':'check'}}">{{scope.row.result!=''?'查看':'审核'}}</router-link>
+              <router-link type="text" class="link" size="small" :to="{name:'读者反馈详情',query:{id: scope.row.id,type:scope.row.result?'detail':'check'}}">{{scope.row.result!=''?'查看':'审核'}}</router-link>
             </template>
           </el-table-column>
         </el-table>

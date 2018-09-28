@@ -1,5 +1,5 @@
 <template>
-	<div class="material-result">
+	<div class="material-result" :style="{'min-height':contentH}">
     <el-tabs v-model="activeName" @tab-click="handleTabsClick">
       <el-tab-pane label="学科分类" :name="'subject'">
 
@@ -173,9 +173,9 @@
         </div>
       </el-tab-pane>
       <el-tab-pane label="内容分类" :name="'content'">
-        <div class="applicationStatistics-byContent">
+        <div class="applicationStatistics-byContent"  style="width: 70%;">
           <!--搜索-->
-          <div class="clearfix">
+          <!--<div class="clearfix">
             <div class="searchBox-wrapper">
               <div class="searchName">内容分类：<span></span></div>
               <div class="searchInput">
@@ -185,10 +185,10 @@
             <div class="searchBox-wrapper searchBtn">
               <el-button  type="primary" icon="search" @click="getContentTableDataFun">搜索</el-button>
             </div>
-            <!--<el-button type="primary" class="pull-right marginL10" @click="importContentExcel">
+            &lt;!&ndash;<el-button type="primary" class="pull-right marginL10" @click="importContentExcel">
               <i class="fa fa-cloud-upload" aria-hidden="true"></i>
               导出
-            </el-button>-->
+            </el-button>&ndash;&gt;
             <my-upload
               class="pull-right "
               ref="upload"
@@ -198,12 +198,12 @@
               :on-error="uploadError"
               :show-file-list="false">
               <el-button type="primary" :disabled="uploadLoading"  :loading="uploadLoading" >{{uploadLoading?'上传解析中...':'点击导入'}}</el-button>
-              <!--<el-button type="primary" :disabled="!productbtn"  v-else>{{'请先维护产品信息'}}</el-button> v-if="productbtn"-->
+              &lt;!&ndash;<el-button type="primary" :disabled="!productbtn"  v-else>{{'请先维护产品信息'}}</el-button> v-if="productbtn"&ndash;&gt;
 
             </my-upload>
             <span class="pull-right"><a style="color: #337ab7;line-height:36px;margin-right:10px;" href="/static/内容分类导入模板.xlsx">模板下载.xls</a></span>
           </div>
-          <!--表格-->
+          &lt;!&ndash;表格&ndash;&gt;
           <div class="table-wrapper">
             <el-table
               :data="contentTableData"
@@ -244,7 +244,7 @@
               </el-table-column>
             </el-table>
           </div>
-          <!--分页-->
+          &lt;!&ndash;分页&ndash;&gt;
           <div class="pagination-wrapper">
             <el-pagination
               v-if="contentTotal>content.pageSize"
@@ -256,7 +256,8 @@
               layout="total, sizes, prev, pager, next, jumper"
               :total="contentTotal">
             </el-pagination>
-          </div>
+          </div>-->
+          <clic_tree ref="clicTree" :productType="productType"></clic_tree>
 
         </div>
       </el-tab-pane>
@@ -268,29 +269,31 @@
 
 <script>
   import { Loading } from 'element-ui';
+  import Clic_tree from "../../../../../components/clic_tree";
 	export default {
     props:['productType'],
 		data() {
 			return {
+        contentH:'auto',
        // fullscreenLoading: false,
         loadingInstance:undefined,
         activeName:"subject",
         declareMajorUrl:'/pmpheep/productType/'+this.productType+'/profession/list'   ,  //内容统计URL
-        contentUrl:'/pmpheep/productType/'+this.productType+'/content/list'   ,  //内容统计URL
+        //contentUrl:'/pmpheep/productType/'+this.productType+'/content/list'   ,  //内容统计URL
         subjectUrl:'/pmpheep/productType/'+this.productType+'/subject/list',   //学科统计URL
         deleteUrl:'/pmpheep/productType/',
-        api_upload_content: '/pmpheep/productType/'+this.productType+'/content/importExcel',
+        //api_upload_content: '/pmpheep/productType/'+this.productType+'/content/importExcel',
         api_upload_subject: '/pmpheep/productType/'+this.productType+'/subject/importExcel',
         api_upload_declareMajor: '/pmpheep/productType/'+this.productType+'/profession/importExcel',
-        content:{
-        pageNumber:1,
-          pageSize:10,
-          type_name:''
-      },
+      //   content:{
+      //   pageNumber:1,
+      //     pageSize:10,
+      //     type_name:''
+      // },
         uploadLoading:false,
         productbtn:true,
-        contentTotal:1,
-        contentTableData:[],
+        //contentTotal:1,
+       // contentTableData:[],
         subject:{
         pageNumber:1,
           pageSize:10,
@@ -371,7 +374,7 @@
           this.excelTableData = res.data.list;
           this.uuid=res.data.uuid;*/
           if(this.activeName=="content"){
-            this.getContentTableDataFun();
+            //this.getContentTableDataFun();
           }else if(this.activeName=="subject"){
             this.getSubjectTableDataFun();
           }else{
@@ -433,26 +436,26 @@
           }
         })
       },
-      getContentTableDataFun(){
-        this.content.pageNumber=1;
-        this.getContentTableData();
-      },
+      // getContentTableDataFun(){
+      //   this.content.pageNumber=1;
+      //   this.getContentTableData();
+      // },
       /* 获取内容申报情况统计数据 */
-      getContentTableData(){
-        this.$axios.get(this.contentUrl,{
-          params:this.content
-        }).then((res)=>{
-          if(res.data.code==1){
-            var resData = res.data.data;
-            this.contentTotal=resData.total;
-            resData.rows.forEach(iterm=>{
-              iterm["data_sources"]="导入";
-            });
-            this.contentTableData=resData.rows;
-
-          }
-        })
-      },
+      // getContentTableData(){
+      //   this.$axios.get(this.contentUrl,{
+      //     params:this.content
+      //   }).then((res)=>{
+      //     if(res.data.code==1){
+      //       var resData = res.data.data;
+      //       this.contentTotal=resData.total;
+      //       resData.rows.forEach(iterm=>{
+      //         iterm["data_sources"]="导入";
+      //       });
+      //       this.contentTableData=resData.rows;
+      //
+      //     }
+      //   })
+      // },
 
       getSubjectTableDataFun(){
         this.subject.pageNumber=1;
@@ -486,15 +489,15 @@
         this.getDeclareMajorTableData();
       },
       /* 分页切换 */
-      contentSizeChange(val){
-        this.content.pageSize=val;
-        this.content.pageNumber=1;
-        this.getContentTableData();
-      },
-      contentCurrentChange(val){
-        this.content.pageNumber=val;
-        this.getContentTableData();
-      },
+      // contentSizeChange(val){
+      //   this.content.pageSize=val;
+      //   this.content.pageNumber=1;
+      //   this.getContentTableData();
+      // },
+      // contentCurrentChange(val){
+      //   this.content.pageNumber=val;
+      //   this.getContentTableData();
+      // },
       subjectSizeChange(val){
         this.subject.pageSize=val;
         this.subject.pageNumber=1;
@@ -519,7 +522,7 @@
           if(res.data.code==1){
             this.$message.success('删除成功');
             if(type=="content"){
-              this.getContentTableDataFun();
+              //this.getContentTableDataFun();
             }else if(type == "subject"){
               this.getSubjectTableDataFun();
             }else{
@@ -543,11 +546,11 @@
       handleTabsClick(tab, event) {
         console.log(tab,event);
         this.subject.type_name='';
-        this.content.type_name='';
+        //this.content.type_name='';
         if(tab.name=='subject'){
           this.getSubjectTableDataFun();
         }else if(tab.name == "content"){
-          this.getContentTableDataFun();
+          //this.getContentTableDataFun();
         }else{
           this.getDeclareMajorTableDataFun();
         }
@@ -579,6 +582,7 @@
     // }
     },
     components:{
+      Clic_tree
 
 
     },
@@ -589,7 +593,9 @@
 
     },
     mounted() {
-
+      //初始化页面高度，当页面内容很少时也要保证页面拉满整个屏幕
+      var windowH = document.documentElement.clientHeight;
+      this.contentH = windowH-100+'px';
 
     }
 	}
