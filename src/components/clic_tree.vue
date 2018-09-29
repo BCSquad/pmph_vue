@@ -146,6 +146,7 @@ node-click:
     watch: {
       filterText(val) {
         this.$refs.tree2.filter(val);
+        this.repalceText();
       }
     },
     created(){
@@ -333,10 +334,29 @@ node-click:
           })
           .catch(() => {});
       },
-      filterNode(value, data) {
+      filterNode(value, data,node) {
         if (!value) return true;
-        //console.log(data);
-        return data.type_name.indexOf(value) !== -1; //这里还缺少一个正则表达式匹配红字
+        let rtn = data.type_name.indexOf(value) !== -1;
+        return rtn; //这里还缺少一个正则表达式匹配红字
+      },
+      repalceText(){
+        var nodeArray = document.getElementsByClassName("el-tree-node__label");
+        let _this = this;
+        //console.log(nodeArray);
+        for(var i in nodeArray){
+          let iterm = nodeArray[i];
+          let html = iterm.innerHTML;
+          if(typeof html != "undefined"){
+            html =  html.replace(/<\/?font.*?>/g,"");
+           // console.log(typeof html);
+            var patt = new RegExp(_this.filterText,"ig");
+            html =  html.replace(patt,"<font style='color:red'>"+_this.filterText+"</font>");
+            iterm.innerHTML = html;
+          }
+        }
+        /*nodeArray.foreach((iterm,index)=>{
+          console.log(iterm.html());
+        });*/
       },
       /*append(data) {
         const newChild = { id: this.id++, label: 'testtest', children: [] };
