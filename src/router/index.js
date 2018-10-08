@@ -233,16 +233,16 @@ export default new Router({
           children: [
             {path: 'clinicalAssistant', name: '临床助手申报', component: ClinicalAssistantRouter, meta: {replaceName: false, authorityId: 45},
             children:[
-              {path: 'clinicalProductList', name: '临床决策专家申报列表', component: ClinicalProductList, meta: {isShowTags: true,authorityId:true}},
+              {path: 'clinicalProductList', name: '临床决策专家申报列表', component: ClinicalProductList, meta: {replaceName: '临床助手申报', isShowTags: true,authorityId:true}},
             ]
             },
             {path: 'medicineAssistant', name: '用药助手申报', component: MedicineAssistantRouter, meta: {replaceName: false, authorityId: 46},
               children:[
-                {path: 'clinicalProductList', name: '用药助手专家申报列表', component: ClinicalProductList, meta: {isShowTags: true,authorityId:true}},
+                {path: 'clinicalProductList', name: '用药助手专家申报列表', component: ClinicalProductList, meta: {replaceName: '用药助手申报',isShowTags: true,authorityId:true}},
               ]},
             {path: 'chineseMedicineAssistant', name: '中医助手申报', component: ChineseMedicineAssistantRouter, meta: {replaceName: false, authorityId: 47},
               children:[
-                {path: 'clinicalProductList', name: '中医助手专家申报列表', component: ClinicalProductList, meta: {isShowTags: true,authorityId:true}},
+                {path: 'clinicalProductList', name: '中医助手专家申报列表', component: ClinicalProductList, meta: {replaceName: '中医助手申报',isShowTags: true,authorityId:true}},
               ]
             },
             {path: 'clinicalAssistantTable',name: '临床助手申报表', component: ClinicalAssistantTableRouter,meta: { authorityId: 49}},

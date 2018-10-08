@@ -165,7 +165,7 @@
        <el-form label-width="55px" v-if="contentDetailData.content">
          <el-form-item label-width="0">
            <div style="margin:0 auto;width:800px;">
-             <p v-html="contentDetailData.content.content"></p>
+             <p v-html="$commonFun.html(contentDetailData.content.content)"></p>
            </div>
          </el-form-item>
          <p style="width:100%" v-for="item in contentDetailData.MaterialNoteAttachment" :key="item.id">

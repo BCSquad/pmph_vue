@@ -40,6 +40,7 @@
         product:{
           productType: this.$route.query.clinicalTabletype,
           product_id: this.$route.query.product_id,
+          product_name:this.$route.query.product_name,
 
         },
 
@@ -66,7 +67,7 @@
         this.isShow = false;
         // 获取到信息
         this.expertInfoId = id;
-        this.$router.push({name:"临床决策专家信息"});
+        this.$router.push({name:"临床决策专家信息",query:{product_name:this.product.product_name}});
 
       },
       back(){

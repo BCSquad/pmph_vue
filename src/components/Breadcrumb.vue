@@ -41,6 +41,12 @@
         }else{
 
         }*/
+        // console.log("-----------------");
+        // console.log(item)
+        //var str2 = this.$router.currentRoute.fullPath.split('/')[2];
+        if(item.name == "临床决策专家申报审核"){
+          return this.$route.query.product_name;
+        }
         return item.meta.replaceName?item.meta.replaceName:item.name;
       }
     },

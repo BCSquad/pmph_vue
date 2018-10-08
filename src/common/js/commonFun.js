@@ -234,6 +234,27 @@ export function formatDate(nS,str) {
  }
 
 }
+
+/**
+ * 过滤html中的特殊字符
+ * @param str
+ * @returns {string}
+ */
+export function html(str) {
+  return str ? str.replace(/&((g|l|quo)t|amp|#39|nbsp|ldquo|rdquo|amp);/g, function (m) {
+    return {
+      '&lt;':'<',
+      '&amp;':'&',
+      '&quot;':'"',
+      '&gt;':'>',
+      '&#39;':"'",
+      '&nbsp;':' ',
+      '&ldquo;':'“',
+      '&rdquo;':'”',
+      '&amp;':'&'
+    }[m]
+  }) : '';
+};
 /**
  * 获取当前的日期 格式“yyyyMMdd”
  * @returns {string}
