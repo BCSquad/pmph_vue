@@ -802,14 +802,17 @@ var utils = UE.utils = {
      * ```
      */
     html:function (str) {
-        return str ? str.replace(/&((g|l|quo)t|amp|#39|nbsp);/g, function (m) {
+        return str ? str.replace(/&((g|l|quo)t|amp|#39|nbsp|ldquo|rdquo|amp);/g, function (m) {
             return {
                 '&lt;':'<',
                 '&amp;':'&',
                 '&quot;':'"',
                 '&gt;':'>',
                 '&#39;':"'",
-                '&nbsp;':' '
+                '&nbsp;':' ',
+                '&ldquo;':'“',
+                '&rdquo;':'”',
+                '&amp;':'&'
             }[m]
         }) : '';
     },

@@ -303,7 +303,7 @@ export default new Router({
           path: 'bookerror',
           name: '图书纠错',
           component: ErrorRouter,
-          meta: {replaceName: false, authorityId: 8},
+          meta: {replaceName: "商品分类", authorityId: 8},
           children: [
             {path: 'check', name: '图书纠错审核', component: CheckError, meta: {authorityId: 23}},
             {path: 'checkerror', name: '纠错审核', component: Check,},
@@ -402,8 +402,8 @@ export default new Router({
             {path: 'materialType', name: '图书分类', component: materialType, meta: {authorityId: 44}},
             {path: 'comment', name: '评论审核', component: CommentManage, meta: {authorityId: 20}},
             {path: 'video', name: '微视频管理', component: MicVideo, meta: {authorityId: 41}},
-            {path: 'feedback', name: '读书反馈', component: FeedBack, meta: {authorityId: 43}},
-            {path: 'feedbackdetail', name: '读书反馈详情', component: FeedBackDetail}
+            {path: 'feedback', name: '读者反馈', component: FeedBack, meta: {authorityId: 43}},
+            {path: 'feedbackdetail', name: '读者反馈详情', component: FeedBackDetail}
 
           ]
         },
