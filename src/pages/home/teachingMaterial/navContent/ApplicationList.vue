@@ -32,7 +32,7 @@
               {{(scope.$index+1)+searchForm.pageSize*(searchForm.pageNumber-1)}}
             </template>
           </el-table-column>
-            <el-table-column label="教材名称">
+            <el-table-column label="教材名称" min-width="100">
                 <template scope="scope">
                     <el-button type="text" style="color:#337ab7;white-space: normal;text-align:left;" @click="operation('toProcess',scope.row)" v-if="hasAccessAuthority(true,scope.row)">{{scope.row.materialName}}</el-button>
                     <p v-else>{{scope.row.materialName}}</p>
@@ -57,7 +57,7 @@
               </p>
             </template>
           </el-table-column>
-            <el-table-column label="创建人" width="80">
+            <el-table-column :className="'justify'" label="创建人" width="80">
                 <template scope="scope">
                     <p>
                         {{scope.row.founderName}}
@@ -81,7 +81,7 @@
                   </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="status" label="状态" width="68">
+            <el-table-column prop="status" label="状态" :className="'justify'" width="98">
                 <template scope="scope">
                     {{scope.row.state}}
                 </template>
@@ -450,4 +450,17 @@ export default {
     float: right;
     margin-top: 20px;
 }
+
+
+
+</style>
+<style>
+  /*姓名列 不同长度名字自适应字间距 对齐总长度*/
+  td.justify{
+    text-align-last: justify;
+  }
+  .application_list th{
+    text-align: center;
+  }
+
 </style>

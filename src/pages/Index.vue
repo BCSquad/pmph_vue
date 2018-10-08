@@ -223,6 +223,20 @@
               </ul>
               <p v-else  class="no_conact_data">暂无待处理的事项</p>
             </el-tab-pane>
+            <el-tab-pane label="读书反馈审核" name="fourth">
+              <ul class="panel-min-list" v-if="bookFeedBack.rows.length!=0&&(isShowSide(6)||isShowSide(43))&&bookFeedBackAuthor>0">
+                <li v-for="(iterm,index) in bookFeedBack.rows" :key="index" v-if="index<limit_size" class="ellipsis" style="text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">
+                  <router-link :to="{name:'读书反馈详情',query:{id: iterm.id,type:iterm.result?'detail':'check'}}"><p class="comment">《{{iterm.bookname}}》：<span v-html="iterm.content"></span></p></router-link>
+                </li>
+                <li class="panel-more-btn" v-if="bookFeedBack.total>limit_size">
+                  <router-link :to="{name:'读书反馈'}">
+                    查看更多
+                    <i class="el-icon-d-arrow-right"></i>
+                  </router-link>
+                </li>
+              </ul>
+              <p v-else  class="no_conact_data">暂无待处理的事项</p>
+            </el-tab-pane>
             <!-- <el-tab-pane label="图书附件审核" name="four">
               <ul class="panel-min-list">
                 <li v-for="(iterm,index) in bookFiles.rows" :key="index" v-if="index<limit_size" class="ellipsis">
@@ -267,6 +281,7 @@ export default {
       publishAuthor:0,
       bookerrorAuthor:0,
       CommentManageAuthor:0,
+      bookFeedBackAuthor:0,
       topicList:{
         rows:[]
       },
@@ -285,6 +300,9 @@ export default {
         rows:[]
       },
       bookCorrectionAudit:{
+        rows:[]
+      },
+      bookFeedBack:{
         rows:[]
       },
       bookFiles:{},
@@ -344,7 +362,7 @@ export default {
      */
     getPageData(){
       var params = {
-        state:'',
+        state:'未结束',
         materialName:'',
         groupName:'',
         bookname:'',
@@ -378,6 +396,8 @@ export default {
               $self.bookerrorAuthor = res.data.userPermission[4].materialAuthor;
             } if(authorLength>5){
               $self.CommentManageAuthor = res.data.userPermission[5].materialAuthor;
+            }if(authorLength>6){
+              $self.bookFeedBackAuthor = res.data.userPermission[6].materialAuthor;
             }
 
 
@@ -402,6 +422,7 @@ export default {
             this.cmsContent = res.data.cmsContent;
             this.bookUserComment = res.data.bookUserComment;
             this.bookCorrectionAudit = res.data.bookCorrectionAudit;
+            this.bookFeedBack = res.data.bookFeedBack;
             this.orgUserCount = res.data.orgUserCount;
             this.writerUserCount = res.data.writerUserCount;
             this.userInfo = res.data.pmphUser;
@@ -613,5 +634,11 @@ export default {
   color:rgb(94, 112, 130);
   text-align:center;
   margin-top:50px;
+}
+/*标签等宽 文字自适应填满*/
+span.el-tag {
+  min-width: 6em;
+  text-align-last: justify;
+  padding: 0 0.5em;
 }
 </style>

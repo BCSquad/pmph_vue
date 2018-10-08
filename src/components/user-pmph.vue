@@ -30,6 +30,20 @@ methods:
               <el-input placeholder="请输入" class="searchInputEle"  @keyup.native.enter="_search" v-model.trim="searchForm.name"></el-input>
             </div>
           </div>
+
+          <div class="searchBox-wrapper">
+            <div class="searchName">角色：<span></span></div>
+            <div class="searchInput">
+              <el-select v-model="searchForm.roleId" placeholder="请选择">
+                <el-option :key="null" :label="'全部'" :value="null">
+                </el-option>
+                <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id">
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+
+
           <div class="searchBox-wrapper searchBtn">
             <el-button  type="primary" icon="search" @click="_search">搜索</el-button>
           </div>
@@ -230,6 +244,7 @@ methods:
           groupId: this.groupId,
           name:'',
           path:'',
+          roleId:'',
           departmentId:'',
           pageNumber:1,
           pageSize:30
@@ -238,6 +253,7 @@ methods:
         tableData:[],
         selectData:[],
         rolenames:[],
+        roleList:[], //所有角色列表
 
         dialogVisible:false,
         form: {// 修改弹窗 表单
@@ -354,10 +370,21 @@ methods:
         });
       })
     },
+
+      _getRoleList(){
+        console.log(this);
+        var _this = this;
+        this.$axios.get("/pmpheep/role/pmph/list/role").then(response => {
+            let res = response.data;
+            if (res.code == "1") {
+              _this.roleList = res.data;
+            }
+          });
+      },
       /**
        * 获取用户角色
        */
-      _getRoleName() {
+      _getRoleName(){
         this.$axios.get("/pmpheep/role/pmph/list/role")
           .then(response => {
             let res = response.data;
@@ -567,7 +594,9 @@ methods:
 
     created(){
       this._getTableData();
+      this._getRoleList();
       this._getRoleName();
+
     },
   }
 </script>
