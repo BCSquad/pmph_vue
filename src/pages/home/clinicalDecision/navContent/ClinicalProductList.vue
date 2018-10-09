@@ -343,7 +343,7 @@ export default {
             this.$router.push({name:'设置选题号',params:{materialId:materialData.id}});
             break;*/
           case 'toProcess':
-            this.$router.push({name:'临床决策专家申报审核',query:{clinicalTabletype:prodcutData.product_type,product_id:prodcutData.id,queryName:'临床决策专家申报审核'}});
+            this.$router.push({name:'临床决策专家申报审核',query:{clinicalTabletype:prodcutData.product_type,product_id:prodcutData.id,queryName:'临床决策专家申报审核',product_name:prodcutData.product_name}});
             //this.$router.push({name:'申报表审核',params:{materialId:materialData.id}});
             break;
           /*case 'exportExcel':
