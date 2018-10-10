@@ -48,7 +48,7 @@
                   <router-link :to="{name:'通知列表',params:{materialName:iterm.materialName}}">{{iterm.materialName}}</router-link>
                 </li>
                 <li class="panel-more-btn" v-if="!materialList.last && !materialList.loading" style="position: absolute;bottom: 0;left:40%;">
-                  <router-link :to="{name:'通知列表'}">
+                  <router-link :to="{name:'通知列表',params:{materialState:this.materialState}}">
                     查看更多
                     <i class="el-icon-d-arrow-right"></i>
                   </router-link>
@@ -63,7 +63,7 @@
                   <router-link :to="{name:'通知列表',params:{materialName:iterm.materialName}}">{{iterm.materialName}}</router-link>
                 </li>
                 <li class="panel-more-btn" v-if="!materialList.last" style="position: absolute;bottom: 0; left:40%;">
-                  <router-link :to="{name:'通知列表'}">
+                  <router-link :to="{name:'通知列表',params:{materialState:this.materialState}}">
                     查看更多
                     <i class="el-icon-d-arrow-right"></i>
                   </router-link>
@@ -71,14 +71,29 @@
               </ul>
               <p v-else  class="no_conact_data">暂无需要您处理的教材</p>
             </el-tab-pane>
-            <el-tab-pane label="已结束" name="fourth" style="position: relative;height: 248px;">
+            <el-tab-pane label="报名结束" name="third" style="position: relative;height: 248px;">
               <ul class="panel-min-list" v-if="materialList.rows.length!=0&&materialAuthor>0">
                 <li v-for="(iterm,index) in materialList.rows" :key="index" v-if="index<limit_size" >
                   <el-tag :type="iterm.state==='已发布'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
                   <router-link :to="{name:'通知列表',params:{materialName:iterm.materialName}}">{{iterm.materialName}}</router-link>
                 </li>
                 <li class="panel-more-btn" v-if="!materialList.last" style="position: absolute;bottom: 0;left:40%;">
-                  <router-link :to="{name:'通知列表'}">
+                  <router-link :to="{name:'通知列表',params:{materialState:this.materialState}}">
+                    查看更多
+                    <i class="el-icon-d-arrow-right"></i>
+                  </router-link>
+                </li>
+              </ul>
+              <p v-else  class="no_conact_data">暂无需要您处理的教材</p>
+            </el-tab-pane>
+            <el-tab-pane label="遴选结束" name="fourth" style="position: relative;height: 248px;">
+              <ul class="panel-min-list" v-if="materialList.rows.length!=0&&materialAuthor>0">
+                <li v-for="(iterm,index) in materialList.rows" :key="index" v-if="index<limit_size" >
+                  <el-tag :type="iterm.state==='已发布'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
+                  <router-link :to="{name:'通知列表',params:{materialName:iterm.materialName}}">{{iterm.materialName}}</router-link>
+                </li>
+                <li class="panel-more-btn" v-if="!materialList.last" style="position: absolute;bottom: 0;left:40%;">
+                  <router-link :to="{name:'通知列表',params:{materialState:this.materialState}}">
                     查看更多
                     <i class="el-icon-d-arrow-right"></i>
                   </router-link>
@@ -270,6 +285,8 @@ export default {
         loading:true,
         rows:[]
       },
+      materialListTotal:0,
+      materialState:'',
       groupList:{
         loading:true,
         rows:[]
@@ -308,7 +325,7 @@ export default {
       bookFiles:{},
       orgUserCount:'',
       writerUserCount:'',
-      materialListTotal:0,
+
       PermissionIds:[],
       pmphRole:{},
       lastLoginTime:undefined,
@@ -442,6 +459,7 @@ export default {
     materialListChange(val){
       let state = val.label;
       state=state==='全部'?'':state;
+      this.materialState = state;
       this.$axios.get('/pmpheep/material/list',{params:{
         pageSize:5,
         pageNumber:1,

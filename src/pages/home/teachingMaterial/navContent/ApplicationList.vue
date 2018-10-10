@@ -362,6 +362,9 @@ export default {
       if(this.$route.params.materialName){
         this.searchForm.materialName=this.$route.params.materialName;
       }
+      if(this.$route.params.materialState){
+        this.searchForm.state=this.$route.params.materialState;
+      }
       this.getTableData();
     }
 }
