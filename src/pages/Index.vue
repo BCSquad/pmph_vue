@@ -397,9 +397,9 @@ export default {
             let authorLength = res.data.userPermission.length;
             console.log(authorLength);
             let $self = this;
-            switch (authorLength) {
+            /*switch (authorLength) {
               case 1:
-            }
+            }*/
             if(authorLength>0){
               $self.materialAuthor = res.data.userPermission[0].materialAuthor;
             }
