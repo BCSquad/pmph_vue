@@ -361,7 +361,7 @@
                 <div class = "table_row" style = "display: table-row;padding: 1em 0em;">
                   <div style = "text-align-last: justify;width: 5em;display: table-cell;">邮寄地址</div><span class = "cell_2" style = "display: table-cell;padding: 0px 0.5em;">：</span>
                   <div style="display: table-cell">
-                    <p>北京市朝阳区潘家园南里19号人卫大厦B座</p>
+                    <p>{{material.mailAddress}}</p>
                   </div>
                 </div>
                 <div class = "table_row" style = "display: table-row;padding: 1em 0em;">
