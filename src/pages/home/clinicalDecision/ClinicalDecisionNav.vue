@@ -25,48 +25,49 @@
   import result from '../clinicalDecision/navContent/Result/index.vue'
   import ClinicalDecisionPressCheck from '../clinicalDecision/navContent/ClinicalDecisionPressCheck.vue'
   import ClinicalDecisionExpertInfo from "./navContent/ClinicalDecisionExpertInfo";
-export default {
-	data() {
-		return {
-      contentH:'auto',
-      activeTagName:'clinicalDecisionPressCheck',
-      productName:['','人卫临床助手','人卫用药助手','人卫中医助手'],
-      isShow:true,
-     // isShowResultSituation:true,
-       expertInfoId:'',
-      api_showTabs:'/pmpheep/expertation/showTabs',
-      notShowTabArray:[],
-      showTabArray:[],
-      product:{
-        productType: this.$route.query.clinicalTabletype,
-        product_id: this.$route.query.product_id,
+  export default {
+    data() {
+      return {
+        contentH:'auto',
+        activeTagName:'clinicalDecisionPressCheck',
+        productName:['','人卫临床助手','人卫用药助手','人卫中医助手'],
+        isShow:true,
+        // isShowResultSituation:true,
+        expertInfoId:'',
+        api_showTabs:'/pmpheep/expertation/showTabs',
+        notShowTabArray:[],
+        showTabArray:[],
+        product:{
+          productType: this.$route.query.clinicalTabletype,
+          product_id: this.$route.query.product_id,
+          product_name:this.$route.query.product_name,
 
       },
 
-		}
-	},
-	methods: {
-    /*routerChange(tag) {
-      this.$router.push(this.activeTagName);
-      this.activeTagName = this.$router.currentRoute.meta.applicationName;
-    }*/
-    handleClick(){
-      if(this.activeTagName=="clinicalDecisionPressCheck"){
-        //console.log(this.$refs.clinicalDecisionPressCheck);
-        //this.$refs.clinicalDecisionPressCheck.getContentTableData();
-      }else{
-       // console.log(this.$refs.clinicalDecisionResult);
-        this.$refs.clinicalDecisionResult.getSubjectEchart();
-        this.$refs.clinicalDecisionResult.getSubjectTableData();
-        /*this.hideTabs(this.notShowTabArray);
-        this.$refs.clinicalDecisionResult.activeFun(this.showTabArray[0]);*/
       }
     },
-    toExpertInfoData(id) {
-      this.isShow = false;
-      // 获取到信息
-      this.expertInfoId = id;
-      this.$router.push({name:"临床决策专家信息"});
+    methods: {
+      /*routerChange(tag) {
+        this.$router.push(this.activeTagName);
+        this.activeTagName = this.$router.currentRoute.meta.applicationName;
+      }*/
+      handleClick(){
+        if(this.activeTagName=="clinicalDecisionPressCheck"){
+          //console.log(this.$refs.clinicalDecisionPressCheck);
+          //this.$refs.clinicalDecisionPressCheck.getContentTableData();
+        }else{
+          // console.log(this.$refs.clinicalDecisionResult);
+          this.$refs.clinicalDecisionResult.getSubjectEchart();
+          this.$refs.clinicalDecisionResult.getSubjectTableData();
+          /*this.hideTabs(this.notShowTabArray);
+          this.$refs.clinicalDecisionResult.activeFun(this.showTabArray[0]);*/
+        }
+      },
+      toExpertInfoData(id) {
+        this.isShow = false;
+        // 获取到信息
+        this.expertInfoId = id;
+        this.$router.push({name:"临床决策专家信息",query:{product_name:this.product.product_name}});
 
     },
     back(){

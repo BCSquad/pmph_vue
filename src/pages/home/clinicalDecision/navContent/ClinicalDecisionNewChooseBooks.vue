@@ -1004,6 +1004,9 @@ export default {
    z-index: 1;
    position: relative;
  }
+ .upload{
+   font-size:16px !important;
+ }
 
 
 

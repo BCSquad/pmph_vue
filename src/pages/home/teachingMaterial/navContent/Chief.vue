@@ -42,12 +42,12 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="申报单位"  prop="reportName"></el-table-column>
+          <el-table-column label="申报单位" width="100"  prop="reportName"></el-table-column>
 
           <!--<el-table-column label="工作单位" prop="orgName"></el-table-column>-->
-          <el-table-column label="申请职位" prop="strPresetPosition"></el-table-column>
+          <el-table-column label="申请职位" width="100" prop="strPresetPosition"></el-table-column>
           <el-table-column label="学校审核" width="100" prop="onlineProgress"></el-table-column>
-          <el-table-column label="出版社审核" width="120" prop="offlineProgress"></el-table-column>
+          <el-table-column label="出版社审核" width="130" prop="offlineProgress"></el-table-column>
 
           <el-table-column label="是否主编" width="100" align="center" >
             <template scope="scope">
@@ -115,7 +115,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="是否数字编委" width="120" align="center" v-if="IsDigitalEditorOptional">
+          <el-table-column label="是否数字编委" width="130" align="center" v-if="IsDigitalEditorOptional">
             <template scope="scope">
               <el-checkbox v-model="scope.row.isDigitalEditor" :disabled="!hasPermission([2,3])||(materialInfo.isForceEnd||materialInfo.isAllTextbookPublished)||optionsType==='view' || type!=='bw'"></el-checkbox>
             </template>

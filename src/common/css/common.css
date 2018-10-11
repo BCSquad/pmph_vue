@@ -317,6 +317,9 @@ button a,button a:hover,button a:active{
 .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
   color: #ffffff;
 }
+.my-upload-list__item-name{
+  font-size:16px !important;
+}
 .el-menu--dark {
   background-color: transparent;
 }

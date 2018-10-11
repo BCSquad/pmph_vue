@@ -172,7 +172,7 @@
         <el-table-column
           prop="isbn"
           label="ISBN"
-          width="230">
+          width="200">
         </el-table-column>
         <el-table-column
           label="是否新书推荐"
@@ -200,6 +200,13 @@
           min-width="120">
           <template scope="scope">
             {{scope.row.typeName}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="书籍封面"
+          min-width="120">
+          <template scope="scope">
+            <img style="width: 62px;height: 86px;" :src="scope.row.imageUrl">
           </template>
         </el-table-column>
         <el-table-column
