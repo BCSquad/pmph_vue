@@ -303,7 +303,7 @@ export default new Router({
           path: 'bookerror',
           name: '图书纠错',
           component: ErrorRouter,
-          meta: {replaceName: "商品分类", authorityId: 8},
+          meta: {replaceName: "", authorityId: 8}, /*商品分类*/
           children: [
             {path: 'check', name: '图书纠错审核', component: CheckError, meta: {authorityId: 23}},
             {path: 'checkerror', name: '纠错审核', component: Check,},
