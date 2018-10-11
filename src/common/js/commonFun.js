@@ -270,8 +270,8 @@ export function getcurrentDate(nS) {
 
 }
 /* 获取当前时间 格式YYYY-MM-DD */
-export function getnowDate() {
-  var date = new Date();
+export function getnowDate(nS) {
+  var date = nS?new Date(nS):new Date();
   var year = date.getFullYear();
   var month = date.getMonth() + 1;
   var strDate = date.getDate();
