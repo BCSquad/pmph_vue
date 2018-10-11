@@ -246,29 +246,34 @@
             </el-form-item>
 
             <el-form-item label="申报通知扫描图片及通知主要内容：" prop="notice">
-              <el-col :span="24">
+              <!--<el-col :span="24">
                 <el-input
                   type="textarea"
                   :autosize="{ minRows: 8, maxRows: 12}"
                   placeholder="请输入内容"
                   v-model="material.notice" @keyup.enter.native="submitForm">
                 </el-input>
+              </el-col>-->
+              <el-col :span="24">
+                <Editor ref="editor" :config="editorConfig" ></Editor>
               </el-col>
             </el-form-item>
                 <el-form-item label="上传通知扫描图片：" prop="noticeFiles">
                   <my-upload
                     class="upload"
                     :auto-upload="true"
-                    name="files"
-                    action="/pmpheep/material/upTempFile"
+                    name="file"
+
+                    action="/pmpheep/file/image/upload"
                     :on-remove="imgUploadChange"
                     :on-success="imgUploadSuccess"
                     :before-upload="imgBeforeUpload"
                     :file-list="material.noticeFiles">
                     <el-button size="small" type="primary">点击上传</el-button>
+                    <!--action="/pmpheep/material/upTempFile"-->
                   </my-upload>
                 </el-form-item>
-            <el-form-item label="备注：" prop="note">
+            <!--<el-form-item label="备注：" prop="note">
               <el-col :span="24">
                 <el-input
                   type="textarea"
@@ -276,6 +281,11 @@
                   placeholder="请输入内容"
                   v-model="material.note" @keyup.enter.native="submitForm">
                 </el-input>
+              </el-col>
+            </el-form-item>-->
+            <el-form-item label="备注："  >
+              <el-col :span="24">
+                <EditorNote ref="editorNote" :config="editorNoteConfig" ></EditorNote>
               </el-col>
             </el-form-item>
 
@@ -297,6 +307,7 @@
 
             <el-form-item class="text-center">
               <el-button icon="arrow-left" type="primary" @click="back()">返回</el-button>
+              <el-button type="primary"  @click="openPreventDialog">预览</el-button>
               <el-button type="primary" @click="submitForm" :loading="isloading">下一步</el-button>
             </el-form-item>
 
@@ -307,12 +318,87 @@
             <el-button  type="primary" @click="addCheckedConact()">增加</el-button>
           </user-pmph>
       </el-dialog>
+      <!-- 预览对话框 -->
+      <el-dialog
+        title=""
+        :visible.sync="showPreventDialog"
+        size="large">
+
+        <div style="padding:0 10%;">
+          <el-form label-width="125px">
+            <p class="material-notice-title text-center">
+              {{material.materialName}}
+            </p>
+            <p class="material-notice-time text-center">
+              截止日期：{{$commonFun.getnowDate(material.actualDeadline)}}
+            </p>
+
+            <div id = "msg_content">
+              <div class = "table" style = "display: table;border-collapse: separate;border-spacing: 0em 1em;">
+                <div class = "table_row" style = "display: table-row;padding: 1em 0em;">
+                  <div style = "text-align-last: justify;width: 5em;display: table-cell;">简介</div><span class = "cell_2" style = "display: table-cell;padding: 0px 0.5em;">：</span>
+                  <div  style="display: table-cell;margin:0 auto;">
+                    <p v-html="preventContent" class="p_content"></p>
+                  </div>
+                </div>
+
+                <div class = "table_row" style = "display: table-row;padding: 1em 0em;" v-if="ruleForm.materialNoticeAttachments">
+                  <div style = "text-align-last: justify;width: 5em;display: table-cell;"></div><span class = "cell_2" style = "display: table-cell;padding: 0px 0.5em;">&emsp;</span>
+                  <div  style="display: table-cell;margin:0 auto;">
+                    <p v-for="(item,index) in ruleForm.materialNoticeAttachments" :key="index" style="text-align: center;"><img  :src="item.url"  /></p>
+                    <!--<p v-for="(item,index) in material.noticeFiles" :key="index" style="text-align: center;"><img  :src="'/pmpheep/image/'+item.url"  /></p>-->
+                  </div>
+                </div>
+
+
+
+                <div class = "table_row" style = "display: table-row;padding: 1em 0em;">
+                  <div style = "text-align-last: justify;width: 5em;display: table-cell;">备注</div><span class = "cell_2" style = "display: table-cell;padding: 0px 0.5em;">：</span>
+                  <div  style="display: table-cell;margin:0 auto;">
+                    <p v-html="noteText" class="p_content"></p>
+                  </div>
+                </div>
+                <div class = "table_row" style = "display: table-row;padding: 1em 0em;">
+                  <div style = "text-align-last: justify;width: 5em;display: table-cell;">邮寄地址</div><span class = "cell_2" style = "display: table-cell;padding: 0px 0.5em;">：</span>
+                  <div style="display: table-cell">
+                    <p>北京市朝阳区潘家园南里19号人卫大厦B座</p>
+                  </div>
+                </div>
+                <div class = "table_row" style = "display: table-row;padding: 1em 0em;">
+                  <div style = "text-align-last: justify;width: 5em;display: table-cell;">联&nbsp;系&nbsp;人</div><span class = "cell_2" style = "display: table-cell;padding: 0px 0.5em;">：</span>
+                  <div style="display: table-cell">
+                    <p v-for="(contact,index) in ruleForm.materialContacts" >
+                        {{contact.contactUserName}} (电话：{{contact.contactPhone}}, Email：{{contact.contactEmail}} )
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="table">
+                <div class = "table_row" style = "display: table-row;padding: 1em 0em;" v-if="show_until_save_msg">
+                  <div style = "text-align-last: justify;width: 5em;display: table-cell;" >附件</div><span class = "cell_2" style = "display: table-cell;padding: 0px 0.5em;">：</span>
+                  <div style="display: table-cell">
+                    <p type="text" style="color:#337ab7" v-for="(item,index) in ruleForm.materialNoteAttachments" :key="index" @click="download(item.url)">{{item.name}}</p>
+                  </div>
+                </div>
+            </div>
+
+          </el-form>
+        </div>
+
+        <div style="text-align: center;">
+          <el-button type="primary" v-if="msg_save_btn_show" @click="saveMsg" :loading="isloading">保存通知详情</el-button>
+        </div>
+
+      </el-dialog>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
 import 'url-search-params-polyfill';
 import userPmph from "components/user-pmph";
+import Editor from "../../../../components/Editor.vue";
+import EditorNote from  "../../../../components/EditorNote.vue";
 export default {
   data() {
     return {
@@ -321,6 +407,7 @@ export default {
       addNewmaterialUrl:'/pmpheep/material/add' ,   //新增教材url
       editMaterialUrl:'/pmpheep/material/get',     //请求教材详细信息URL
       updateMaterialUrl:'/pmpheep/material/update',  //更新教材url
+      api_msg_save:'/pmpheep/material/extra/update', //保存教材信息
       labelPosition: "right",
       mainContent: "",
       remark: "",
@@ -332,6 +419,8 @@ export default {
       classify: "", // 分类
       projectDirectorData: [], // 项目主任
       checkedTreeData: [],   //教材分类树
+      show_until_save_msg:true,
+      msg_save_btn_show:false,
       defaultProps: {
         // 树结构
         children: "childrenMaterialTypeVO",
@@ -542,6 +631,7 @@ export default {
         },
       ],
       material:{
+         id:'',
          materialName:'',
          materialRound:'',
          deadline:''  ,
@@ -578,6 +668,17 @@ export default {
           materialNoteAttachments:[]
 
       },
+      editorConfig: {
+        initialFrameWidth: null,
+        initialFrameHeight: 200
+      },
+      editorNoteConfig:{
+        initialFrameWidth: null,
+        initialFrameHeight: 200
+      },
+      preventContent:"",
+      noteText:"",
+      showPreventDialog:false,
       /* noticeFiles:[],
       noteFiles:[], */
       chooseBookData:[],
@@ -756,7 +857,9 @@ export default {
               for(var i in noticeArr){
                   this.ruleForm.materialNoticeAttachments.push({
                     id:noticeArr[i].id,
-                    attachment:noticeArr[i].attachment,
+                    attachment:'/pmpheep/image/'+noticeArr[i].attachment,
+                    url:'/pmpheep/image/'+noticeArr[i].attachment,
+                    attachmentName:noticeArr[i].attachmentName,
                   })
                   this.material.noticeFiles.push({
                     id:noticeArr[i].id,
@@ -770,7 +873,9 @@ export default {
               for(var i in noteArr){
                   this.ruleForm.materialNoteAttachments.push({
                     id:noteArr[i].id,
-                    attachment:noteArr[i].attachment,
+                    attachment:'/pmpheep/file/note/download/'+noteArr[i].attachment,
+                    url:'/pmpheep/file/note/download/'+noteArr[i].attachment,
+                    name:noteArr[i].attachmentName,
                   })
                  this.material.noteFiles.push({
                    id:noteArr[i].id,
@@ -795,6 +900,20 @@ export default {
                     this.material.projectEditorPowers.push(parseInt(i));
                   }
                }
+               this.ruleForm.noteContent=res.data.data.noteContent||{};
+               this.ruleForm.descriptionContent=res.data.data.descriptionContent||{};
+               let _this=this;
+               setTimeout(function() {
+                 if(!_this.$commonFun.Empty(_this.material.note)){_this.$refs.editorNote.setContent(_this.material.note)}else{
+                   // _this.$refs.editorNote.setContent("");
+                 };
+                 if(!_this.$commonFun.Empty(_this.material.notice)){
+                   _this.$refs.editor.setContent(_this.material.notice)
+                 }
+                 else{
+                   // _this.$refs.editor.setContent("");
+                 };
+               },1000);
              }
            })
         }
@@ -835,6 +954,9 @@ export default {
         if(!obj.usecheck){
           obj.needcheck=false;
         }
+      },
+      download(url){
+        this.$commonFun.downloadFile(url);
       },
       /* 联系人选择 */
       conactPersonChange(val){
@@ -963,15 +1085,21 @@ export default {
     imgUploadChange(file,filelist){
      this.material.noticeFiles=filelist;   //表单验证用
       this.ruleForm.materialNoticeAttachments=[];
-      filelist.forEach((item)=>{
+      /*filelist.forEach((item)=>{
         this.ruleForm.materialNoticeAttachments.push({id:item.id?item.id:null,attachment:item.response?item.response.data[0]:item.url});
+      })*/
+      filelist.forEach((item)=>{
+        this.ruleForm.materialNoticeAttachments.push(
+          {id:item.id?item.id:null,materialId:this.ruleForm["material.id"],attachment:item.response?item.response.data:item.url,url:item.response?('/pmpheep/image/'+item.response.data):('/pmpheep/image/'+item.url),attachmentName:item.name}
+        );
+        /*{id:item.id?item.id:null,attachment:item.response?item.response.data[0]:item.url,name:item.name}*/
       })
      console.log(file,filelist);
      this.$refs.ruleForm.validateField('noticeFiles');
     },
     imgBeforeUpload(file){
        for(var i in this.ruleForm.materialNoticeAttachments){
-         if(this.ruleForm.materialNoticeAttachments[i].name==file.name){
+         if(this.ruleForm.materialNoticeAttachments[i].attachmentName==file.name){
            this.$confirm('请勿多次上传同一图片', "提示",{
            	confirmButtonText: "确定",
            	cancelButtonText: "取消",
@@ -1037,11 +1165,14 @@ export default {
       }
     },
     imgUploadSuccess(res,file,filelist){
-      console.log(res,file,filelist);
+      console.log(filelist);
       this.material.noticeFiles=filelist;   //表单验证用
       this.ruleForm.materialNoticeAttachments=[];
       filelist.forEach((item)=>{
-        this.ruleForm.materialNoticeAttachments.push({id:item.id?item.id:null,attachment:item.response?item.response.data[0]:item.url,name:item.name});
+        this.ruleForm.materialNoticeAttachments.push(
+          {id:item.id?item.id:null,materialId:this.ruleForm["material.id"],attachment:item.response?item.response.data:item.url,url:item.response?('/pmpheep/image/'+item.response.data):('/pmpheep/image/'+item.url),attachmentName:item.name}
+          );
+        /*{id:item.id?item.id:null,attachment:item.response?item.response.data[0]:item.url,name:item.name}*/
       })
       this.$refs.ruleForm.validateField('noticeFiles');
     },
@@ -1050,7 +1181,7 @@ export default {
      this.material.noteFiles=filelist;   //表单验证用
       this.ruleForm.materialNoteAttachments=[];
       filelist.forEach((item)=>{
-        this.ruleForm.materialNoteAttachments.push({id:item.id?item.id:null,attachment:item.response?item.response.data[0]:item.url});
+        this.ruleForm.materialNoteAttachments.push({id:item.id?item.id:null,attachment:item.response?item.response.data[0]:item.url,name:item.name});
       })
      this.$refs.ruleForm.validateField('noteFiles');
     },
@@ -1159,7 +1290,61 @@ export default {
       this.checkedTreeData = data;
       console.log(data);
     },
+    /* 预览 */
+    openPreventDialog(msg_save_btn_show){
+      this.msg_save_btn_show = msg_save_btn_show === true;
+      this.preventContent=this.$refs.editor.getContent();
+      this.noteText = this.$refs.editorNote.getContent();
+      this.showPreventDialog=true;
+    },
+    /**
+     * 保存消息下一步
+     */
+    saveMsg(){
+      let _this = this;
 
+      this.show_until_save_msg = false;
+      let msg_content = document.getElementById("msg_content").innerHTML;
+
+      this.show_until_save_msg = true;
+      //验证表单是否正确
+      if(!(this.material.materialName&&this.material.materialName.length<50&&msg_content)){
+        this.$confirm('标题和内容都不能为空', "提示",{
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          showCancelButton: false,
+          type: "error"
+        });
+        return;
+      }
+
+
+      this.$confirm("确定保存通知详情？", "提示",{
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(()=>{
+          _this.$axios.put(this.api_msg_save,this.$commonFun.initPostData({
+            materialId:_this.material.id,
+            content:msg_content,
+            materialName:_this.material.materialName,
+          }))
+            .then((response)=>{
+              let res = response.data
+              if (res.code == '1'){
+                _this.$message.success('保存成功！');
+                _this.$router.push({name:'设置书目录'});
+              }
+            })
+            .catch(e=>{
+
+            })
+        })
+        .catch(e=>{})
+
+
+    },
     /**
        *
        * @param index
@@ -1303,8 +1488,14 @@ export default {
 
     /* 提交表单 */
     submitForm(){
+        let _this = this;
+        this.ruleForm.noteContent["content"] = this.$refs.editorNote.getContent();
+        this.ruleForm.descriptionContent["content"] = this.$refs.editor.getContent();
+        this.material.note = this.$refs.editorNote.getContent();
+        this.material.notice = this.$refs.editor.getContent();
         this.optionMerge()  //选项合并
         this.mergeForms();   //表单合并
+
 
         this.$refs.ruleForm.validate((valid) => {
           if (valid&&this.formTableChecked()) {
@@ -1326,7 +1517,10 @@ export default {
                     this.isloading=false;
                     if(res.data.code==1){
                       // this.$message.success('已保存教材通知');
-                      this.$router.push({name:'编辑通知详情',params:{materialId:res.data.data}});
+                      _this.material.id = res.data.data;
+                      _this.openPreventDialog(true);
+
+                      //this.$router.push({name:'编辑通知详情',params:{materialId:res.data.data}});
                     }else{
                       this.$confirm(res.data.msg.msgTrim(), "提示",{
                       	confirmButtonText: "确定",
@@ -1365,7 +1559,10 @@ export default {
     }
   },
   components: {
-    userPmph
+    userPmph,
+    Editor,
+    EditorNote
+
   }
 };
 </script>
@@ -1430,5 +1627,35 @@ export default {
 }
 .form-item{
   margin:182px 0 0 -150px;
+}
+  .cell_1{
+    text-align-last: justify;
+    width: 5em;
+    display: table-cell;
+  }
+  .cell_2{
+    display: table-cell;
+    padding: 0px 0.5em;
+  }
+.material-notice-title.text-center{
+  font-size: 24px;
+  color: black;
+}
+.material-notice-time.text-center{
+  color: #bdbdbd;
+  padding-top: 10px;
+  margin-bottom: 2em;
+}
+  .table_row{
+    display: table-row;
+    padding: 1em 0em;
+  }
+  .table{
+    display: table;
+    border-collapse: separate;
+    border-spacing: 0em 1em;
+  }
+.app-main-border-box{
+  box-sizing: border-box;
 }
 </style>
