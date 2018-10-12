@@ -413,9 +413,12 @@ export default {
               $self.bookerrorAuthor = res.data.userPermission[4].materialAuthor;
             } if(authorLength>5){
               $self.CommentManageAuthor = res.data.userPermission[5].materialAuthor;
-            }if(authorLength>6){
-              $self.bookFeedBackAuthor = res.data.userPermission[6].materialAuthor;
+            }if(authorLength>6) {
+              //$self.bookFeedBackAuthor = res.data.userPermission[6].materialAuthor;
+
             }
+            $self.bookFeedBackAuthor = $self.$getUserData().permissionIds.indexOf(6)>=-1
+
 
 
             res.data.topicList.rows.map(iterm=>{
