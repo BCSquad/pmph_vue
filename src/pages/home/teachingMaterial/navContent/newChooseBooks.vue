@@ -900,8 +900,8 @@ export default {
                     this.material.projectEditorPowers.push(parseInt(i));
                   }
                }
-               this.ruleForm.noteContent=res.data.data.noteContent||{};
-               this.ruleForm.descriptionContent=res.data.data.descriptionContent||{};
+               /*this.ruleForm.noteContent=res.data.data.noteContent||{};
+               this.ruleForm.descriptionContent=res.data.data.descriptionContent||{};*/
                let _this=this;
                setTimeout(function() {
                  if(!_this.$commonFun.Empty(_this.material.note)){_this.$refs.editorNote.setContent(_this.material.note)}else{
@@ -1334,7 +1334,7 @@ export default {
               let res = response.data
               if (res.code == '1'){
                 _this.$message.success('保存成功！');
-                _this.$router.push({name:'设置书目录'});
+                _this.$router.push({name:'设置书目录',params:{materialId:_this.material.id}});
               }
             })
             .catch(e=>{
@@ -1489,8 +1489,8 @@ export default {
     /* 提交表单 */
     submitForm(){
         let _this = this;
-        this.ruleForm.noteContent["content"] = this.$refs.editorNote.getContent();
-        this.ruleForm.descriptionContent["content"] = this.$refs.editor.getContent();
+        /*this.ruleForm.noteContent["content"] = this.$refs.editorNote.getContent();
+        this.ruleForm.descriptionContent["content"] = this.$refs.editor.getContent();*/
         this.material.note = this.$refs.editorNote.getContent();
         this.material.notice = this.$refs.editor.getContent();
         this.optionMerge()  //选项合并
