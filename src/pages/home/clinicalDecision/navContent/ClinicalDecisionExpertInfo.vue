@@ -629,7 +629,7 @@
               //初始化专家身份信息
              // debugger;
               res.data.sex=res.data.sex=='2'?'女':'男';
-              //res.data.birthday = res.data.birthday;
+              res.data.birthday = res.data.birthday;
               //this.amIAnAuditor = res.data.amIAnAuditor?true:false;
               if(!this.$commonFun.Empty(res.data)){
                 let audit =  this.$commonFun.Empty(res.data.auditorArray)?[]:res.data.auditorArray.split(",");
