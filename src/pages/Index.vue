@@ -385,7 +385,8 @@ export default {
         bookname:'',
         name:'',
         title:'',
-        authProgress:'1,2,3',
+        // authProgress:'1,2,3',
+        authProgress:'1', //客户要求只显示待执行
         topicBookname:'',
       };
       this.$axios.get('/pmpheep/users/pmph/personal/center',{params:params})
