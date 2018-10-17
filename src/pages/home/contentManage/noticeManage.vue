@@ -50,6 +50,14 @@
                placeholder="选择发布结束时间"
                :picker-options="pickerOptions">
              </el-date-picker>
+             <el-select v-model="isMaterialEntry" clearable placeholder="请选择" v-if="searchValue==5" class="input">
+               <el-option
+                 v-for="item in entryType"
+                 :key="item.id"
+                 :label="item.name"
+                 :value="item.id">
+               </el-option>
+             </el-select>
           <span>发布状态：</span>
           <el-select v-model="status" style="width:186px"   class="input" placeholder="全部">
            <el-option
@@ -78,6 +86,15 @@
             label="作者"
             width="110">
             </el-table-column>
+        <el-table-column
+          prop="isMaterialEntry"
+          label="公告类型"
+          width="110">
+          <template scope="scope">
+            {{scope.row.isMaterialEntry?'教材公告':'手工公告'}}
+          </template>
+        </el-table-column>
+
         <el-table-column
           prop="apporpc"
           label="应用类型"
@@ -165,7 +182,7 @@
        <el-form label-width="55px" v-if="contentDetailData.content">
          <el-form-item label-width="0">
            <div style="margin:0 auto;width:800px;">
-             <p v-html="contentDetailData.content.content"></p>
+             <p v-html="$commonFun.html(contentDetailData.content.content)"></p>
            </div>
          </el-form-item>
          <p style="width:100%" v-for="item in contentDetailData.MaterialNoteAttachment" :key="item.id">
@@ -230,9 +247,14 @@ export default {
         },{
           value:4,
           label:'发布时间'
+        },{
+          value:5,
+          label:'公告类型'
         }
       ],
       applyType:['全部','PC端','移动端'],
+      isMaterialEntry:"",
+      entryType:[{id:"",name:'全部'},{id:0,name:'手工公告'},{id:1,name:'教材公告'}],
       tableData: [],
       selectedOptions: [],
       contentSelectData: [],
@@ -263,6 +285,18 @@ export default {
       materialId: '',
       bookOptions:[]
     };
+  },
+  watch:{
+    searchValue(){
+      this.conPageNumber = 1;
+      this.title = "";
+      this.startCreateDate = "";
+      this.endCreateDate = "";
+      this.startAuDate = "";
+      this.endAuDate = "";
+      this.materialId = "";
+      this.isMaterialEntry = "";
+    },
   },
   computed: {
     isContentSelected() {
@@ -302,7 +336,8 @@ export default {
             endCreateDate: this.$commonFun.formatDate(+new Date(this.endCreateDate)),
             startAuDate: this.$commonFun.formatDate(+new Date(this.startAuDate)),
             endAuDate: this.$commonFun.formatDate(+new Date(this.endAuDate)),
-            materialId: this.materialId
+            materialId: this.materialId,
+            isMaterialEntry:this.isMaterialEntry
           }
         })
         .then(response => {

@@ -890,3 +890,8 @@
     margin-left: 134px;
   }
 </style>
+<style>
+  th.is-leaf{
+    text-align: center;
+  }
+</style>

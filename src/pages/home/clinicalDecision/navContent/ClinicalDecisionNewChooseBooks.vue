@@ -218,7 +218,7 @@
 import 'url-search-params-polyfill';
 import userPmph from "components/user-pmph";
 import Editor from "../../../../components/Editor.vue";
- import EditorNote from  "../../../../components/EditorNote.vue";
+import EditorNote from  "../../../../components/EditorNote.vue";
 export default {
   data() {
     return {
@@ -1003,6 +1003,9 @@ export default {
    line-height: 20px;
    z-index: 1;
    position: relative;
+ }
+ .upload{
+   font-size:16px !important;
  }
 
 

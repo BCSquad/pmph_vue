@@ -56,8 +56,8 @@
                  {min:1,max:100,message:'文档名称不能超过100个字符',trigger: "blur,change" }
                ],
                note:[
-                 { required: true, message: "备注不能为空", trigger: "blur" },
-                 {min:1,max:100,message:'备注不能超过100个字符',trigger: "blur,change" }
+                 /*{ required: true, message: "备注不能为空", trigger: "blur" },*/
+                 {min:0,max:100,message:'备注不能超过100个字符',trigger: "blur,change" }
                ],
                fileList:[
                  { type: 'array', required: true, message: '请上传附件', trigger: 'change' }

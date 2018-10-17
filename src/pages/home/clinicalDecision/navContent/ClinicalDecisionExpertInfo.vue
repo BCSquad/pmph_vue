@@ -10,7 +10,7 @@
         <el-button type="primary" :disabled="btn_notPass"  v-if="(isDirector||isAdmin||amIAnAuditor)&&!recall" @click="check(2)">
           {{'不通过'}}
         </el-button>
-        <el-button type="primary" v-if="recall" @click="check(0)" >
+        <el-button type="primary" v-if="(isDirector||isAdmin||amIAnAuditor)&&recall" @click="check(0)" >
           {{"撤回"}}
         </el-button>
         <el-button type="danger"  :disabled="btn_back_school" @click="check(4)" v-if="(isDirector||isAdmin||amIAnAuditor)&&(expertInfoData.org_id!=0 )" >
@@ -386,7 +386,7 @@
       </div>
 
       <!--备注-->
-      <div class="expert-info-box" v-if="!$commonFun.Empty(expertInfoData.unit_advise_online)">
+      <div class="expert-info-box" v-if="!$commonFun.Empty(expertInfoData.remark)">
         <p class="info-box-title">备注</p>
         <div class="no-padding">
           <table class="expert-info-table" border="1" style="padding: 20px 10px;" >
@@ -632,13 +632,13 @@
               res.data.birthday = res.data.birthday;
               //this.amIAnAuditor = res.data.amIAnAuditor?true:false;
               if(!this.$commonFun.Empty(res.data)){
-                let audit = res.data.auditorArray.split(",");
+                let audit =  this.$commonFun.Empty(res.data.auditorArray)?[]:res.data.auditorArray.split(",");
                 audit.forEach(iterm=>{
                   if(parseInt(iterm) == this.loginId){
                     this.amIAnAuditor = true;  //我是产品的审核人
                   }
                 })
-                let directorArray = res.data.director.split(",");
+                let directorArray = this.$commonFun.Empty(res.data.director)?[]:res.data.director.split(",");
                 directorArray.forEach(iterm=>{
                   if(parseInt(iterm) == this.loginId){
                     this.isDirector = true;  //我是产品审核人的主任

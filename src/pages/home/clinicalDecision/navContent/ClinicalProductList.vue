@@ -31,7 +31,7 @@
               {{(scope.$index+1)+searchForm.pageSize*(searchForm.pageNumber-1)}}
             </template>
           </el-table-column>
-            <el-table-column label="临床申报名称" width="120">
+            <el-table-column label="临床申报名称" width="130">
                 <template scope="scope">
                     <el-button type="text" style="color:#337ab7;white-space: normal;text-align:left;" @click="operation('toProcess',scope.row)" v-if="hasAccessAuthority(true,scope.row)">{{scope.row.product_name}}</el-button>
                     <p v-else>{{scope.row.product_name}}</p>
@@ -52,11 +52,18 @@
           <el-table-column label="发布日期" width="110">
             <template scope="scope">
               <p>
-               {{scope.row.gmtPublish}}
+               {{scope.row.gmtCreate}}
               </p>
             </template>
           </el-table-column>
-          <el-table-column label="报名截止日期" width="120">
+          <el-table-column label="创建人" >
+            <template scope="scope">
+              <p>
+                {{scope.row.founder}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column label="报名截止日期" width="130">
             <template scope="scope">
               <p>
                 {{scope.row.actualDeadline}}
@@ -68,12 +75,20 @@
               {{scope.row.is_published?'已发布':'未发布'}}
             </template>
           </el-table-column>
-          <el-table-column label="创建人" >
-              <template scope="scope">
-                  <p>
-                      {{scope.row.founder}}
-                  </p>
-              </template>
+
+          <el-table-column label="修改时间" width="110">
+            <template scope="scope">
+              <p>
+                {{scope.row.gmtPublish}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column label="修改人" >
+            <template scope="scope">
+              <p>
+                {{scope.row.publisher}}
+              </p>
+            </template>
           </el-table-column>
           <el-table-column label="创建部门" width="100" align="center">
             <template scope="scope">
@@ -93,7 +108,7 @@
                 </template>
             </el-table-column>-->
 
-          <el-table-column label="是否当前公告" width="120" align="center">
+          <el-table-column label="是否当前公告" width="130" align="center">
             <template scope="scope">
               <div v-if="scope.row.is_active&&scope.row.is_published"><font color="red">是</font></div>
               <div v-else-if="scope.row.is_active&&!scope.row.is_published">是</div>
@@ -101,7 +116,7 @@
             </template>
 
           </el-table-column>
-            <el-table-column label="操作" >
+            <el-table-column label="操作" min-width="140">
                 <template scope="scope">
                     <p class="operation_p">
                         <el-button type="text" class="op_button" @click="operation('edit',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">修改</el-button>
@@ -328,7 +343,7 @@ export default {
             this.$router.push({name:'设置选题号',params:{materialId:materialData.id}});
             break;*/
           case 'toProcess':
-            this.$router.push({name:'临床决策专家申报审核',query:{clinicalTabletype:prodcutData.product_type,product_id:prodcutData.id,queryName:'临床决策专家申报审核'}});
+            this.$router.push({name:'临床决策专家申报审核',query:{clinicalTabletype:prodcutData.product_type,product_id:prodcutData.id,queryName:'临床决策专家申报审核',product_name:prodcutData.product_name}});
             //this.$router.push({name:'申报表审核',params:{materialId:materialData.id}});
             break;
           /*case 'exportExcel':

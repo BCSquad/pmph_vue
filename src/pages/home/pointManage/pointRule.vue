@@ -7,7 +7,7 @@
                     <el-input v-model.trim="name" placeholder="请输入" @keyup.enter.native="search"></el-input>
                 </div>
             </div>
-            <div class="searchBox-wrapper">
+            <div style="display: none;" class="searchBox-wrapper">
                 <div class="searchName">积分规则标识:<span></span></div>
 								<div class="searchInput">
                 	<el-input v-model.trim="tag" placeholder="请输入" @keyup.enter.native="search"></el-input>

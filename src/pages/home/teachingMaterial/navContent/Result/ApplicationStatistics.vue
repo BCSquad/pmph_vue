@@ -99,7 +99,7 @@
                 prop="presetPositionSubeditor"
                 label="副主编申报数"
                 align="center"
-                width="120">
+                width="130">
               </el-table-column>
               <el-table-column
                 prop="presetPositionEditorial"
@@ -111,7 +111,7 @@
                 prop="presetDigitalEditor"
                 label="数字编委申报数"
                 align="center"
-                width="110">
+                width="140">
               </el-table-column>
               <el-table-column
                 prop="chosenPositionEditor"
@@ -123,7 +123,7 @@
                 prop="chosenPositionSubeditor"
                 label="副主编当选数"
                 align="center"
-                width="120">
+                width="130">
               </el-table-column>
               <el-table-column
                 prop="chosenPositionEditorial"
@@ -190,7 +190,8 @@
               </el-table-column>
               <el-table-column
                 prop="schoolName"
-                label="申报单位">
+                label="申报单位"
+                min-width="100">
               </el-table-column>
               <el-table-column
                 prop="presetPositionEditor"
@@ -202,7 +203,7 @@
                 prop="presetPositionSubeditor"
                 label="副主编申报数"
                 align="center"
-                width="120">
+                width="130">
               </el-table-column>
               <el-table-column
                 prop="presetPositionEditorial"
@@ -214,7 +215,7 @@
                 prop="presetDigitalEditor"
                 label="数字编委申报数"
                 align="center"
-                width="110">
+                width="140">
               </el-table-column>
               <el-table-column
                 prop="chosenPositionEditor"
@@ -226,7 +227,7 @@
                 prop="chosenPositionSubeditor"
                 label="副主编当选数"
                 align="center"
-                width="120">
+                width="130">
               </el-table-column>
               <el-table-column
                 prop="chosenPositionEditorial"

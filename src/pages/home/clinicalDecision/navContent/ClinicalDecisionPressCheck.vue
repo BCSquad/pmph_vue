@@ -160,6 +160,7 @@
         <div class="operation-wrapper">
           <!--<el-button type="danger" :disabled="!tableData.length" @click="exportExcel">批量审核通过</el-button>
           <el-button type="danger" :disabled="!tableData.length" @click="exportExcel">批量最终结果公布</el-button>-->
+          <el-button type="primary" :disabled="!tableData.length" @click="exportWordStart">导出Word</el-button>
           <el-button type="primary" :disabled="!tableData.length" @click="exportExcel">导出Excel</el-button>
         </div>
       </div>
@@ -290,6 +291,24 @@
         <el-progress :text-inside="true" :stroke-width="18" :percentage="exportLoading" status="success"></el-progress>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="下载word"
+      :visible.sync="downloadWordDialog"
+      size="tiny"
+    >
+      <div class="paddingT20 paddingB50 text-center">
+        <div class="width100 inline-block">
+          <el-progress type="circle" :percentage="100" status="success"></el-progress>
+        </div>
+        <div class="paddingT10">
+          <el-button type="text" class="link" @click="downloadWord">点击此链接下载word</el-button>
+          <el-button type="text" @click="copyDownloadUrl">
+            <i class="fa fa-copy"></i>
+          </el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -308,6 +327,9 @@
         exportLoadingTimerHandle:undefined,
         api_clinicalDecision_list:'/pmpheep/expertation/list',
         api_export_excel:'/pmpheep/expertation/exportExpertation',
+        api_export_word_start:'/pmpheep/word/clic/declaration',
+        api_export_word_progress:'/pmpheep/word/progress',
+        api_export_word_download:'/pmpheep/zip/download',
         //stateSchoolList:['未提交','待学校审核','被学校退回','学校已审核','待学校审核','','',''],
         //stateList:['未提交','','','待出版社审核','出版社退回给学校','被出版社退回','出版社审核通过','出版社审核未通过'],
         //stateList:['未提交','待学校审核','被学校退回','学校已审核','待学校审核','被出版社退回'],
@@ -399,6 +421,12 @@
           }
         ],
         noWatchFirst:false,//做浏览记录 第一次watch不生效
+        exportDialog:false,
+        exportLoading:0,
+        exportLoadingTimerHandle:undefined,
+        handleExportWordtimer:null,
+        downloadWordDialog:false,
+        wordUrl:'',
       }
     },
     watch:{
@@ -574,7 +602,107 @@
         this.searchParams.pageNumber=1;
         this.getTableData();
       },
+      exportWordStart(id){
+        this.exportDialog=true;
+        this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.bort();
+        this.exportLoadingTimerHandle = this.$commonFun.perfectAnimate(0,100,60000,(val)=>{
+          this.exportLoading = val;
+          if(this.exportLoading==100){
+            this.exportDialog=false;
+          }
+        },true);
+        this.$axios.get(this.api_export_word_start,{params:{
+            product_id:this.product_id,
+            realname:this.searchParams.realname,
+            position:this.searchParams.position,
+            title:this.searchParams.title,
+            expert_type:this.productType,
+            startCommitDate:this.$commonFun.formatDate(+new Date(this.startCommitDate)),
+            endCommitDate:this.$commonFun.formatDate(+new Date(this.endCommitDate)),
+            schoolStauts:this.searchParams.schoolStauts,
+            pmphStauts:this.searchParams.pmphStauts,
+            handphone:this.searchParams.handphone,
+            finalResult:this.searchParams.finalResult
+          }})
+          .then(response=>{
+            this.exportWordProgress(response.data);
+          })
+          .catch(e=>{
+            console.log(e);
+            this.exportDialog=false;
+            clearInterval(this.handleExportWordtimer);
+            this.$confirm('导出失败，请重试！', "提示",{
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
+            })
+          })
+      },
+      exportWordProgress(id){
+        var timeout = 3*60*1000;//设置3分钟超时
+        var useTime = 0;
+        this.handleExportWordtimer = setInterval(()=>{
+          useTime+=1500;
+          this.$axios.get(this.api_export_word_progress,{params:{
+              id:id
+            }})
+            .then(response=>{
+              let res = response.data;
+              if(res.state==1){
+                clearInterval(this.handleExportWordtimer);
+                console.log("exportWordDownload  "+res.detail);
+                this.exportWordDownload(res.detail);
+              }
+            })
+            .catch(e=>{
+              console.log(e);
+              if(this.exportDialog){
+                this.$confirm('导出失败，请重试！', "提示",{
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  showCancelButton: false,
+                  type: "error"
+                });
+                this.exportDialog=false;
+                clearInterval(this.handleExportWordtimer);
+                this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.end();
+              }
+            })
+          //超时提醒
+          if(useTime>timeout){
+            this.$confirm('导出请求超时，请重试！', "提示",{
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
+            });
+            clearInterval(this.handleExportWordtimer);
+            this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.end();
+          }
+        },1500)
 
+      },
+      exportWordDownload(url){
+        console.log("url   "+url);
+        //this.$commonFun.downloadFile('/pmpheep'+url);
+        this.exportDialog=false;
+        this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.end();
+        this.downloadWordDialog=true;
+        console.log("url   /pmpheep"+url);
+        this.wordUrl='/pmpheep'+url;
+
+      },
+      downloadWord(){
+        if(this.wordUrl){
+          this.$commonFun.downloadFile(this.wordUrl);
+        }
+      },
+      copyDownloadUrl(){
+        if(this.wordUrl){
+          this.$commonFun.copy(window.location.origin+this.wordUrl);
+        }
+      },
       /**
        * 导出excel
        */
@@ -658,4 +786,6 @@
     margin: 0.35em;
   }
 
+
 </style>
+
