@@ -2,14 +2,14 @@
   <div class="add_new_model">
       <div style="width:100%;float:left;">
       <p class="left_header_p">
-         问卷信息
+         调研表信息
        <span></span>
        </p>
        </div>
       <div style="width:100%;float:left;">
       <el-form :model="surveyForm" ref="surveyForm" :rules="rules"  label-width="120px" style="margin:30px 0;width:80%;">
-          <el-form-item label="调查问卷名称:" prop="templateName">
-             <el-input placeholder="请输入调查问卷名称" v-model="surveyForm.templateName"></el-input>
+          <el-form-item label="调研表名称:" prop="templateName">
+             <el-input placeholder="请输入调研表名称" v-model="surveyForm.templateName"></el-input>
           </el-form-item>
           <el-form-item label="调查对象:" prop="typeId">
              <el-select v-model="surveyForm.typeId"  placeholder="请选择调查对象" style="width:50%">
@@ -184,13 +184,13 @@
 export default {
   data() {
     return {
-        objListUrl:'/pmpheep/survey/type/list',   //调查对象列表url
+        objListUrl:'/pmpheep/materialSurvey/type/list',   //调查对象列表url
         addNewObjUrl:'/pmpheep/survey/type/create', //添加新对象url
         editObjUrl:'/pmpheep/survey/type/update',  //修改对象url
         deleteObjUrl:'/pmpheep/survey/type/',  //删除对象url
-        addTemplateUrl:'/pmpheep/survey/template/create', //新增模板url
-        editTemplateUrl:'/pmpheep/survey/modify', //修改提交url
-        surveyForm:{          //问卷信息抬头
+        addTemplateUrl:'/pmpheep/materialSurvey/template/create', //新增模板url
+        editTemplateUrl:'/pmpheep/materialSurvey/modify', //修改提交url
+        surveyForm:{          //调研表信息抬头
           templateName:'',
           typeId:'',
           intro:'',
@@ -243,8 +243,8 @@ export default {
         dialogVisible:false,
         rules:{
             templateName:[
-               { required: true, message: '请输入问卷名称', trigger: 'blur' },
-               {min:1,max:50,message:'问卷名称不能超过50个字符',trigger:'change,blur'}
+               { required: true, message: '请输入调研表名称', trigger: 'blur' },
+               {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'}
             ],
             typeId:[
                 {type:'number', required: true, message: '请选择调查对象', trigger: 'blur' },
@@ -306,7 +306,7 @@ export default {
        if(this.$route.params.type!='add'&&this.$route.params.surveryData){
            var surveyData=this.$route.params.surveryData;
           console.log(surveyData) ;
-          this.surveyForm.templateName=surveyData.survey.title;
+          this.surveyForm.templateName=surveyData.survey.templateName;
           this.surveyForm.typeId=surveyData.survey.typeId;
           this.surveyForm.intro=surveyData.survey.intro;
           this.surveyForm.id=surveyData.survey.id;
@@ -357,7 +357,7 @@ export default {
                         console.log(this.surveyForm.questionAnswerJosn,arr);
                         if(res.data.code==1){
                         this.$message.success(str=='add'?'添加成功':'修改成功');
-                        this.$router.push({name:'调查问卷模板设置'});
+                        this.$router.push({name:'调研表模板设置'});
 
                         }else{
                             this.$confirm(res.data.msg.msgTrim(), "提示",{

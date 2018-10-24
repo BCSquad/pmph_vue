@@ -22,7 +22,7 @@
             placeholder="请选择结束日期">
         </el-date-picker>
         <el-button type="primary" icon="search" @click="search()">搜索</el-button>
-        <el-button type="primary"  style="float:right" @click="$router.push({name:'问卷模板新增',params:{type:'add'}})">添加问卷</el-button>
+        <el-button type="primary"  style="float:right" @click="$router.push({name:'调研表模板新增',params:{type:'add'}})">模板新增</el-button>
     </p>
     <el-table
     :data="tableData"
@@ -80,7 +80,7 @@
       :width="isAdmin?350:300"
      >
      <template scope="scope">
-       <el-button type="text"  @click="updataTemplate(scope.row.templateId,scope.row.id)">修改</el-button>
+       <el-button type="text"  @click="updataTemplate(scope.row.id)">修改</el-button>
        <span>|</span>
        <el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
        <span>|</span>
@@ -178,16 +178,16 @@
               this.getSurveyList();
             },
            /* 修改按钮 */
-           updataTemplate(tid,sid,str){
+           updataTemplate(id,str){
             this.$axios.get(this.editTemplateUrl,{
                 params:{
-                    templateId:tid,
-                    surveyId:sid
+                    templateId:id
+
                 }
             }).then((res)=>{
                 console.log(res);
                 if(res.data.code==1){
-                   this.$router.push({name:'问卷模板新增',params:{surveryData:res.data.data,type:str?str:''}});
+                   this.$router.push({name:'调研表模板新增',params:{surveryData:res.data.data,type:str?str:''}});
                 }
             })
            },
