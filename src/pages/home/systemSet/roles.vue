@@ -241,6 +241,20 @@ export default {
           id: 4
         },
         {
+          label:"师资培训",
+          id:57,
+          children:[
+            {
+              label:"活动管理",
+              id:58
+            },
+            {
+              label:"视频与教材关联",
+              id:59
+            }
+          ]
+        },
+        {
           label: "内容管理",
           id: 5,
           children: [
@@ -267,7 +281,7 @@ export default {
             {
               label: "帮助管理",
               id: 42
-            },
+            }
           ]
         },
         {
