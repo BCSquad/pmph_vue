@@ -87,6 +87,14 @@ import MyMessageRouter from 'pages/home/myMessage/MessageRouter';
 
 const MyMessageList = () => import('pages/home/myMessage/MessageList')
 const MyMessageDetails = () => import('pages/home/myMessage/MessageDetails')
+/*师资培训*/
+import ActivityRouter from '../pages/home/teacherTraining/activityRouter'
+const activityManager = () => import('../pages/home/teacherTraining/activityManage')
+const activityEdit = () => import('../pages/home/teacherTraining/activityEdit')
+const activityVideo = () => import('../pages/home/teacherTraining/activityVideo')
+const activitySource = () => import('../pages/home/teacherTraining/activitySource')
+const materiaChainVideo = () => import('../pages/home/teacherTraining/materialChainVideo')
+
 /* 内容管理 */
 import ContentRouter from '../pages/home/contentManage/contentRouter'
 
@@ -370,6 +378,20 @@ export default new Router({
           children: [
             {path: 'writers', name: '教师审核', component: TeacherCheck, meta: {authorityId: true}},
             {path: 'orgs', name: '学校管理员审核', component: SchoolAdminCheck, meta: {authorityId: true}}
+          ]
+        },
+
+        {
+          path: 'activity',
+          name: '活动管理',
+          component: ActivityRouter,
+          meta: {replaceName: false, authorityId: 57},
+          children: [
+            {path: 'activityList', name: '活动管理', meta: {authorityId: 58}, component: activityManager},
+            {path: 'newActivity', name: '添加活动',  component: activityEdit,meta: {authorityId: true}},
+            {path: 'toVideo', name: '活动视频',  component: activityVideo,meta: {authorityId: true}},
+            {path: 'toSource', name: '活动资源',  component: activitySource,meta: {authorityId: true}},
+            {path: 'materialChainVideo', name: '视频与教材关联',meta: {authorityId: 59},component: materiaChainVideo},
           ]
         },
         /* 内容管理 */
