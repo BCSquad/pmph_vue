@@ -238,13 +238,13 @@
               </ul>
               <p v-else  class="no_conact_data">暂无待处理的事项</p>
             </el-tab-pane>
-            <el-tab-pane label="读书反馈审核" name="fourth">
+            <el-tab-pane label="读者反馈详情" name="fourth">
               <ul class="panel-min-list" v-if="bookFeedBack.rows.length!=0&&(isShowSide(6)||isShowSide(43))&&bookFeedBackAuthor>0">
                 <li v-for="(iterm,index) in bookFeedBack.rows" :key="index" v-if="index<limit_size" class="ellipsis" style="text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">
-                  <router-link :to="{name:'读书反馈详情',query:{id: iterm.id,type:iterm.result?'detail':'check'}}"><p class="comment">《{{iterm.bookname}}》：<span v-html="iterm.content"></span></p></router-link>
+                  <router-link :to="{name:'读者反馈详情',query:{id: iterm.id,type:iterm.result?'detail':'check'}}"><p class="comment">《{{iterm.bookname}}》：<span v-html="iterm.content"></span></p></router-link>
                 </li>
                 <li class="panel-more-btn" v-if="bookFeedBack.total>limit_size">
-                  <router-link :to="{name:'读书反馈'}">
+                  <router-link :to="{name:'读者反馈'}">
                     查看更多
                     <i class="el-icon-d-arrow-right"></i>
                   </router-link>

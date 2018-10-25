@@ -187,6 +187,24 @@ export default {
           label: "教材申报",
           id: 2,
         },{
+          label: "调研表",
+          id: 52,
+          children: [
+            {
+              label: "调研表模板管理",
+              id: 53
+            },{
+              label: "调研表发布管理",
+              id: 54
+            },{
+              label: "教材相关调研统计",
+              id: 55
+            },{
+              label: "其他调研统计",
+              id: 56
+            }
+          ]
+        },{
           label: "临床决策",
           id: 44,
           children: [

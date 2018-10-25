@@ -158,6 +158,12 @@ const surveryResultStatistic = () => import('../pages/home/questionSurvey/survey
 const surveryResultDetail = () => import('../pages/home/questionSurvey/surveyResultDetail')
 const launchSurvey = () => import('../pages/home/questionSurvey/launchSurvey')
 const recoveryResult = () => import('../pages/home/questionSurvey/recoveryResult')
+
+/*调研表*/
+const materialSurveyModelSet = () => import('../pages/home/materialSurvey/surveyModelSet');
+const materialSurveyPublishManage = () => import('../pages/home/materialSurvey/surveyPublishManage');
+const materialAddNewModel = () => import('../pages/home/materialSurvey/addNewModel');
+
 /**系统日志 */
 const SystemLog = () => import('pages/home/systemLog/systemLog');
 
@@ -445,6 +451,30 @@ export default new Router({
             {path: 'launch', name: '发起调查', component: launchSurvey, meta: {authorityId: true}},
             {path: 'reissue', name: '补发消息', component: reIssue, meta: {authorityId: true}},
             {path: 'newmodel', name: '问卷模板新增', component: addNewModel, meta: {authorityId: true}},
+            {path: 'newsurvey', name: '新建调查问卷', component: addNewSurvey, meta: {authorityId: true}},
+            {path: 'statistic', name: '调查问卷结果统计', component: surveryResultStatistic, meta: {authorityId: 38}},
+            {path: 'detail', name: '结果明细', component: surveryResultDetail, meta: {authorityId: true}},
+            {path: 'recovery', name: '调查问卷回收', component: surveyRecovery, meta: {authorityId: 39}},
+            {path: 'result', name: '问卷回收结果', component: recoveryResult, meta: {authorityId: true}},
+          ]
+        },
+
+        /* 调研表 */
+        {
+          path: 'materialsurvey',
+          name: '调研表',
+          component: questionSurveyRouter,
+          meta: {replaceName: false, authorityId: 13},
+          children: [
+            {path: 'setmodel', name: '调研表模板管理', component: materialSurveyModelSet, meta: {authorityId: 53}},
+
+            {path: 'publishManage', name: '调研表发布管理', component: materialSurveyPublishManage, meta: {authorityId: 54}},
+
+            {path: 'newmodel', name: '调研表模板新增', component: materialAddNewModel, meta: {authorityId: true}},
+
+            {path: 'launch', name: '发起调查', component: launchSurvey, meta: {authorityId: true}},
+            {path: 'reissue', name: '补发消息', component: reIssue, meta: {authorityId: true}},
+
             {path: 'newsurvey', name: '新建调查问卷', component: addNewSurvey, meta: {authorityId: true}},
             {path: 'statistic', name: '调查问卷结果统计', component: surveryResultStatistic, meta: {authorityId: 38}},
             {path: 'detail', name: '结果明细', component: surveryResultDetail, meta: {authorityId: true}},
