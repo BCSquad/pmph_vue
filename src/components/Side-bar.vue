@@ -49,7 +49,16 @@
         <span slot="title">系统消息</span>
       </el-menu-item>
 
-      <el-submenu index="/content" v-if="isShowSide(5)||isShowSide(15)||isShowSide(16)||isShowSide(17)||isShowSide(18)">
+      <el-submenu index="/activity" v-if="isShowSide(57)||isShowSide(58)||isShowSide(59)">
+        <template slot="title">
+          <i class="fa  fa-file-text fa-fw"></i>
+          <span slot="title">师资培训</span>
+        </template>
+        <el-menu-item index="/activity/activityList" v-if="isShowSide(57)||isShowSide(58)">活动管理</el-menu-item>
+        <el-menu-item index="/activity/materialChainVideo" v-if="isShowSide(57)||isShowSide(59)">视频与教材关联</el-menu-item>
+      </el-submenu>
+
+      <el-submenu index="/content" v-if="isShowSide(5)||isShowSide(15)||isShowSide(16)||isShowSide(17)||isShowSide(18)||isShowSide(58)||isShowSide(57)">
         <template slot="title">
           <i class="fa  fa-file-text fa-fw"></i>
           <span slot="title">内容管理</span>
