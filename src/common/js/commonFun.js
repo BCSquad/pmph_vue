@@ -617,6 +617,21 @@ export function parseURL(url) {
 
 
 }
+
+/**
+ * 对象数组深拷贝
+ * @param source
+ * @returns {*}
+ */
+export function objArrayDeepCopy(source) {
+  var sourceCopy = source instanceof Array ? [] : {};
+  for (var item in source) {
+    sourceCopy[item] = typeof source[item] === 'object' ? objDeepCopy(source[item]) : source[item];
+  }
+  return sourceCopy;
+}
+
+
 /*
  * 判断变量是否空值
  * undefined, null, '', false, 0, [], {} 均返回true，否则返回false
