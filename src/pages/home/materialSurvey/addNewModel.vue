@@ -100,11 +100,11 @@
            <el-form-item :label="item.sort+'.'+item.title" v-for="(item,index) in surveyForm.questionAnswerJosn" :key="index">
                <!-- 单选 -->
                 <el-radio-group  v-if="item.type==1">
-                    <el-radio :label="it.optionContent" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-radio>
+                    <el-radio :label="it.optionContent" v-if="!it.isDeleted" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-radio>
                 </el-radio-group>
                 <!-- 多选 -->
                 <el-checkbox-group   v-if="item.type==2" style="float:left;">
-                    <el-checkbox :label="it.optionContent" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-checkbox>
+                    <el-checkbox :label="it.optionContent" v-if="!it.isDeleted" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-checkbox>
                 </el-checkbox-group>
                 <!-- 单行文本 -->
                 <el-input  class="form_input" v-if="item.type==4"></el-input>
@@ -153,11 +153,11 @@
                     </el-radio-group>
                </el-form-item> -->
                <el-form-item label="选项：" v-if="dialogForm.type!=4&&dialogForm.type!=5" required>
-                   <el-form :model="item" v-for="(item,index) in dialogForm.surveyQuestionOptionList" :rules="dialogRules" :ref="'dialog'+index" :key="index">
-                 <el-form-item label-width="0"  prop="optionContent">
-                    <el-input placeholder="请输入选项" class="dialog_input" v-model="item.optionContent"></el-input>
-                    <el-button type="text"  style="color:#ff4949" @click="deleteDlalogOption(index)">删除</el-button>
-                 </el-form-item>
+                   <el-form :model="item" v-if="!item.isDeleted" v-for="(item,index) in dialogForm.surveyQuestionOptionList" :rules="dialogRules" :ref="'dialog'+index" :key="index">
+                     <el-form-item label-width="0"  prop="optionContent" >
+                        <el-input placeholder="请输入选项" class="dialog_input" v-model="item.optionContent"></el-input>
+                        <el-button type="text"  style="color:#ff4949" @click="deleteDlalogOption(index)">删除</el-button>
+                     </el-form-item>
                     </el-form>
                  <!-- <el-form-item label-width="0">
                     <el-input placeholder="请输入选项" class="dialog_input"></el-input>
@@ -189,7 +189,7 @@ export default {
         editObjUrl:'/pmpheep/survey/type/update',  //修改对象url
         deleteObjUrl:'/pmpheep/survey/type/',  //删除对象url
         addTemplateUrl:'/pmpheep/materialSurvey/template/create', //新增模板url
-        editTemplateUrl:'/pmpheep/materialSurvey/modify', //修改提交url
+        editTemplateUrl:'/pmpheep/materialSurvey/template/create', //修改提交urls
         surveyForm:{          //调研表信息抬头
           templateName:'',
           typeId:'',
@@ -310,18 +310,20 @@ export default {
           this.surveyForm.typeId=surveyData.survey.typeId;
           this.surveyForm.intro=surveyData.survey.intro;
           this.surveyForm.id=surveyData.survey.id;
-          this.surveyForm.templateId=surveyData.survey.templateId;
+          this.surveyForm.templateId=surveyData.survey.id;
           for(var i in surveyData.qestionAndOption){
               this.surveyForm.questionAnswerJosn[i]={};
+              this.surveyForm.questionAnswerJosn[i].id=surveyData.qestionAndOption[i].id;
               this.surveyForm.questionAnswerJosn[i].title=surveyData.qestionAndOption[i].title;
               this.surveyForm.questionAnswerJosn[i].type=surveyData.qestionAndOption[i].type+'';
               this.surveyForm.questionAnswerJosn[i].direction=surveyData.qestionAndOption[i].direction;
               this.surveyForm.questionAnswerJosn[i].sort=surveyData.qestionAndOption[i].sort+'';
               this.surveyForm.questionAnswerJosn[i].surveyQuestionOptionList=[];
               var options=surveyData.qestionAndOption[i].optionContent?surveyData.qestionAndOption[i].optionContent.split(','):[];
+              let optionIds=surveyData.qestionAndOption[i].optionIdString?surveyData.qestionAndOption[i].optionIdString.split(','):[];
               for(var t in options){
                  this.surveyForm.questionAnswerJosn[i].surveyQuestionOptionList.push(
-                     {optionContent:options[t]}
+                     {optionContent:options[t],id:optionIds[t]}
                      )
               }
           }
@@ -339,6 +341,7 @@ export default {
       },
       /* 新增或修改 */
       updateTemplate(str){
+        str = 'add';
          this.$refs.surveyForm.validate((valid)=>{
              if(valid){
           var arr=[];
@@ -475,7 +478,15 @@ export default {
       },
       /* 对话框 选项删除 */
       deleteDlalogOption(i){
-       this.dialogForm.surveyQuestionOptionList.splice(i,1);
+
+        let delOption = this.dialogForm.surveyQuestionOptionList[i];
+        if(delOption.id){
+          this.dialogForm.surveyQuestionOptionList[i].isDeleted = 1;
+        }else{
+          this.dialogForm.surveyQuestionOptionList.splice(i,1);
+        }
+
+
       },
       /* 添加对话框选项 */
       addDialogOption(){
@@ -486,10 +497,17 @@ export default {
       editFormItem(item,index){
           this.isEdit=true;
           this.editIndex=index;
-      for(var i in item){
-        this.dialogForm[i]=item[i];
-      }
-      this.dialogVisible=true;
+
+          for(var i in item){
+
+            if(item[i] && (/\[object object\]/ig).test(item[i].toString())){
+              this.dialogForm[i]=item[i].slice(0);
+            }else{
+              this.dialogForm[i]=item[i];
+            }
+
+          }
+          this.dialogVisible=true;
       },
       /* 删除表单项1 */
       deleteFormItem(index){
