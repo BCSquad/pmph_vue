@@ -86,7 +86,7 @@
           {{infoExpressTag.name}}
         </el-tag>
 
-        <el-form-item id="cs" label=" 活动介绍：" prop="content" required>
+        <el-form-item id="cs" label=" 活动介绍：" prop="content" >
           <Editor ref="editor" :config="editorConfig"></Editor>
         </el-form-item>
       </el-form>
@@ -228,13 +228,7 @@
           activityName: [
             {required: true, message: "活动名称不能为空", trigger: "blur"},
             {min: 1, max: 100, message: "活动名称不能超过100个字符", trigger: "change"}
-          ],
-          content: [
-            {required: true, message: "活动不能为空", trigger: "blur"},
-            {min: 1, max: 100, message: "标题不能超过100个字符", trigger: "change"}
           ]
-
-
         },
         // materialType:{
         //   value: "id",
@@ -310,7 +304,7 @@
         if (!this.isEditContent) {
           this.activitySubmit(0);
         }else{
-          this.activitySubmit(0);
+          this.activitySubmit(this.formData.status);
         }
 
         this.$router.push({
@@ -331,7 +325,9 @@
           this.activitySubmit(0);
 
         }else{
-          this.activitySubmit(0);
+          alert(this.formData.status);
+         this.activitySubmit(this.formData.status);
+          alert(this.formData.status);
         }
         this.$router.push({
           name: '活动资源',
