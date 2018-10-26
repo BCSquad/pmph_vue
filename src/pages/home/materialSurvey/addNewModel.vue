@@ -100,11 +100,11 @@
            <el-form-item :label="item.sort+'.'+item.title" v-for="(item,index) in surveyForm.questionAnswerJosn" :key="index">
                <!-- 单选 -->
                 <el-radio-group  v-if="item.type==1">
-                    <el-radio :label="it.optionContent" v-if="!it.isDeleted" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-radio>
+                    <el-radio :label="it.optionContent" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-radio>
                 </el-radio-group>
                 <!-- 多选 -->
                 <el-checkbox-group   v-if="item.type==2" style="float:left;">
-                    <el-checkbox :label="it.optionContent" v-if="!it.isDeleted" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-checkbox>
+                    <el-checkbox :label="it.optionContent" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-checkbox>
                 </el-checkbox-group>
                 <!-- 单行文本 -->
                 <el-input  class="form_input" v-if="item.type==4"></el-input>
@@ -125,7 +125,7 @@
       </div>
 
       <!-- 添加 修改弹窗 -->
-      <el-dialog  :title="isEdit?'修改问题':'新增问题'" :visible.sync="dialogVisible" size="tiny" class="form_item_dialog" :before-close="reloadDialog">
+      <el-dialog  :title="isEdit?'修改问题':'新增问题'" :visible.sync="dialogVisible" size="tiny" class="form_item_dialog" :beforeClose="reloadDialog">
            <el-form :model="dialogForm" ref="dialogForm"  :rules="dialogRules" label-width="70px">
                <el-form-item label="题目：" prop="title">
                    <el-input placeholder="请输入题目" v-model="dialogForm.title"></el-input>
@@ -153,7 +153,7 @@
                     </el-radio-group>
                </el-form-item> -->
                <el-form-item label="选项：" v-if="dialogForm.type!=4&&dialogForm.type!=5" required>
-                   <el-form :model="item" v-if="!item.isDeleted" v-for="(item,index) in dialogForm.surveyQuestionOptionList" :rules="dialogRules" :ref="'dialog'+index" :key="index">
+                   <el-form :model="item" v-for="(item,index) in dialogForm.surveyQuestionOptionList" :rules="dialogRules" :ref="'dialog'+index" :key="index">
                      <el-form-item label-width="0"  prop="optionContent" >
                         <el-input placeholder="请输入选项" class="dialog_input" v-model="item.optionContent"></el-input>
                         <el-button type="text"  style="color:#ff4949" @click="deleteDlalogOption(index)">删除</el-button>
@@ -175,7 +175,7 @@
          <span slot="footer" class="dialog-footer">
 
            <el-button type="primary" @click="upLoadFormItem">确 定</el-button>
-           <el-button @click="dialogVisible = false">取 消</el-button>
+           <el-button @click="dialogVisible = false;reloadDialog(function(){});">取 消</el-button>
          </span>
       </el-dialog>
   </div>
@@ -197,6 +197,9 @@ export default {
           questionAnswerJosn:[
           ]
         },
+        del_question:[],
+        del_dialog_option:[],
+        del_question_option:[],
         objDialogVisible:false,
         isEditObj:false,
         isAddNewObj:true,
@@ -350,6 +353,8 @@ export default {
               this.surveyForm.questionAnswerJosn[i]=JSON.stringify(this.surveyForm.questionAnswerJosn[i]);
           }
           this.surveyForm.questionAnswerJosn='['+this.surveyForm.questionAnswerJosn+']';
+          this.surveyForm.del_question = JSON.stringify(this.del_question);
+          this.surveyForm.del_question_option = JSON.stringify(this.del_question_option);
                     this.$axios(
                         {
                             url:str=='add'?this.addTemplateUrl:this.editTemplateUrl,
@@ -481,12 +486,10 @@ export default {
 
         let delOption = this.dialogForm.surveyQuestionOptionList[i];
         if(delOption.id){
-          this.dialogForm.surveyQuestionOptionList[i].isDeleted = 1;
-        }else{
-          this.dialogForm.surveyQuestionOptionList.splice(i,1);
+          delOption.isDeleted = 1;
+          this.del_dialog_option.push(delOption);
         }
-
-
+        this.dialogForm.surveyQuestionOptionList.splice(i,1);
       },
       /* 添加对话框选项 */
       addDialogOption(){
@@ -497,21 +500,18 @@ export default {
       editFormItem(item,index){
           this.isEdit=true;
           this.editIndex=index;
-
-          for(var i in item){
-
-            if(item[i] && (/\[object object\]/ig).test(item[i].toString())){
-              this.dialogForm[i]=item[i].slice(0);
-            }else{
-              this.dialogForm[i]=item[i];
-            }
-
-          }
+          //数组对象深克隆 对话框临时表单从当前打开选项数组克隆一份，而非直接=赋值，否则对象同指针，修改后点取消也无法消除影响
+          this.dialogForm = this.$commonFun.objArrayDeepCopy(item);
           this.dialogVisible=true;
       },
       /* 删除表单项1 */
       deleteFormItem(index){
-      this.surveyForm.questionAnswerJosn.splice(index,1);
+        let delForm = this.surveyForm.questionAnswerJosn[index];
+        if(delForm.id){
+          delForm.isDeleted = 1;
+          this.del_question.push(delForm);
+        }
+        this.surveyForm.questionAnswerJosn.splice(index,1);
       },
       /* 弹框表单验证 */
       dialogValid(){
@@ -535,21 +535,22 @@ export default {
          this.dialogValid();
         this.$refs.dialogForm.validate((valid)=>{
               if(valid&&this.dialogValid()){
+                this.del_question_option = this.del_question_option.concat(this.del_dialog_option) ;
                     if(this.isEdit){
-                    this.surveyForm.questionAnswerJosn[this.editIndex]=this.dialogForm;
-                }else{
-                    if(this.checkOrderNumber(this.dialogForm)){
-                     this.surveyForm.questionAnswerJosn.push(this.dialogForm);
+                        this.surveyForm.questionAnswerJosn[this.editIndex]=this.dialogForm;
                     }else{
-                        this.$confirm('该问题序号已存在', "提示",{
-                        	confirmButtonText: "确定",
-                        	cancelButtonText: "取消",
-                        	showCancelButton: false,
-                        	type: "error"
-                        });
-                        return ;
+                        if(this.checkOrderNumber(this.dialogForm)){
+                         this.surveyForm.questionAnswerJosn.push(this.dialogForm);
+                        }else{
+                            this.$confirm('该问题序号已存在', "提示",{
+                              confirmButtonText: "确定",
+                              cancelButtonText: "取消",
+                              showCancelButton: false,
+                              type: "error"
+                            });
+                            return ;
+                        }
                     }
-                }
                 this.dialogForm={
                             title:'',
                             type:'',
@@ -569,6 +570,7 @@ export default {
                 return false;
             }
           })
+
       },
       /* 清空dialog */
       reloadDialog(done){
@@ -578,20 +580,21 @@ export default {
                     direction:'',
                     sort:'',
                     surveyQuestionOptionList:[
-                        {
+                        /*{
                             optionContent:''
                         },
                         {
                             optionContent:''
-                        },
+                        },*/
                     ]
-                    }
+                    };
+        this.del_dialog_option = [];
                     done();
       },
       /* 核验问题序号 */
       checkOrderNumber(obj){
        for(var i in this.surveyForm.questionAnswerJosn){
-           if(obj.sort==this.surveyForm.questionAnswerJosn[i].sort){
+           if(obj.sort==this.surveyForm.questionAnswerJosn[i].sort && !this.surveyForm.questionAnswerJosn[i].isDeleted){
                return false;
            }
        }
