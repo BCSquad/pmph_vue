@@ -14,7 +14,7 @@
     <p class="header_p" style="margin-top: 50px">
       <span>视频名称：</span>
       <el-input class="input" style="width:300px;margin-right:10px;" v-model="searchParams.title"
-                @keyup.enter.native="search"
+                @keyup.enter.native="getList()"
                 placeholder="请输入资源名称"></el-input>
       <span>状态：</span>
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
@@ -28,9 +28,10 @@
               {{scope.$index+1}}
             </template>
           </el-table-column>
+          playVideo
           <el-table-column prop="cover" label="封面">
             <template scope="scope">
-              <img style="width: 88px;height: 86px;" :src="scope.row.imgUrl">
+              <img style="width: 88px;height: 86px;" :src="scope.row.imgUrl" @click="playVideo(scope.row)">
             </template>
           </el-table-column>
           <el-table-column prop="title" label="视频标题">
@@ -45,7 +46,7 @@
           <el-table-column  label="操作">
             <template scope="scope">
               <el-button type="text" style="color:#337ab7;" @click="delVideoByid(scope.row)">删除</el-button>
-              <el-button type="text" style="color:#337ab7;" @click="downloadFile(scope.row)">下载</el-button>
+              <a  style="color:#337ab7;margin-right:5px;" :href="videoDownLoad(scope.row)">下载</a>
             </template>
           </el-table-column>
           <div class="pagination-wrapper">
@@ -61,7 +62,11 @@
             </el-pagination>
           </div>
         </el-table>
-
+    <el-dialog :visible.sync="isShowVideoPlayer" size="tiny" :close-on-click-modal="false"  class="video_player_dialog" >
+      <video :src="videoSrc" controls="controls" autoplay v-if="isShowVideoPlayer">
+        您的浏览器不支持 video 标签。
+      </video>
+    </el-dialog>
 
     <el-dialog title="选择视频" :visible.sync="selectVideoVisible" size="small" width="100%">
       <p class="header_p" style="margin-top: 50px">
@@ -697,5 +702,20 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .activity_video .video_player_dialog  .el-dialog__body{
+    padding:0;
+    background: none;
+  }
+  .activity_video .video_player_dialog .el-dialog__header{
+    padding:0;
+  }
+  .activity_video .video_player_dialog .el-dialog__header .el-dialog__headerbtn{
+    margin:3px;
+  }
+  .activity_video .video_player_dialog video{
+    width:100%;
+    vertical-align: bottom;
+    min-height:300px;
   }
 </style>

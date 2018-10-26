@@ -7,6 +7,7 @@
                 placeholder="请输入活动名称"></el-input>
       <span>状态：</span>
       <el-select v-model="searchParams.status" clearable style="width:150px;margin-right:10px;" placeholder="请选择">
+        <el-option label="全部" value=""></el-option>
         <el-option label="已暂存" value="0"></el-option>
         <el-option label="以发布" value="1"></el-option>
         <el-option label="以撤回" value="2"></el-option>
@@ -14,52 +15,59 @@
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search">搜索</el-button>
 
 
-      <el-checkbox style="margin-left: 40px" true-label="1" false-label="" v-model="searchParams.isSetTop"><span >是否置顶</span></el-checkbox>
+      <el-checkbox style="margin-left: 40px" true-label="1" false-label="" v-model="searchParams.isSetTop">
+        <span>是否置顶</span></el-checkbox>
       <el-button type="primary" style="float:right;margin-right: 50px"
                  @click="$router.push({name:'添加活动',query:{columnId:1,type:'newActivity',isShowCover:true}})">新建活动
       </el-button>
     </p>
     <el-table :data="tableData" border style="width:98%;">
-      <el-table-column label="序号" prop="index" width="65">
+      <el-table-column label="序号" prop="index" width="65" align="center">
         <template scope="scope">
           {{scope.$index+1}}
         </template>
       </el-table-column>
 
-      <el-table-column label="活动名称" prop="activityName">
+      <el-table-column label="活动名称" prop="activityName" align="center">
         <template scope="scope">
-          <p class="link"  @click="openPreventDialog(scope.row)">{{scope.row.activityName}}</p>
-
+          <p class="link" @click="openPreventDialog(scope.row)">{{scope.row.activityName}}</p>
         </template>
       </el-table-column>
-      <el-table-column label="活动日期" prop="activityDate" width="250" format="yyyy-MM-dd">
+      <el-table-column label="活动日期" prop="activityDate" width="250" format="yyyy-MM-dd" align="center">
         <template scope="scope">
           {{$commonFun.formatDate(scope.row.activityDate,"yyyy-MM-dd")}}
         </template>
       </el-table-column>
-      <el-table-column label="是否置顶" prop="isSetTop">
+      <el-table-column label="是否置顶" prop="isSetTop" align="center">
         <template scope="scope">
           {{scope.row.isSetTop==0?'否':'是'}}
         </template>
       </el-table-column>
-      <el-table-column label="状态" prop="status">
+      <el-table-column label="状态" prop="status" align="center">
         <template scope="scope">
           {{scope.row.status==0?'以暂存':(scope.row.status==1?'已发布':'已撤回')}}
         </template>
       </el-table-column>
-      <el-table-column label="创建人" prop="realname">
+      <el-table-column label="创建人" prop="realname" align="center">
       </el-table-column>
-      <el-table-column label="创建时间" prop="gmtCreate" width="230">
+      <el-table-column label="创建时间" prop="gmtCreate" width="230" align="center">
         <template scope="scope">
           {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" width="180" header-align="center">
         <template scope="scope">
           <el-button type="text" style="color:#337ab7;" @click="editActivity(scope.row)">修改</el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
+
           <el-button type="text" style="color:#337ab7;" @click="setStatus(scope.row,2)">撤回</el-button>
-          <el-button type="text" style="color:#337ab7;" @click="setTop(scope.row,'true')"  v-if="scope.row.isSetTop==false">置顶</el-button>
-          <el-button type="text" style="color:#337ab7;" @click="setTop(scope.row,'false')" v-if="scope.row.isSetTop==true">取消置顶</el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
+          <el-button type="text" style="color:#337ab7;" @click="setTop(scope.row,'true')"
+                     v-if="scope.row.isSetTop==false">置顶
+          </el-button>
+          <el-button type="text" style="color:#337ab7;" @click="setTop(scope.row,'false')"
+                     v-if="scope.row.isSetTop==true">取消置顶
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -79,16 +87,16 @@
 
 
     <el-dialog
-      title="活动详情"
+      title=""
       :visible.sync="showPreventDialog"
-      size="large">
-      <div style="padding:0 10%;">
-        <h5 class="previewTitle text-center">{{formData.activityName}}</h5>
+      size="large" top="5%" >
+      <div style="padding:0 05%;">
+        <h1 class="previewTitle text-center">{{formData.activityName}}</h1>
         <p class="senderInfo text-center paddingT10">
           <span class="marginR10"></span>
-          <span>{{this.$commonFun.formatDate(formData.gmtCreate)}}</span>
+          <span style="color: grey;margin-right: 44.5%">活动日期:{{this.$commonFun.getnowDate(formData.gmtCreate)}}</span>
         </p>
-        <el-form label-width="55px">
+        <el-form label-width="55">
           <el-form-item label="" label-width="0">
             <div style="margin:0 auto;width:800px;"><p v-html="preventContent" class="p_content"></p></div>
           </el-form-item>
@@ -113,7 +121,7 @@
         setTopUrl: '/pmpheep/activity/updateSetTop',
         transCodingUrl: "/v/query",   //查询视频转码地址
         tableData: [],
-        preventContent:'',
+        preventContent: '',
         activityDialogVisible: false,
         showPreventDialog: false,
         dialogVisible: false,
@@ -125,14 +133,14 @@
           imgList: [],
           transCoding: []
         },
-        formData:{},
-        upStatusDate:{
-          id:'',
-          status:0,
+        formData: {},
+        upStatusDate: {
+          id: '',
+          status: 0,
         },
-        setTopDate:{
-          id:'',
-          isSetTop:true,
+        setTopDate: {
+          id: '',
+          isSetTop: true,
         },
         videoSrc: '',
         isdisabled: false,
@@ -140,7 +148,7 @@
         searchParams: {
           status: '',
           activityName: '',
-          isSetTop:"",
+          isSetTop: "",
           pageSize: 10,
           pageNumber: 1,
         },
@@ -172,11 +180,11 @@
     },
     methods: {
       setStatus(obj, status) {
-        this.upStatusDate.id=obj.id;
-        this.upStatusDate.status=status;
+        this.upStatusDate.id = obj.id;
+        this.upStatusDate.status = status;
         this.$axios
-          .get(this.setStatusUrl,{
-              params:this.upStatusDate
+          .get(this.setStatusUrl, {
+              params: this.upStatusDate
             }
           )
           .then(res => {
@@ -185,15 +193,15 @@
           });
       },
       setTop(obj, isSetTop) {
-        this.setTopDate.id=obj.id;
-        this.setTopDate.isSetTop=isSetTop;
+        this.setTopDate.id = obj.id;
+        this.setTopDate.isSetTop = isSetTop;
         this.$axios
           .get(this.setTopUrl, {
-            params:this.setTopDate
+            params: this.setTopDate
           })
           .then(res => {
             console.log(res);
-              this.getList();
+            this.getList();
 
           });
       }
@@ -250,8 +258,8 @@
           .then(res => {
             console.log(res);
             if (res.data.code == 1) {
-              this.formData.gmtCreate=res.data.data.activity.gmtCreate;
-              this.formData.activityName=res.data.data.activity.activityName;
+              this.formData.gmtCreate = res.data.data.activity.gmtCreate;
+              this.formData.activityName = res.data.data.activity.activityName;
               this.preventContent = res.data.data.content.content;
               this.showPreventDialog = true;
             }
