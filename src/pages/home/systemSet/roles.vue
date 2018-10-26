@@ -247,10 +247,6 @@ export default {
             {
               label:"活动管理",
               id:58
-            },
-            {
-              label:"视频与教材关联",
-              id:59
             }
           ]
         },

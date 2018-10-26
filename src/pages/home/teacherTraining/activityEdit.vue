@@ -15,51 +15,52 @@
       </div>
     </div>
     <div>
-      <el-form :model="formData" :rules="formRules" ref="addForm" label-width="120" style="margin:20px 30px 20px 0;">
+      <el-form :model="formData" :rules="formRules" ref="addForm" label-width="150" style="margin:20px 30px 20px 0;">
+
+        <el-form-item id="cs" label="活动名称：" prop="activityName"  required >
+          <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName" ></el-input>
+        </el-form-item>
         <div id="buts">
           <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(0)">暂存</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
-          <el-button class="but" type="primary" style="background-color: #F34141"
+          <el-button class="but" type="primary" @click="CheckSubmit(0)" v-if="formData.status!=1">暂存</el-button>
+          <el-button class="but" type="primary" @click="CheckSubmit(1)" >发布</el-button>
+          <el-button class="but" type="primary"  style="background-color: #F34141"
                      @click="videoManage">视频维护
           </el-button>
           <el-button class="but" type="primary" style="background-color: #F34141"
                      @click="sourceManage">资源维护
           </el-button>
         </div>
-        <el-form-item label="活动名称：" prop="activityName" style="height: 45px;">
-          <el-input placeholder="请输入活动名称" class="input" widi v-model.trim="formData.activityName"></el-input>
-        </el-form-item>
-
-        <el-form-item label="活动时间：">
+        <el-form-item label=" 活动时间："  style="height: 35px;">
           <el-date-picker
             v-model="formData.activityDate"
             type="date"
-            placeholder="选择日期"
+            placeholder=" 选择日期"
             value-format="timestamp">
           </el-date-picker>
 
         </el-form-item>
 
 
-        <el-form-item label="是否置顶：" prop="isSetTop">
+        <el-form-item label=" 是否置顶：" prop="isSetTop">
           <!-- <el-input class="input" placeholder="请输入数字" v-model="formData.sort"></el-input> -->
           <el-radio class="radio" v-model="formData.isSetTop" :label=true>是</el-radio>
           <el-radio class="radio" v-model="formData.isSetTop" :label=false>否</el-radio>
         </el-form-item>
-        <el-form-item label="所属教材：">
+        <el-form-item label=" 所属教材：">
           <el-button size="small" type="primary" @click="selectmaterial">选择教材</el-button>
         </el-form-item>
         <el-tag
-          v-if="materialExpressTag.name!=null"
+          v-if="formData.materialId!=''"
           :key="materialExpressTag.name"
           :type="materialExpressTag.type"
           @close="materialRemoveTag()"
+          closable
           style="margin-left: 85px;margin-bottom: 10px">
           {{materialExpressTag.name}}
         </el-tag>
 
-        <el-form-item label="活动封面：" v-if="$route.query.isShowCover">
+        <el-form-item label=" 活动封面：" v-if="$route.query.isShowCover">
           <el-upload
             class="upload-demo"
             style="float:left"
@@ -73,19 +74,19 @@
             <el-button size="small" type="primary">上传活动封面</el-button>
           </el-upload>
         </el-form-item>
-        <el-form-item label="信息快报：">
+        <el-form-item label=" 信息快报：">
           <el-button size="small" type="primary" @click="selectInfoExpress">选择快报</el-button>
         </el-form-item>
         <el-tag ref="InfoExpressT"
-                v-if="infoExpressTag.name!=null"
+                v-if="formData.infoExpressCmsId!=''"
                 :key="infoExpressTag.name"
                 @close="InfoExpressRemoveTag()"
-
+                closable
                 :type="infoExpressTag.type" style="margin-left: 85px;margin-bottom: 10px">
           {{infoExpressTag.name}}
         </el-tag>
 
-        <el-form-item label="内容：">
+        <el-form-item id="cs" label=" 活动介绍：" prop="content" required >
           <Editor ref="editor" :config="editorConfig"></Editor>
         </el-form-item>
       </el-form>
@@ -94,12 +95,12 @@
     <el-dialog
       title=""
       :visible.sync="showPreventDialog"
-      size="large">
-      <div style="padding:0 10%;">
-        <h5 class="previewTitle text-center">{{formData.activityName}}</h5>
+      size="large" top="5%" >
+      <div style="padding:0 05%;">
+        <h1 class="previewTitle text-center">{{formData.activityName}}</h1>
         <p class="senderInfo text-center paddingT10">
           <span class="marginR10"></span>
-          <span>{{$commonFun.getNowFormatDate()}}</span>
+          <span style="color: grey;margin-right: 44.5%">活动日期:{{this.$commonFun.getnowDate(formData.gmtCreate)}}</span>
         </p>
         <el-form label-width="55px">
           <el-form-item label="" label-width="0">
@@ -207,6 +208,7 @@
           infoExpressCmsId: "",
           content: "",
           imgFile: [],
+          status:0,
         },
         materialExpressTag: {},
         infoExpressTag: {},
@@ -223,11 +225,10 @@
         infoCurrentRow: null,
         materialCurrentRow: null,
         formRules: {
-          title: [
-            {required: true, message: "标题不能为空", trigger: "blur"},
-            {min: 1, max: 100, message: "标题不能超过100个字符", trigger: "change"}
+          activityName: [
+            {required: true, message: "活动名称不能为空", trigger: "blur"},
+            {min: 1, max: 100, message: "活动名称不能超过100个字符", trigger: "change"}
           ]
-
         },
         // materialType:{
         //   value: "id",
@@ -300,13 +301,17 @@
           this.$message.error("请先输入标题和内容");
           return;
         }
-        this.activitySubmit(0);
+        if (!this.isEditContent) {
+          this.activitySubmit(0);
+        }else{
+          this.activitySubmit(this.formData.status);
+        }
+
         this.$router.push({
           name: '活动视频',
           params: this.formData,
           query: {columnId: 1, type: 'toVideo', isShowCover: true}
         })
-
 
       },
 
@@ -316,7 +321,12 @@
           this.$message.error("请先输入标题和内容");
           return;
         }
-        this.activitySubmit(0);
+        if (!this.isEditContent) {
+          this.activitySubmit(0);
+
+        }else{
+         this.activitySubmit(this.formData.status);
+        }
         this.$router.push({
           name: '活动资源',
           params: this.formData,
@@ -326,15 +336,17 @@
 
 
       materialRemoveTag() {
+        this.formData.materialId='';
         this.materialCurrentRow = {
           name: null,
           type: null
         };
       },
       InfoExpressRemoveTag() {
+        this.formData.infoExpressCmsId='';
         this.infoCurrentRow = {
-          name: null,
-          type: null
+          name: '',
+          type: ''
         };
       },
       activitySubmit(num) {
@@ -362,9 +374,6 @@
             }
             if (num == 1) {
               this.formData.status = 1;
-            }
-            if (num == 2) {
-              this.formData.status = 2;
             }
             this.formData.sessionId = this.$getUserData().sessionId;
             /* 判断新增还是修改 */
@@ -631,9 +640,12 @@
               _this.$refs.editor.setContent(editData.content.content);
             }, 100);
             /* 填充封面图片 */
-            if (this.$route.query.isShowCover) {
-              this.imgList.push({name: editData.imgFileName, url: editData.imgFilePath});
+            if(editData.imgFileName){
+              if (this.$route.query.isShowCover) {
+                this.imgList.push({name: editData.imgFileName, url: editData.imgFilePath});
+              }
             }
+
           } else {
             var _this = this;
             _this.$confirm('活动内容为空', "提示", {
@@ -664,6 +676,7 @@
 <style>
   .activity_edit .input {
     width: 40%;
+
   }
 
   .activity_edit .date_input {
@@ -690,6 +703,9 @@
 
   .edui-editor {
     float: right;
+    margin-left: 80px;
+    margin-top: -30px;
+
   }
 
   .activity_edit .cover_dialog .el-dialog .el-dialog__header {
@@ -707,8 +723,9 @@
     float: right;
     position: relative;
     width: 400px;
-    z-index: 100;
+    z-index: 999;
     margin-right: 50px;
+    margin-top: -60px;
   }
 
   .top-nav {
@@ -761,8 +778,23 @@
     text-overflow: ellipsis;
   }
 
-  .mic_video .material_dialog .el-dialog.infoExpres_dialog {
+  .material_dialog .el-dialog.infoExpres_dialog {
     min-width: 660px;
     position: relative;
   }
+
+  .el-form-item__error {
+    color: #ff4949;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 4px;
+    position: absolute;
+    top: 100%;
+    margin-left: 92px;
+
+  }
+  #cs .el-form-item__label{
+    margin-left: -10px;
+  }
+
 </style>

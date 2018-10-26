@@ -14,7 +14,7 @@
     <p class="header_p" style="margin-top: 50px">
       <span>资源名称：</span>
       <el-input class="input" style="width:300px;margin-right:10px;" v-model="searchParams.sourceName"
-                @keyup.enter.native="search"
+                @keyup.enter.native="getList()"
                 placeholder="请输入资源名称"></el-input>
       <span>状态：</span>
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
@@ -238,6 +238,7 @@
       fileUpload() {
         this.dialogVisible = true;
       },
+
       /* 文件移除回调 */
       uploadFileRemove(file, flielist) {
         this.fileList = flielist;
@@ -247,7 +248,6 @@
             this.dialogForm.file.push(i.response.data);
           });
         } else {
-
           if (file.attachment) {
             if (!this.dialogForm.attachment) {
               this.dialogForm.attachment = [];
@@ -259,18 +259,16 @@
       },
       /* 文件上传成功回调 */
       upLoadFileSuccess(res, file, filelist) {
-
-        this.fileList = filelist;
+        this.fileList = [];
         this.dialogForm.file = [];
+
         if (res.code == 1) {
           this.dialogForm.sourceName=file.name;
-          filelist.forEach(item => {
-            if (item.response) {
-              this.dialogForm.file.push(item.response.data);
+          this.fileList.push(file) ;
+            if (file.response) {
+              this.dialogForm.file.push(file.response.data);
             }
-          });
         }
-
       },
       /* 文件上传大小判断 */
       beforeAvatarUpload(file) {
@@ -317,6 +315,10 @@
         return isLt100M;
       },
       fileUp() {
+        if(this.dialogForm.file.length==0){
+          this.$message.error("文件不能为空");
+          return;
+        }
         this.$axios
           .post(this.newSourceUrl, this.$commonFun.initPostData(this.dialogForm))
           .then(res => {
