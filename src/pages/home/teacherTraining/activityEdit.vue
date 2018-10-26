@@ -325,9 +325,7 @@
           this.activitySubmit(0);
 
         }else{
-
          this.activitySubmit(this.formData.status);
-
         }
         this.$router.push({
           name: '活动资源',

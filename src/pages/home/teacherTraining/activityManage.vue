@@ -15,7 +15,7 @@
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search">搜索</el-button>
 
 
-      <el-checkbox style="margin-left: 40px" true-label="1" false-label="" v-model="searchParams.isSetTop">
+      <el-checkbox style="margin-left: 40px" true-label="1" false-label="" v-model="searchParams.isSetTop" checked="true" @change="search" >
         <span>是否置顶</span></el-checkbox>
       <el-button type="primary" style="float:right;margin-right: 50px"
                  @click="$router.push({name:'添加活动',query:{columnId:1,type:'newActivity',isShowCover:true}})">新建活动
@@ -148,7 +148,7 @@
         searchParams: {
           status: '',
           activityName: '',
-          isSetTop: "",
+          isSetTop: 1,
           pageSize: 10,
           pageNumber: 1,
         },
