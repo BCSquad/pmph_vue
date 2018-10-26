@@ -9,8 +9,8 @@
       <el-select v-model="searchParams.status" clearable style="width:150px;margin-right:10px;" placeholder="请选择">
         <el-option label="全部" value=""></el-option>
         <el-option label="已暂存" value="0"></el-option>
-        <el-option label="以发布" value="1"></el-option>
-        <el-option label="以撤回" value="2"></el-option>
+        <el-option label="已发布" value="1"></el-option>
+        <el-option label="已撤回" value="2"></el-option>
       </el-select>
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search">搜索</el-button>
 
@@ -28,39 +28,42 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="活动名称" prop="activityName" align="center">
+      <el-table-column label="活动名称" width="300" prop="activityName" align="center">
         <template scope="scope">
           <p class="link" @click="openPreventDialog(scope.row)">{{scope.row.activityName}}</p>
         </template>
       </el-table-column>
-      <el-table-column label="活动日期" prop="activityDate" width="250" format="yyyy-MM-dd" align="center">
+      <el-table-column label="活动日期" prop="activityDate"  format="yyyy-MM-dd" align="center">
         <template scope="scope">
           {{$commonFun.formatDate(scope.row.activityDate,"yyyy-MM-dd")}}
         </template>
       </el-table-column>
-      <el-table-column label="是否置顶" prop="isSetTop" align="center">
+      <el-table-column label="是否置顶"  prop="isSetTop" align="center">
         <template scope="scope">
           {{scope.row.isSetTop==0?'否':'是'}}
         </template>
       </el-table-column>
-      <el-table-column label="状态" prop="status" align="center">
+      <el-table-column label="状态" prop="status"   align="center">
         <template scope="scope">
-          {{scope.row.status==0?'以暂存':(scope.row.status==1?'已发布':'已撤回')}}
+          {{scope.row.status==0?'已暂存':(scope.row.status==1?'已发布':'已撤回')}}
         </template>
       </el-table-column>
       <el-table-column label="创建人" prop="realname" align="center">
       </el-table-column>
-      <el-table-column label="创建时间" prop="gmtCreate" width="230" align="center">
+      <el-table-column label="创建时间" prop="gmtCreate"  align="center">
         <template scope="scope">
           {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="180" header-align="center">
+      <el-table-column label="操作" width="250" header-align="center">
         <template scope="scope">
           <el-button type="text" style="color:#337ab7;" @click="editActivity(scope.row)">修改</el-button>
           <a  style="color:#337ab7;font-size: 18px" >|</a>
 
-          <el-button type="text" style="color:#337ab7;" @click="setStatus(scope.row,2)">撤回</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="setStatus(scope.row,2)" v-if="scope.row.status==1">撤回</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="setStatus(scope.row,1)"
+                     v-if="scope.row.status!=1">发布</el-button>
+
           <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="setTop(scope.row,'true')"
                      v-if="scope.row.isSetTop==false">置顶
@@ -71,7 +74,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <div class="pagination-wrapper">
       <el-pagination
         v-if="pageTotal>searchParams.pageSize"
@@ -84,8 +86,7 @@
         :total="pageTotal">
       </el-pagination>
     </div>
-
-
+    <!--显示活动详情-->
     <el-dialog
       title=""
       :visible.sync="showPreventDialog"
@@ -143,7 +144,6 @@
           isSetTop: true,
         },
         videoSrc: '',
-        isdisabled: false,
         pageTotal: 100,
         searchParams: {
           status: '',
@@ -152,33 +152,13 @@
           pageSize: 10,
           pageNumber: 1,
         },
-        currentBook: {},
-        currentExamId: '',
-        bookParams: {
-          name: '',
-          pageSize: 10,
-          pageNumber: 1,
-        },
-        bookTotal: 20,
-        dialogRules: {
-          videoName: [
-            {required: true, message: '请输入视频名称', trigger: 'blur'},
-            {min: 1, max: 50, message: '视频名称不能超过50个字符', trigger: 'blur,change'}
-          ],
-          imgList: [
-            {type: 'array', required: true, message: '请上传视频封面', trigger: 'change'}
-          ],
-          videoList: [
-            {type: 'array', required: true, message: '请上传视频内容', trigger: 'change'}
-          ]
-
-        }
       }
     },
     created() {
       this.getList();
     },
     methods: {
+      /*修改状态*/
       setStatus(obj, status) {
         this.upStatusDate.id = obj.id;
         this.upStatusDate.status = status;
@@ -192,6 +172,7 @@
             this.getList();
           });
       },
+      /*置顶*/
       setTop(obj, isSetTop) {
         this.setTopDate.id = obj.id;
         this.setTopDate.isSetTop = isSetTop;
@@ -251,7 +232,7 @@
         this.searchParams.pageNumber = val;
         this.getList();
       },
-      /* 预览 */
+      /* 显示活动详情 */
       openPreventDialog(obj) {
         this.$axios
           .get(this.getActivityUrl + obj.id + "/search", {})

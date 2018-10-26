@@ -22,9 +22,9 @@
         </el-form-item>
         <div id="buts">
           <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(0)">暂存</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
-          <el-button class="but" type="primary" style="background-color: #F34141"
+          <el-button class="but" type="primary" @click="CheckSubmit(0)" v-if="formData.status!=1">暂存</el-button>
+          <el-button class="but" type="primary" @click="CheckSubmit(1)" >发布</el-button>
+          <el-button class="but" type="primary"  style="background-color: #F34141"
                      @click="videoManage">视频维护
           </el-button>
           <el-button class="but" type="primary" style="background-color: #F34141"
@@ -86,7 +86,7 @@
           {{infoExpressTag.name}}
         </el-tag>
 
-        <el-form-item id="cs" label=" 活动介绍：" prop="content" >
+        <el-form-item id="cs" label=" 活动介绍：" prop="content" required >
           <Editor ref="editor" :config="editorConfig"></Editor>
         </el-form-item>
       </el-form>
@@ -722,7 +722,7 @@
   #buts {
     float: right;
     position: relative;
-    width: 500px;
+    width: 400px;
     z-index: 999;
     margin-right: 50px;
     margin-top: -60px;

@@ -31,7 +31,7 @@
           playVideo
           <el-table-column prop="cover" label="封面">
             <template scope="scope">
-              <img style="width: 88px;height: 86px;" :src="scope.row.imgUrl" @click="playVideo(scope.row)">
+              <img style="width: 88px;height: 86px;" :src="'/pmpheep/image/'+scope.row.cover" @click="playVideo(scope.row)">
             </template>
           </el-table-column>
           <el-table-column prop="title" label="视频标题">
@@ -93,7 +93,10 @@
             {{scope.$index+1}}
           </template>
         </el-table-column>
-        <el-table-column prop="cover" label="封面">
+        <el-table-column  label="封面">
+          <template scope="scope">
+            <img style="width: 88px;height: 86px;" :src="'/pmpheep/image/'+scope.row.cover" @click="playVideo(scope.row)">
+          </template>
         </el-table-column>
         <el-table-column prop="title" label="视频标题">
         </el-table-column>
@@ -250,7 +253,6 @@
           });
 
       },
-
       selectConfirm(){
         this.videoParams.videos="";
         this.videoParams.activityId='';
@@ -293,6 +295,7 @@
           })
 
       },
+
 
       /* 获取视频列表 */
       getList(){
