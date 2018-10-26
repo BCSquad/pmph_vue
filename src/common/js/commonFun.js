@@ -626,7 +626,9 @@ export function parseURL(url) {
 export function objArrayDeepCopy(source) {
   var sourceCopy = source instanceof Array ? [] : {};
   for (var item in source) {
-    sourceCopy[item] = typeof source[item] === 'object' ? objDeepCopy(source[item]) : source[item];
+    sourceCopy[item] =(source[item] != null)
+      ? (typeof source[item] === 'object') ? objArrayDeepCopy(source[item]) : source[item]
+      :null;
   }
   return sourceCopy;
 }
