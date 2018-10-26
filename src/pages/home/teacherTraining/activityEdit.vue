@@ -17,21 +17,34 @@
     <div>
       <el-form :model="formData" :rules="formRules" ref="addForm" label-width="150" style="margin:20px 30px 20px 0;">
 
-        <el-form-item id="cs" label="活动名称：" prop="activityName"  required >
-          <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName" ></el-input>
+        <el-form-item id="cs" label="活动名称：" prop="activityName" required>
+          <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName"></el-input>
         </el-form-item>
-        <div id="buts">
+
+        <div v-if="formData.status!=1"  style="float: right;position: relative;width: 400px;z-index: 999;margin-right: 50px;margin-top: -60px;">
           <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(0)" v-if="formData.status!=1">暂存</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(1)" >发布</el-button>
-          <el-button class="but" type="primary"  style="background-color: #F34141"
+          <el-button class="but" type="primary" @click="CheckSubmit(0)">暂存</el-button>
+          <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
+          <el-button class="but" type="primary" style="background-color: #F34141"
                      @click="videoManage">视频维护
           </el-button>
           <el-button class="but" type="primary" style="background-color: #F34141"
                      @click="sourceManage">资源维护
           </el-button>
         </div>
-        <el-form-item label=" 活动时间："  style="height: 35px;">
+
+        <div  v-if="formData.status==1" style="float: right;position: relative;width: 300px;z-index: 999;margin-right: 50px;margin-top: -60px;">
+          <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
+          <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
+          <el-button class="but" type="primary" style="background-color: #F34141"
+                     @click="videoManage">视频维护
+          </el-button>
+          <el-button class="but" type="primary" style="background-color: #F34141"
+                     @click="sourceManage">资源维护
+          </el-button>
+        </div>
+
+        <el-form-item label=" 活动时间：" style="height: 35px;">
           <el-date-picker
             v-model="formData.activityDate"
             type="date"
@@ -86,7 +99,7 @@
           {{infoExpressTag.name}}
         </el-tag>
 
-        <el-form-item id="cs" label=" 活动介绍：" prop="content" required >
+        <el-form-item id="cs" label=" 活动介绍：" prop="content" required>
           <Editor ref="editor" :config="editorConfig"></Editor>
         </el-form-item>
       </el-form>
@@ -95,7 +108,7 @@
     <el-dialog
       title=""
       :visible.sync="showPreventDialog"
-      size="large" top="5%" >
+      size="large" top="5%">
       <div style="padding:0 05%;">
         <h1 class="previewTitle text-center">{{formData.activityName}}</h1>
         <p class="senderInfo text-center paddingT10">
@@ -208,7 +221,7 @@
           infoExpressCmsId: "",
           content: "",
           imgFile: [],
-          status:0,
+          status: 0,
         },
         materialExpressTag: {},
         infoExpressTag: {},
@@ -303,7 +316,7 @@
         }
         if (!this.isEditContent) {
           this.activitySubmit(0);
-        }else{
+        } else {
           this.activitySubmit(this.formData.status);
         }
 
@@ -324,8 +337,8 @@
         if (!this.isEditContent) {
           this.activitySubmit(0);
 
-        }else{
-         this.activitySubmit(this.formData.status);
+        } else {
+          this.activitySubmit(this.formData.status);
         }
         this.$router.push({
           name: '活动资源',
@@ -336,14 +349,14 @@
 
 
       materialRemoveTag() {
-        this.formData.materialId='';
+        this.formData.materialId = '';
         this.materialCurrentRow = {
           name: null,
           type: null
         };
       },
       InfoExpressRemoveTag() {
-        this.formData.infoExpressCmsId='';
+        this.formData.infoExpressCmsId = '';
         this.infoCurrentRow = {
           name: '',
           type: ''
@@ -640,7 +653,7 @@
               _this.$refs.editor.setContent(editData.content.content);
             }, 100);
             /* 填充封面图片 */
-            if(editData.imgFileName){
+            if (editData.imgFileName) {
               if (this.$route.query.isShowCover) {
                 this.imgList.push({name: editData.imgFileName, url: editData.imgFilePath});
               }
@@ -718,16 +731,6 @@
     margin-top: 0;
     margin-right: 20px;
   }
-
-  #buts {
-    float: right;
-    position: relative;
-    width: 400px;
-    z-index: 999;
-    margin-right: 50px;
-    margin-top: -60px;
-  }
-
   .top-nav {
     /* float: left; */
     width: 100%;
@@ -793,7 +796,8 @@
     margin-left: 92px;
 
   }
-  #cs .el-form-item__label{
+
+  #cs .el-form-item__label {
     margin-left: -10px;
   }
 
