@@ -23,21 +23,21 @@
     </p>
 
     <el-table :data="sourceListData" border highlight-current-row style="width:100%;margin:10px 0;">
-      <el-table-column label="序号" prop="index" width="65">
+      <el-table-column label="序号" prop="index" width="65" align="center">
         <template scope="scope">
           {{scope.$index+1}}
         </template>
       </el-table-column>
-      <el-table-column prop="sourceName" label="资源名称">
+      <el-table-column prop="sourceName" label="资源名称" header-align="center" align="left">
       </el-table-column>
-      <el-table-column prop="realname" label="上传人">
+      <el-table-column prop="realname" label="上传人" align="center">
       </el-table-column>
-      <el-table-column prop="gmtUpload" label="上传时间">
+      <el-table-column prop="gmtUpload" label="上传时间" align="center">
         <template scope="scope">
           {{$commonFun.formatDate(scope.row.gmtUpload,"yyyy-MM-dd")}}
         </template>
       </el-table-column>
-      <el-table-column prop="infoExpressName" label="操作">
+      <el-table-column prop="infoExpressName" label="操作" align="center">
         <template scope="scope">
           <el-button type="text" style="color:#337ab7;" @click="delSourceByid(scope.row)">删除</el-button>
           <el-button type="text" style="color:#337ab7;" @click="downFile(scope.row)">下载</el-button>
@@ -50,7 +50,7 @@
     <el-dialog title="添加资源" :visible.sync="dialogVisible" size="tiny" width="100%">
       <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules" label-width="100px">
 
-        <el-form-item label="资源名称：">
+        <el-form-item label="资源名称：" >
           <div class="col-content file-upload-wrapper" style="padding-left:0;">
             <my-upload
               class="upload-demo"
@@ -95,16 +95,16 @@
           width="55">
         </el-table-column>
 
-        <el-table-column label="序号" prop="index" width="65">
+        <el-table-column label="序号" prop="index" width="65" align="center">
           <template scope="scope">
             {{scope.$index+1}}
           </template>
         </el-table-column>
-        <el-table-column prop="sourceName" label="资源名称">
+        <el-table-column prop="sourceName" label="资源名称" header-align="center" align="left">
         </el-table-column>
-        <el-table-column prop="realname" label="上传人">
+        <el-table-column prop="realname" label="上传人" align="center">>
         </el-table-column>
-        <el-table-column prop="gmtUpload" label="上传时间">
+        <el-table-column prop="gmtUpload" label="上传时间" align="center">>
           <template scope="scope">
             {{$commonFun.formatDate(scope.row.gmtUpload,"yyyy-MM-dd")}}
           </template>

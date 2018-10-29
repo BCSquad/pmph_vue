@@ -23,28 +23,28 @@
     </p>
 
         <el-table :data="videoListData" border highlight-current-row style="width:100%;margin:10px 0;">
-          <el-table-column prop="index" width="60" label="序号">
+          <el-table-column prop="index" width="60" label="序号" align="center">
             <template scope="scope">
               {{scope.$index+1}}
             </template>
           </el-table-column>
           playVideo
-          <el-table-column prop="cover" label="封面">
+          <el-table-column prop="cover" label="封面" align="center">
             <template scope="scope">
               <img style="width: 88px;height: 86px;" :src="'/pmpheep/image/'+scope.row.cover" @click="playVideo(scope.row)">
             </template>
           </el-table-column>
-          <el-table-column prop="title" label="视频标题">
+          <el-table-column prop="title" label="视频标题" align="center">
           </el-table-column>
-          <el-table-column prop="realname" label="上传人">
+          <el-table-column prop="realname" label="上传人" align="center">
           </el-table-column>
-          <el-table-column prop="gmtCreate" label="上传时间">
+          <el-table-column prop="gmtCreate" label="上传时间" align="center">
             <template scope="scope">
               {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
             </template>
           </el-table-column>
-          <el-table-column  label="操作">
-            <template scope="scope">
+          <el-table-column  label="操作" align="center">
+            <template scope="scope" align="center">
               <el-button type="text" style="color:#337ab7;" @click="delVideoByid(scope.row)">删除</el-button>
               <a  style="color:#337ab7;margin-right:5px;" :href="videoDownLoad(scope.row)">下载</a>
             </template>
@@ -88,23 +88,23 @@
           type="selection"
           width="55">
         </el-table-column>
-        <el-table-column prop="index" label="序号">
+        <el-table-column prop="index" label="序号" width="60" align="center">>
           <template scope="scope">
             {{scope.$index+1}}
           </template>
         </el-table-column>
-        <el-table-column  label="封面">
+        <el-table-column  label="封面" align="center">>
           <template scope="scope">
             <img style="width: 88px;height: 86px;" :src="'/pmpheep/image/'+scope.row.cover" @click="playVideo(scope.row)">
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="视频标题">
+        <el-table-column prop="title" label="视频标题" align="center">>
         </el-table-column>
-        <el-table-column prop="realname" label="上传人">
+        <el-table-column prop="realname" label="上传人" align="center">>
         </el-table-column>
-        <el-table-column prop="gmt_create" label="上传时间">
+        <el-table-column prop="gmt_create" label="上传时间" align="center">>
           <template scope="scope">
-            {{$commonFun.formatDate(scope.row.gmtUpload,"yyyy-MM-dd")}}
+            {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
           </template>
         </el-table-column>
         </el-table-column>

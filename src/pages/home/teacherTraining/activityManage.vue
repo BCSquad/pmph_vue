@@ -28,7 +28,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="活动名称" width="300" prop="activityName" align="center">
+      <el-table-column label="活动名称" width="300" prop="activityName" header-align="center" align="left">
         <template scope="scope">
           <p class="link" @click="openPreventDialog(scope.row)">{{scope.row.activityName}}</p>
         </template>
@@ -95,7 +95,7 @@
         <h1 class="previewTitle text-center">{{formData.activityName}}</h1>
         <p class="senderInfo text-center paddingT10">
           <span class="marginR10"></span>
-          <span style="color: grey;margin-right: 44.5%">活动日期:{{this.$commonFun.getnowDate(formData.gmtCreate)}}</span>
+          <span style="color: grey;margin-right: 680px">活动日期:{{this.$commonFun.getnowDate(formData.gmtCreate)}}</span>
         </p>
         <el-form label-width="55">
           <el-form-item label="" label-width="0">

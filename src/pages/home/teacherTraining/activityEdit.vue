@@ -19,32 +19,35 @@
 
         <el-form-item id="cs" label="活动名称：" prop="activityName" required>
           <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName"></el-input>
+
         </el-form-item>
 
-        <div v-if="formData.status!=1"  style="float: right;position: relative;width: 400px;z-index: 999;margin-right: 50px;margin-top: -60px;">
-          <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(0)">暂存</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
-          <el-button class="but" type="primary" style="background-color: #F34141"
-                     @click="videoManage">视频维护
-          </el-button>
-          <el-button class="but" type="primary" style="background-color: #F34141"
-                     @click="sourceManage">资源维护
-          </el-button>
-        </div>
 
-        <div  v-if="formData.status==1" style="float: right;position: relative;width: 300px;z-index: 999;margin-right: 50px;margin-top: -60px;">
-          <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
-          <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
-          <el-button class="but" type="primary" style="background-color: #F34141"
-                     @click="videoManage">视频维护
-          </el-button>
-          <el-button class="but" type="primary" style="background-color: #F34141"
-                     @click="sourceManage">资源维护
-          </el-button>
-        </div>
 
         <el-form-item label=" 活动时间：" style="height: 35px;">
+
+          <div v-if="formData.status!=1"  style="float: right;position: relative;width: 400px;margin-right: 50px;margin-top: -60px;">
+            <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
+            <el-button class="but" type="primary" @click="CheckSubmit(0)">暂存</el-button>
+            <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
+            <el-button class="but" type="primary" style="background-color: #F34141"
+                       @click="videoManage">视频维护
+            </el-button>
+            <el-button class="but" type="primary" style="background-color: #F34141"
+                       @click="sourceManage">资源维护
+            </el-button>
+          </div>
+
+          <div  v-if="formData.status==1" style="float: right;position: relative;width: 300px;margin-right: 50px;margin-top: -60px;">
+            <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
+            <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
+            <el-button class="but" type="primary" style="background-color: #F34141"
+                       @click="videoManage">视频维护
+            </el-button>
+            <el-button class="but" type="primary" style="background-color: #F34141"
+                       @click="sourceManage">资源维护
+            </el-button>
+          </div>
           <el-date-picker
             v-model="formData.activityDate"
             type="date"
@@ -113,7 +116,7 @@
         <h1 class="previewTitle text-center">{{formData.activityName}}</h1>
         <p class="senderInfo text-center paddingT10">
           <span class="marginR10"></span>
-          <span style="color: grey;margin-right: 44.5%">活动日期:{{this.$commonFun.getnowDate(formData.gmtCreate)}}</span>
+          <span style="color: grey;margin-right:680px">活动日期:{{this.$commonFun.getnowDate(formData.gmtCreate)}}</span>
         </p>
         <el-form label-width="55px">
           <el-form-item label="" label-width="0">
