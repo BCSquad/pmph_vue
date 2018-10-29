@@ -77,19 +77,19 @@
 
      <el-table-column
       label="操作"
-      :width="isAdmin?350:300"
+      width="120"
      >
      <template scope="scope">
        <el-button type="text"  @click="updataTemplate(scope.row.id)">修改</el-button>
        <span>|</span>
-       <el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
+       <!--<el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
        <span>|</span>
        <el-button type="text" @click="$router.push({name:'发起调查',params:{surveyId:scope.row.id,surverData:scope.row}})">发起调查</el-button>
-       <span>|</span>
-       <el-button v-if="isAdmin" type="text" @click="deleteSurvey(scope.row.templateId,scope.row.id)">删除</el-button>
-       <span v-if="isAdmin">|</span>
+       <span>|</span>-->
+       <el-button v-if="isAdmin" type="text" @click="deleteSurvey(scope.row.active,scope.row.id)">{{scope.row.active?'作废':'启用'}}</el-button>
+       <!--<span v-if="isAdmin">|</span>-->
 
-       <el-button type="text" @click="showSend(scope.row.id)">查看发送对象</el-button>
+       <!--<el-button type="text" @click="showSend(scope.row.id)">查看发送对象</el-button>-->
      </template>
      </el-table-column>
     </el-table>
@@ -191,23 +191,23 @@
                 }
             })
            },
-          deleteSurvey(templateId,surveyId){
+          deleteSurvey(oriActive,surveyId){
             let _this = this;
-            this.$confirm("确定删除选中问卷吗?", "提示", {
+            this.$confirm("确定作废选中模板吗?", "提示", {
               confirmButtonText: "确定",
               cancelButtonText: "取消",
               type: "warning"
             })
               .then(() => {
-                _this.$axios.delete('/pmpheep/survey/'+surveyId+'/remove',{
+                _this.$axios.get('/materialSurvey/template/'+surveyId+'/switchActive',{
                   params:{
-                    templateId:templateId,
-                    surveyId:surveyId
+                    isActive:!oriActive,
+                    id:surveyId
                   }
                 }).then((res)=>{
                   console.log(res);
                   if(res.data.code==1){
-                    _this.$message.success("删除成功！");
+                    _this.$message.success("操作成功！");
                     _this.getSurveyList();
                   }else{
                     _this.$confirm(res.data.msg.msgTrim(), "提示",{
