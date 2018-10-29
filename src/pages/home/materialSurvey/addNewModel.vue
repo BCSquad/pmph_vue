@@ -7,12 +7,12 @@
        </p>
        </div>
       <div style="width:100%;float:left;">
-      <el-form :model="surveyForm" ref="surveyForm" :rules="rules"  label-width="120px" style="margin:30px 0;width:80%;">
-          <el-form-item label="调研表名称:" prop="templateName">
-             <el-input placeholder="请输入调研表名称" v-model="surveyForm.templateName"></el-input>
+      <el-form :model="surveyForm" ref="surveyForm" :rules="rules"   label-width="120px" style="margin:30px 0;width:80%;">
+          <el-form-item label="调研表名称:" prop="templateName" >
+             <el-input placeholder="请输入调研表名称" v-model="surveyForm.templateName" style="width:100%"></el-input>
           </el-form-item>
           <el-form-item label="调查对象:" prop="typeId">
-             <el-select v-model="surveyForm.typeId"  placeholder="请选择调查对象" style="width:50%">
+             <el-select v-model="surveyForm.typeId"  placeholder="请选择调查对象">
                     <el-option
                     v-for="item in objTableData"
                     :key="item.id"
@@ -25,6 +25,20 @@
           <el-form-item label="调查概述:" prop="intro">
              <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
           </el-form-item>
+          <el-form-item label="调查教材:" prop="preVersionMaterialId" >
+            <el-select v-model="surveyForm.preVersionMaterialId" clearable filterable placeholder="请选择调查教材" style="width:60%;">
+              <el-option
+                v-for="item in materialOptions"
+                :key="item.id"
+                :label="item.materialName"
+                :value="item.id">
+              </el-option>
+            </el-select>
+            <el-form-item label="调查教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
+              <el-input type="text"  v-model="surveyForm.preVersionMaterialRound"  placeholder="版次"></el-input>
+            </el-form-item>
+          </el-form-item>
+
       </el-form>
       <!-- 调查对象弹框 -->
      <el-dialog :visible.sync="objDialogVisible" title="调查类型（对象）列表" size="tiny" class="obj_dialog table-wrapper">
@@ -194,9 +208,12 @@ export default {
           templateName:'',
           typeId:'',
           intro:'',
+          preVersionMaterialId:'',
+          preVersionMaterialRound:'',
           questionAnswerJosn:[
           ]
         },
+        materialOptions:[],
         del_question:[],
         del_dialog_option:[],
         del_question_option:[],
@@ -291,6 +308,7 @@ export default {
     }
   },
   created(){
+      this.getMaterialLists();
       this.initFormData();
       this.getObjList();
   },
@@ -314,6 +332,9 @@ export default {
           this.surveyForm.intro=surveyData.survey.intro;
           this.surveyForm.id=surveyData.survey.id;
           this.surveyForm.templateId=surveyData.survey.id;
+          this.surveyForm.preVersionMaterialId = surveyData.survey.preVersionMaterialId;
+          this.surveyForm.preVersionMaterialRound = surveyData.survey.preVersionMaterialRound;
+
           for(var i in surveyData.qestionAndOption){
               this.surveyForm.questionAnswerJosn[i]={};
               this.surveyForm.questionAnswerJosn[i].id=surveyData.qestionAndOption[i].id;
@@ -365,7 +386,7 @@ export default {
                         console.log(this.surveyForm.questionAnswerJosn,arr);
                         if(res.data.code==1){
                         this.$message.success(str=='add'?'添加成功':'修改成功');
-                        this.$router.push({name:'调研表模板设置'});
+                        this.$router.push({name:'调研表模板管理'});
 
                         }else{
                             this.$confirm(res.data.msg.msgTrim(), "提示",{
@@ -599,7 +620,16 @@ export default {
            }
        }
        return true;
-      }
+      },
+      /**获取教材列表 */
+      getMaterialLists(){
+        this.$axios.get('/pmpheep/material/published').then(response => {
+          let res = response.data;
+          if (res.code == '1') {
+            this.materialOptions=res.data;
+          }
+        })
+      },
   }
 };
 </script>
