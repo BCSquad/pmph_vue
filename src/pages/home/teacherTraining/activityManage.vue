@@ -18,7 +18,7 @@
       <el-checkbox style="margin-left: 40px" true-label="1" false-label="" v-model="searchParams.isSetTop" checked="true" @change="search" >
         <span>是否置顶</span></el-checkbox>
       <el-button type="primary" style="float:right;margin-right: 50px"
-                 @click="$router.push({name:'添加活动',query:{columnId:1,type:'newActivity',isShowCover:true}})">新建活动
+                 @click="$router.push({name:'活动详情',query:{columnId:1,type:'newActivity',isShowCover:true}})">新建活动
       </el-button>
     </p>
     <el-table :data="tableData" border style="width:98%;">
@@ -195,7 +195,7 @@
             console.log(res);
             if (res.data.code == 1) {
               this.$router.push({
-                name: "添加活动",
+                name: "活动详情",
                 params: res.data.data,
                 query: {type: "edit", columnId: 1, isShowCover: true}
               });

@@ -388,9 +388,9 @@ export default new Router({
           meta: {replaceName: false, authorityId: 57},
           children: [
             {path: 'activityList', name: '活动管理', meta: {authorityId: 58}, component: activityManager},
-            {path: 'newActivity', name: '添加活动',  component: activityEdit,meta: {authorityId: true}},
-            {path: 'toVideo', name: '活动视频',  component: activityVideo,meta: {authorityId: true}},
-            {path: 'toSource', name: '活动资源',  component: activitySource,meta: {authorityId: true}},
+            {path: 'newActivity', name: '活动详情',  component: activityEdit,meta: {authorityId: true}},
+            {path: 'toVideo', name: '视频列表',  component: activityVideo,meta: {authorityId: true}},
+            {path: 'toSource', name: '资源列表',  component: activitySource,meta: {authorityId: true}},
           ]
         },
         /* 内容管理 */

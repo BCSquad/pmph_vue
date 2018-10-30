@@ -2,7 +2,7 @@
   <div class="activity_edit" style="width: 95%;margin-left: 25px;">
     <div class="top-nav">
       <div class="header_title_tips">
-        <p>添加活动</p>
+        <p>活动详情</p>
         <div class="tips_icon"></div>
       </div>
       <div class="header_back_tips">
@@ -19,13 +19,15 @@
 
         <el-form-item id="cs" label="活动名称：" prop="activityName" required>
           <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName"></el-input>
-
         </el-form-item>
 
-
-
-        <el-form-item label=" 活动时间：" style="height: 35px;">
-
+        <el-form-item label=" 活动日期：" style="height: 35px;">
+          <el-date-picker
+            v-model="formData.activityDate"
+            type="date"
+            placeholder=" 选择日期"
+            value-format="timestamp">
+          </el-date-picker>
           <div v-if="formData.status!=1"  style="float: right;position: relative;width: 400px;margin-right: 50px;margin-top: -60px;">
             <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
             <el-button class="but" type="primary" @click="CheckSubmit(0)">暂存</el-button>
@@ -48,13 +50,6 @@
                        @click="sourceManage">资源维护
             </el-button>
           </div>
-          <el-date-picker
-            v-model="formData.activityDate"
-            type="date"
-            placeholder=" 选择日期"
-            value-format="timestamp">
-          </el-date-picker>
-
         </el-form-item>
 
 
@@ -131,7 +126,7 @@
       title="选择教材"
       :visible.sync="materialDialogVisible"
       class='material_dialog'
-      size="tiny"
+      size="small"
     >
       <p class="header_p"><span>教材名称：</span>
         <el-input class="input" v-model="materialParams.materialName" placeholder="请输入教材名称"></el-input>
@@ -141,7 +136,7 @@
       <el-table :data="materialListData" border highlight-current-row
                 @current-change="materialSlectRow"
                 style="width:100%;margin:10px 0;">
-        <el-table-column prop="materialName" label="教材名称">
+        <el-table-column prop="materialName" label="教材名称"  header-align="center" align="left">
         </el-table-column>
       </el-table>
       <div class="pagination-wrapper">
@@ -162,7 +157,7 @@
       title="选择快报"
       :visible.sync="infoExpressDialogVisible"
       class='material_dialog'
-      size="tiny"
+      size="small"
     >
       <p class="header_p"><span>快报标题：</span>
         <el-input class="input" v-model="infoExpressParams.title" placeholder="请输入信息快报标题"></el-input>
@@ -173,16 +168,16 @@
                 border highlight-current-row
                 @current-change="infoExpressSlectRow"
                 style="width:100%;margin:10px 0;">
-        <el-table-column prop="index" label="序号">
+        <el-table-column prop="index" label="序号" width="55px" align="center">
           <template scope="scope">
             {{scope.$index+1}}
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="信息快报标题">
+        <el-table-column prop="title" label="信息快报标题"  header-align="center" align="left">
         </el-table-column>
-        <el-table-column prop="materialId" label="所属教材">
+        <el-table-column prop="materialName" label="所属教材"  header-align="center" align="left">
         </el-table-column>
-        <el-table-column prop="gmtCreate" label="创建时间">
+        <el-table-column prop="gmtCreate" width="120" label="创建时间" align="center">
           <template scope="scope">
             {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
           </template>
@@ -324,7 +319,7 @@
         }
 
         this.$router.push({
-          name: '活动视频',
+          name: '视频列表',
           params: this.formData,
           query: {columnId: 1, type: 'toVideo', isShowCover: true}
         })
@@ -344,7 +339,7 @@
           this.activitySubmit(this.formData.status);
         }
         this.$router.push({
-          name: '活动资源',
+          name: '资源列表',
           params: this.formData,
           query: {columnId: 1, type: 'toSource', isShowCover: true}
         })
@@ -511,12 +506,12 @@
         this.selectmaterial();
       },
       infoExpressSizeChange(val) {
-        this.materialParams.pageSize = val;
-        this.materialParams.pageNumber = 1;
+        this.infoExpressParams.pageSize = val;
+        this.infoExpressParams.pageNumber = 1;
         this.selectInfoExpress();
       },
       infoExpressCurrentChange(val) {
-        this.materialParams.pageNumber = val;
+        this.infoExpressParams.pageNumber = val;
         this.selectInfoExpress();
       },
       infoExpressSlectRow(val) {
@@ -734,6 +729,7 @@
     margin-top: 0;
     margin-right: 20px;
   }
+
   .top-nav {
     /* float: left; */
     width: 100%;

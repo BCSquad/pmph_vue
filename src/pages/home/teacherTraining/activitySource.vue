@@ -10,16 +10,15 @@
       </div>
     </div>
 
-    <h3 style="text-align: left" :data="editData">活动名称: {{editData.activityName}}</h3>
-    <p class="header_p" style="margin-top: 50px">
-      <span>资源名称：</span>
+    <p style="text-align: left;margin-top: 20px;font-size: 16px" :data="editData">活动名称: {{editData.activityName}}</p>
+    <p class="header_p" style="margin-top: 30px;font-size: 16px">
+      <span>资源名称</span>
       <el-input class="input" style="width:300px;margin-right:10px;" v-model="searchParams.sourceName"
                 @keyup.enter.native="getList()"
                 placeholder="请输入资源名称"></el-input>
-      <span>状态：</span>
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
-      <el-button type="primary" style="float:right;margin-right: 50px" @click="fileUpload">上传资源</el-button>
-      <el-button type="primary" style="float:right;" @click="selectSource">选择资源</el-button>
+      <el-button type="primary" style="float:right;margin-right: 15px;;margin-bottom:10px" @click="selectSource">选择资源</el-button>
+      <el-button type="primary" style="float:right;margin-right: 15px;margin-bottom:10px" @click="fileUpload">上传资源</el-button>
     </p>
 
     <el-table :data="sourceListData" border highlight-current-row style="width:100%;margin:10px 0;">
@@ -41,16 +40,29 @@
         <template scope="scope">
           <el-button type="text" style="color:#337ab7;" @click="delSourceByid(scope.row)">删除</el-button>
           <el-button type="text" style="color:#337ab7;" @click="downFile(scope.row)">下载</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')">上移</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'down')">下移</el-button>
 
         </template>
         </el-table-column>
 
-
     </el-table>
-    <el-dialog title="添加资源" :visible.sync="dialogVisible" size="tiny" width="100%">
+    <div class="pagination-wrapper">
+      <el-pagination
+        v-if="pageTotal>searchParams.pageSize"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="searchParams.pageNumber"
+        :page-sizes="[10,20,30,50]"
+        :page-size="searchParams.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pageTotal">
+      </el-pagination>
+    </div>
+    <el-dialog title="资源上传" :visible.sync="dialogVisible" size="tiny" width="100%">
       <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules" label-width="100px">
 
-        <el-form-item label="资源名称：" >
+        <el-form-item label="资源名称：" required >
           <div class="col-content file-upload-wrapper" style="padding-left:0;">
             <my-upload
               class="upload-demo"
@@ -61,7 +73,7 @@
               :before-upload="beforeAvatarUpload"
               :file-list="fileList">
                   <span>
-              <i class="fa fa-paperclip fa-lg"></i> 添加附件</span>
+              <i class="fa fa-paperclip fa-lg"></i> 选择文件</span>
               <div slot="tip" class="el-upload__tip" style="line-height:1;">文件大小不超过200M</div>
             </my-upload>
           </div>
@@ -69,24 +81,23 @@
 
       </el-form>
       <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="fileUp">确定</el-button>
-                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="fileUp">保 存</el-button>
+                <el-button @click="dialogVisible = false">关闭</el-button>
             </span>
     </el-dialog>
 
     <el-dialog title="选择资源" :visible.sync="selectSourceVisible" size="small" width="100%">
-      <p class="header_p" style="margin-top: 50px">
+      <p class="header_p" style="margin-top: 5px">
         <span>资源名称：</span>
-        <el-input class="input" style="width:300px;margin-right:10px;" v-model="searchParams.sourceName"
-                  @keyup.enter.native="search"
+        <el-input class="input" style="width:300px;margin-right:10px;" v-model="selectParams.sourceName"
+                  @keyup.enter.native="selectSearch"
                   placeholder="请输入资源名称"></el-input>
-        <span>状态：</span>
-        <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
+        <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="selectSearch()">搜索</el-button>
 
         <el-button type="primary" style="float:right;" @click="selectConfirm">确认选择</el-button>
       </p>
 
-      <el-table :data="sourceListData"
+      <el-table :data="selectSourceList"
                 border highlight-current-row
                 @selection-change="handleSelectionChange">
                 style="width:100%;margin:10px 0;">
@@ -110,7 +121,20 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="pagination-wrapper">
+        <el-pagination
+          v-if="sourcepageTotal>selectParams.pageSize"
+          @size-change="selectSizeChange"
+          @current-change="selectCurrentChange"
+          :current-page.sync="selectParams.pageNumber"
+          :page-sizes="[10,20,30,50]"
+          :page-size="selectParams.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="sourcepageTotal">
+        </el-pagination>
+      </div>
     </el-dialog>
+
 
   </div>
 </template>
@@ -124,10 +148,12 @@
         activitySourceChainUrl:"/pmpheep/activitySource/addActivitySourceChain",
         getActivityUrl:'/pmpheep/activity/getActivity/',
         deleteSourceUrl:'/pmpheep/activitySource/deleteSourceById/',
+        updateSortUrl: "/pmpheep/activitySource/updateSort",
         dialogVisible: false,
         selectSourceVisible: false,
         sourceListData: [],
         selectSourceList: [],
+        pageTotal:20,
         editData:'',
         searchParams: {
           sourceName:'',
@@ -150,6 +176,12 @@
           sourceName: '',
           fileList: [],
         },
+        selectParams:{
+          sourceName:'',
+          pageSize: 10,
+          pageNumber: 1,
+        },
+        sourcepageTotal:20,
         fileList: [],
         selectSourceRow: {},
         coverUploadUrl: '/pmpheep/file/image/upload',
@@ -188,6 +220,27 @@
       }
     },
     methods: {
+
+
+      updateSort(row,type){
+        this.$axios.get(this.updateSortUrl, {
+          params: {
+            sourceName:this.searchParams.sourceName,
+            pageSize:this.searchParams.pageSize,
+            PageNumber:this.searchParams.PageNumber,
+            id:row.id,
+            type:type
+          }
+        }).then((res) => {
+          if (res.data.code == 1) {
+            this.getList();
+          }
+        })
+
+
+
+
+      },
       downFile(obj){
         this.$commonFun.downloadFile('/pmpheep/file/download/'+obj.fileId);
       },
@@ -221,19 +274,21 @@
       },
       selectSource() {
         this.selectSourceVisible = true;
+        this.selectSearch()
+      },
+
+      selectSearch(){
         this.$axios.get(this.getSourceListUrl, {
-          params: this.searchParams
+          params: this.selectParams
         })
           .then((res) => {
             console.log(res);
             if (res.data.code == 1) {
               this.selectSourceList = res.data.data.rows;
-              this.pageTotal = res.data.data.total;
+              this.sourcepageTotal = res.data.data.total;
               console.log(tableData.toString());
             }
           })
-
-
       },
       fileUpload() {
         this.dialogVisible = true;
@@ -339,6 +394,25 @@
           });
       }
       ,
+      handleSizeChange(val) {
+        this.searchParams.pageSize = val;
+        this.searchParams.pageNumber = 1;
+        this.getList();
+      },
+      handleCurrentChange(val) {
+        this.searchParams.pageNumber = val;
+        this.getList();
+      },
+
+      selectSizeChange(val) {
+        this.selectParams.pageSize = val;
+        this.selectParams.pageNumber = 1;
+        this.selectSearch();
+      },
+      selectCurrentChange(val) {
+        this.selectParams.pageNumber = val;
+        this.selectSearch();
+      },
       /* 获取视频列表 */
       getList() {
         this.$axios.get(this.getSourceListUrl, {
@@ -381,7 +455,7 @@
               console.log(res);
               if (res.data.code == 1) {
                 this.$router.push({
-                  name: "添加活动",
+                  name: "活动详情",
                   params: res.data.data,
                   query: { type: "edit", columnId: 1 ,isShowCover:true}
                 });
