@@ -12,7 +12,7 @@
 
     <p style="text-align: left;margin-top: 20px;font-size: 16px" :data="editData">活动名称: {{editData.activityName}}</p>
     <p class="header_p" style="margin-top: 30px;font-size: 16px">
-      <span>资源名称</span>
+      <span>资源名称：</span>
       <el-input class="input" style="width:300px;margin-right:10px;" v-model="searchParams.sourceName"
                 @keyup.enter.native="getList()"
                 placeholder="请输入资源名称"></el-input>
@@ -22,7 +22,7 @@
     </p>
 
     <el-table :data="sourceListData" border highlight-current-row style="width:100%;margin:10px 0;">
-      <el-table-column label="序号" prop="index" width="65" align="center">
+      <el-table-column label="序号" prop="index" width="80" align="center">
         <template scope="scope">
           {{scope.$index+1}}
         </template>
@@ -106,7 +106,7 @@
           width="55">
         </el-table-column>
 
-        <el-table-column label="序号" prop="index" width="65" align="center">
+        <el-table-column label="序号" prop="index" width="80" align="center">
           <template scope="scope">
             {{scope.$index+1}}
           </template>
