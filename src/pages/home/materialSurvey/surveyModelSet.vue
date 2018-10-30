@@ -35,7 +35,7 @@
      prop="templateName"
      >
      <template scope="scope">
-       <el-button type="text" @click="updataTemplate(scope.row.templateId,scope.row.id,'check')">{{scope.row.templateName}}</el-button>
+       <el-button type="text" @click="updataTemplate(scope.row.id,'check')">{{scope.row.templateName}}</el-button>
      </template>
      </el-table-column>
       <el-table-column
@@ -193,16 +193,16 @@
            },
           deleteSurvey(oriActive,surveyId){
             let _this = this;
-            this.$confirm("确定作废选中模板吗?", "提示", {
+            this.$confirm("确定"+(oriActive?"作废":"启用")+"选中模板吗?", "提示", {
               confirmButtonText: "确定",
               cancelButtonText: "取消",
               type: "warning"
             })
               .then(() => {
-                _this.$axios.get('/materialSurvey/template/'+surveyId+'/switchActive',{
+                _this.$axios.get('/pmpheep/materialSurvey/template/switchActive',{
                   params:{
                     isActive:!oriActive,
-                    id:surveyId
+                    templateId:surveyId
                   }
                 }).then((res)=>{
                   console.log(res);

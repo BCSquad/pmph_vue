@@ -170,6 +170,7 @@ const recoveryResult = () => import('../pages/home/questionSurvey/recoveryResult
 const materialSurveyModelSet = () => import('../pages/home/materialSurvey/surveyModelSet');
 const materialSurveyPublishManage = () => import('../pages/home/materialSurvey/surveyPublishManage');
 const materialAddNewModel = () => import('../pages/home/materialSurvey/addNewModel');
+const materialAddNewSurvey = () => import('../pages/home/materialSurvey/addNewSurvey');
 
 /**系统日志 */
 const SystemLog = () => import('pages/home/systemLog/systemLog');
@@ -492,10 +493,12 @@ export default new Router({
 
             {path: 'newmodel', name: '调研表模板新增', component: materialAddNewModel, meta: {authorityId: true}},
 
+            {path: 'newsurvey', name: '调研表新增', component: materialAddNewSurvey, meta: {authorityId: true}},
+
             {path: 'launch', name: '发起调查', component: launchSurvey, meta: {authorityId: true}},
             {path: 'reissue', name: '补发消息', component: reIssue, meta: {authorityId: true}},
 
-            {path: 'newsurvey', name: '新建调查问卷', component: addNewSurvey, meta: {authorityId: true}},
+
             {path: 'statistic', name: '调查问卷结果统计', component: surveryResultStatistic, meta: {authorityId: 38}},
             {path: 'detail', name: '结果明细', component: surveryResultDetail, meta: {authorityId: true}},
             {path: 'recovery', name: '调查问卷回收', component: surveyRecovery, meta: {authorityId: 39}},
