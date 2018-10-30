@@ -50,11 +50,11 @@
      width="110"
      >
      </el-table-column>
-     <el-table-column
+     <!--<el-table-column
      label="问卷概述"
      prop="intro"
      >
-     </el-table-column>
+     </el-table-column>-->
      <el-table-column
      label="创建日期"
      prop="gmtCreat"
@@ -71,8 +71,8 @@
      <template scope="scope">
        <el-button type="text" :disabled="scope.row.status!=0"  @click="updataTemplate(scope.row.templateId,scope.row.id)">修改</el-button>
        <span>|</span>
-       <el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
-       <span>|</span>
+       <!--<el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
+       <span>|</span>-->
        <el-button type="text" @click="$router.push({name:'发起调查',params:{surveyId:scope.row.id,surverData:scope.row}})">发起调查</el-button>
        <span>|</span>
        <el-button v-if="isAdmin" type="text" @click="deleteSurvey(scope.row.templateId,scope.row.id)">删除</el-button>
@@ -123,7 +123,7 @@
         data(){
             return{
               surveyLsitUrl:'/pmpheep/materialSurvey/list', //调查问卷列表url
-              editTemplateUrl:'/pmpheep/materialSurvey/template/question/look', //获取修改信息url
+              editTemplateUrl:'/pmpheep/materialSurvey/question/look', //获取修改信息url
 
                 searchParams:{
                     title:'',
@@ -168,13 +168,12 @@
            updataTemplate(tid,sid,str){
             this.$axios.get(this.editTemplateUrl,{
                 params:{
-                    templateId:tid,
-                    surveyId:sid
+                    id:sid
                 }
             }).then((res)=>{
                 console.log(res);
                 if(res.data.code==1){
-                   this.$router.push({name:'问卷模板新增',params:{surveryData:res.data.data,type:str?str:''}});
+                   this.$router.push({name:'调研表新增',params:{surveryData:res.data.data,type:str?str:''}});
                 }
             })
            },

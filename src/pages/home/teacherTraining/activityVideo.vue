@@ -10,16 +10,16 @@
       </div>
     </div>
 
-    <h3 style="text-align: left" :data="editData">活动名称: {{editData.activityName}}</h3>
-    <p class="header_p" style="margin-top: 50px">
-      <span>视频名称：</span>
+    <p style="text-align: left;margin-top: 20px;font-size: 16px" :data="editData">活动名称: {{editData.activityName}}</p>
+    <p class="header_p" style="margin-top: 30px">
+      <span>视频标题：</span>
       <el-input class="input" style="width:300px;margin-right:10px;" v-model="searchParams.title"
                 @keyup.enter.native="getList()"
                 placeholder="请输入资源名称"></el-input>
-      <span>状态：</span>
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
-      <el-button type="primary" style="float:right;margin-right: 50px" @click="openAddVideoDialog">上传视频</el-button>
-      <el-button type="primary" style="float:right;" @click="selectVideo">选择视频</el-button>
+
+      <el-button type="primary" style="float:right;margin-right: 15px" @click="selectVideo">选择视频</el-button>
+      <el-button type="primary" style="float:right;margin-right: 15px" @click="openAddVideoDialog">上传视频</el-button>
     </p>
 
         <el-table :data="videoListData" border highlight-current-row style="width:100%;margin:10px 0;">
@@ -47,21 +47,23 @@
             <template scope="scope" align="center">
               <el-button type="text" style="color:#337ab7;" @click="delVideoByid(scope.row)">删除</el-button>
               <a  style="color:#337ab7;margin-right:5px;" :href="videoDownLoad(scope.row)">下载</a>
+              <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')">上移</el-button>
+              <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'down')">下移</el-button>
             </template>
           </el-table-column>
-          <div class="pagination-wrapper">
-            <el-pagination
-              v-if="pageTotal>searchParams.pageSize"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page.sync="searchParams.pageNumber"
-              :page-sizes="[10,20,30,50]"
-              :page-size="searchParams.pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="pageTotal">
-            </el-pagination>
-          </div>
         </el-table>
+    <div class="pagination-wrapper">
+      <el-pagination
+        v-if="pageTotal>searchParams.pageSize"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="searchParams.pageNumber"
+        :page-sizes="[10,20,30,50]"
+        :page-size="searchParams.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pageTotal">
+      </el-pagination>
+    </div>
     <el-dialog :visible.sync="isShowVideoPlayer" size="tiny" :close-on-click-modal="false"  class="video_player_dialog" >
       <video :src="videoSrc" controls="controls" autoplay v-if="isShowVideoPlayer">
         您的浏览器不支持 video 标签。
@@ -70,12 +72,11 @@
 
     <el-dialog title="选择视频" :visible.sync="selectVideoVisible" size="small" width="100%">
       <p class="header_p" style="margin-top: 50px">
-        <span>资源名称：</span>
-        <el-input class="input" style="width:300px;margin-right:10px;" v-model="searchParams.bookName"
-                  @keyup.enter.native="search"
-                  placeholder="请输入资源名称"></el-input>
-        <span>状态：</span>
-        <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
+        <span>视频标题：</span>
+        <el-input class="input" style="width:300px;margin-right:10px;" v-model="videoSearch.title"
+                  @keyup.enter.native="searchSelect"
+                  placeholder="请输入视频标题"></el-input>
+        <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="searchSelect()">搜索</el-button>
 
         <el-button type="primary" style="float:right;" @click="selectConfirm">确认选择</el-button>
       </p>
@@ -111,14 +112,14 @@
       </el-table>
       <div class="pagination-wrapper">
         <el-pagination
-          v-if="pageTotal>searchParams.pageSize"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="searchParams.pageNumber"
+          v-if="videopageTotal>videoSearch.pageSize"
+          @size-change="videoSizeChange"
+          @current-change="videoCurrentChange"
+          :current-page.sync="videoSearch.pageNumber"
           :page-sizes="[10,20,30,50]"
-          :page-size="searchParams.pageSize"
+          :page-size="videoSearch.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="pageTotal">
+          :total="videopageTotal">
         </el-pagination>
       </div>
     </el-dialog>
@@ -128,10 +129,10 @@
 
 
 
-    <el-dialog title="添加活动视频" :visible.sync="dialogVisible" size="tiny" width="100%">
+    <el-dialog title="“视频上传" :visible.sync="dialogVisible" size="tiny" width="100%">
       <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules"  label-width="100px" >
-        <el-form-item label="视频名称：" prop="videoName">
-          <el-input v-model="dialogForm.videoName" placeholder="请输入视频名称"></el-input>
+        <el-form-item label="视频标题：" prop="videoName">
+          <el-input v-model="dialogForm.videoName" placeholder="请输入视频标题"></el-input>
         </el-form-item>
         <el-form-item label="视频封面：" prop="imgList">
           <el-upload
@@ -142,10 +143,10 @@
             :auto-upload="false"
             :on-change="imgUploadChange"
             :file-list="dialogForm.imgList">
-            <el-button size="small" type="primary" >点击上传</el-button>
+            <el-button size="small" type="primary" >上传封面</el-button>
           </el-upload>
         </el-form-item>
-        <el-form-item label="视频内容：" prop="videoList">
+        <el-form-item label="视频上传：" prop="videoList">
           <el-upload
             style="float:left;width:260px;"
             action="/v/upload"
@@ -155,13 +156,13 @@
             :before-upload="videoBeforeUpload"
             :on-success="videoUploadSuccess"
             :file-list="dialogForm.videoList">
-            <el-button size="small" type="primary" >点击上传</el-button>
+            <el-button size="small" type="primary" >上传视频</el-button>
           </el-upload>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="addVideoSubmit" :loading="isUploadVideo" :disabled="isdisabled">{{isUploadVideo?'转码中':'确 定'}}</el-button>
-                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addVideoSubmit" :loading="isUploadVideo" :disabled="isdisabled">{{isUploadVideo?'转码中':'保 存'}}</el-button>
+                <el-button @click="dialogVisible = false">关 闭</el-button>
             </span>
     </el-dialog>
 
@@ -184,6 +185,7 @@
         activitySourceChainUrl:"/pmpheep/activityVideo/addActivitySourceChain",
         addNewVideoUrl:'/pmpheep/activityVideo/addActivityVideo',   //添加提交视频url
         transCodingUrl:"/v/query",   //查询视频转码地址
+        updateSortUrl:'/pmpheep/activityVideo/updateSort',  //视频列表url
         videoListData:[],
         bookDialogVisible:false,
         isShowVideoPlayer:false,
@@ -200,6 +202,11 @@
         videoParams:{
           activityId:'',
             videos:''
+        },
+        videoSearch:{
+          title:'',
+          pageSize:10,
+          pageNumber:1,
         },
         vListData:[],
         selectVideoRow:{},
@@ -218,7 +225,7 @@
           pageSize:10,
           pageNumber:1,
         },
-        bookTotal:20,
+        videopageTotal:20,
         dialogRules:{
           videoName:[
             {required: true, message: '请输入视频名称', trigger: 'blur' },
@@ -236,6 +243,22 @@
     },
 
     methods:{
+      updateSort(row,type){
+        this.$axios.get(this.updateSortUrl, {
+          params: {
+            sourceName:this.searchParams.sourceName,
+            pageSize:this.searchParams.pageSize,
+            PageNumber:this.searchParams.PageNumber,
+            id:row.id,
+            type:type
+          }
+        }).then((res) => {
+          if (res.data.code == 1) {
+            this.getList();
+          }
+        })
+
+      },
 
       delVideoByid(obj){
         this.$axios
@@ -283,30 +306,31 @@
       },
       selectVideo() {
         this.selectVideoVisible = true;
+        this.searchSelect()
+
+      },
+      searchSelect(){
         this.$axios.get(this.videoListUrl,{
-          params:this.searchParams
+          params:this.videoSearch
         })
           .then((res)=>{
             console.log(res);
             if(res.data.code==1){
               this.vListData=res.data.data.rows;
-              this.pageTotal=res.data.data.total;
+              this.videopageTotal=res.data.data.total;
             }
           })
-
       },
 
 
       /* 获取视频列表 */
       getList(){
-
         this.$axios.get(this.videoListUrl,{
           params:this.searchParams
         })
           .then((res)=>{
             console.log(res);
             if(res.data.code==1){
-              this.vListData=res.data.data.rows;
               this.videoListData=res.data.data.rows;
               this.pageTotal=res.data.data.total;
             }
@@ -335,14 +359,14 @@
         this.searchParams.pageNumber=val;
         this.getList();
       },
-      bookSizeChange(val){
-        this.bookParams.pageSize=val;
-        this.bookParams.pageNumber=1;
-        this.selectBook();
+      videoSizeChange(val){
+        this.videoSearch.pageSize=val;
+        this.videoSearch.pageNumber=1;
+        this.searchSelect();
       },
-      bookCurrentChange(val){
-        this.bookParams.pageNumber=val;
-        this.selectBook();
+      videoCurrentChange(val){
+        this.videoSearch.pageNumber=val;
+        this.searchSelect();
       },
 
       openAddVideoDialog(){
@@ -634,7 +658,7 @@
               console.log(res);
               if (res.data.code == 1) {
                 this.$router.push({
-                  name: "添加活动",
+                  name: "活动详情",
                   params: res.data.data,
                   query: { type: "edit", columnId: 1 ,isShowCover:true}
                 });

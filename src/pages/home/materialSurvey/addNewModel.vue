@@ -26,7 +26,7 @@
              <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
           </el-form-item>
           <el-form-item label="调查教材:" prop="preVersionMaterialId" >
-            <el-select v-model="surveyForm.preVersionMaterialId" clearable filterable placeholder="请选择调查教材" style="width:60%;">
+            <el-select v-model="surveyForm.preVersionMaterialId" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
               <el-option
                 v-for="item in materialOptions"
                 :key="item.id"
@@ -332,8 +332,8 @@ export default {
           this.surveyForm.intro=surveyData.survey.intro;
           this.surveyForm.id=surveyData.survey.id;
           this.surveyForm.templateId=surveyData.survey.id;
-          this.surveyForm.preVersionMaterialId = surveyData.survey.preVersionMaterialId;
-          this.surveyForm.preVersionMaterialRound = surveyData.survey.preVersionMaterialRound;
+          this.surveyForm.preVersionMaterialId = (surveyData.survey.preVersionMaterialId?surveyData.survey.preVersionMaterialId:"");
+          this.surveyForm.preVersionMaterialRound = (surveyData.survey.preVersionMaterialRound !=null?surveyData.survey.preVersionMaterialRound:"");
 
           for(var i in surveyData.qestionAndOption){
               this.surveyForm.questionAnswerJosn[i]={};
