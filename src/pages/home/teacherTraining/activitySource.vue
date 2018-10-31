@@ -407,6 +407,12 @@
           .then(res => {
             console.log(res);
             if (res.data.code == 1) {
+              if(res.data.data.code==2){
+                this.$message.error("已存在相同的文件名称");
+                return;
+
+              }
+
               this.$message.success("上传资源成功");
               this.dialogVisible = false;
               this.getList();
@@ -554,8 +560,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .my-upload-list__item[data-v-5749c197] {
-
+  .my-upload-list__item{
     font-size: 14px;
     color: #48576a;
     line-height: 1.8;

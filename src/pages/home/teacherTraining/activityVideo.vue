@@ -629,6 +629,14 @@
                 console.log(res);
                 this.isdisabled = false;
                 if(res.data.code==1){
+                  if(res.data.data.code==2){
+                    this.$message.error("已存在相同的视频标题");
+                  return;
+
+                  }
+
+
+
                   this.getList();
                   this.$message.success('添加成功');
                   this.dialogVisible=false;
