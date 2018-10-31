@@ -11,8 +11,11 @@
         <el-form-item label="调研表名称:" prop="templateName" >
           <el-input placeholder="请输入调研表名称" v-model="surveyForm.templateName" style="width:100%"></el-input>
         </el-form-item>
+        <el-form-item label="新调研表名称:" prop="title" >
+          <el-input placeholder="请输入调研表名称" v-model="surveyForm.title" style="width:100%"></el-input>
+        </el-form-item>
         <el-form-item label="调查对象:" prop="typeId">
-          <el-select v-model="surveyForm.typeId"  placeholder="请选择调查对象">
+          <el-select v-model="surveyForm.typeId"  placeholder="请选择调查对象" style="margin-right: 2em;">
             <el-option
               v-for="item in objTableData"
               :key="item.id"
@@ -20,7 +23,8 @@
               :value="item.id">
             </el-option>
           </el-select>
-          <el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调查对象</el-button>
+          <!--<el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调查对象</el-button>-->
+          <el-checkbox v-model="tempReCreat">是否新增调研表模板</el-checkbox>
         </el-form-item>
         <el-form-item label="调查概述:" prop="intro">
           <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
@@ -204,17 +208,19 @@
         editObjUrl:'/pmpheep/survey/type/update',  //修改对象url
         deleteObjUrl:'/pmpheep/survey/type/',  //删除对象url
 
-        addTemplateUrl:'/pmpheep/materialSurvey/template/create', //新增模板url
-        editTemplateUrl:'/pmpheep/materialSurvey/template/create', //修改提交urls
+        addTemplateUrl:'/pmpheep/materialSurvey/create', //新增模板url
+        editTemplateUrl:'/pmpheep/materialSurvey/create', //修改提交urls
         surveyForm:{          //调研表信息抬头
           templateName:'',
           typeId:'',
           intro:'',
           preVersionMaterialId:'',
           preVersionMaterialRound:'',
+          tempReCreat:false,
           questionAnswerJosn:[
           ]
         },
+        tempReCreat:false,
         materialOptions:[],
         del_question:[],
         del_dialog_option:[],
@@ -265,6 +271,10 @@
         dialogVisible:false,
         rules:{
           templateName:[
+            { required: false, message: '请输入调研表模板名称', trigger: 'blur' },
+            {min:1,max:50,message:'调研表模板名称不能超过50个字符',trigger:'change,blur'}
+          ],
+          title:[
             { required: true, message: '请输入调研表名称', trigger: 'blur' },
             {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'}
           ],
@@ -314,6 +324,13 @@
       this.initFormData();
       this.getObjList();
     },
+    watch:{
+      tempReCreat(curVal,oldVal){
+        this.surveyForm.tempReCreat = curVal;
+        this.rules.templateName[0].required = curVal;
+        this.surveyForm.templateName = (curVal && !this.surveyForm.templateName)?this.surveyForm.title+'_默认模板_'+this.$commonFun.getNowFormatDate():this.surveyForm.templateName;
+      },
+    },
     methods:{
       /* 获取对象列表 */
       getObjList(){
@@ -329,13 +346,14 @@
         if(this.$route.params.type!='add'&&this.$route.params.surveryData){
           var surveyData=this.$route.params.surveryData;
           console.log(surveyData) ;
-          this.surveyForm.templateName=surveyData.survey.templateName;
+          //this.surveyForm.templateName=surveyData.survey.templateName;
           this.surveyForm.typeId=surveyData.survey.typeId;
           this.surveyForm.intro=surveyData.survey.intro;
           this.surveyForm.id=surveyData.survey.id;
-          this.surveyForm.templateId=surveyData.survey.id;
+          //this.surveyForm.templateId=surveyData.survey.id;
           this.surveyForm.preVersionMaterialId = (surveyData.survey.preVersionMaterialId?surveyData.survey.preVersionMaterialId:"");
           this.surveyForm.preVersionMaterialRound = (surveyData.survey.preVersionMaterialRound !=null?surveyData.survey.preVersionMaterialRound:"");
+          this.surveyForm.title=surveyData.survey.title;
 
           for(var i in surveyData.qestionAndOption){
             this.surveyForm.questionAnswerJosn[i]={};
@@ -388,7 +406,7 @@
               console.log(this.surveyForm.questionAnswerJosn,arr);
               if(res.data.code==1){
                 this.$message.success(str=='add'?'添加成功':'修改成功');
-                this.$router.push({name:'调研表模板管理'});
+                this.$router.push({name:'调研表发布管理'});
 
               }else{
                 this.$confirm(res.data.msg.msgTrim(), "提示",{
