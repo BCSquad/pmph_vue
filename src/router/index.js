@@ -172,7 +172,7 @@ const materialSurveyPublishManage = () => import('../pages/home/materialSurvey/s
 const materialAddNewModel = () => import('../pages/home/materialSurvey/addNewModel');
 const materialAddNewSurvey = () => import('../pages/home/materialSurvey/addNewSurvey');
 const materialSurveyModeSelect =() => import('../pages/home/materialSurvey/surveyModelSelect');
-
+const materialSurveyMaterialList = () => import('../pages/home/materialSurvey/materialList');
 /**系统日志 */
 const SystemLog = () => import('pages/home/systemLog/systemLog');
 
@@ -497,6 +497,10 @@ export default new Router({
             {path: 'newsurvey', name: '调研表新增', component: materialAddNewSurvey, meta: {authorityId: true}},
 
             {path: 'chooseModel', name: '选择调研表模板', component: materialSurveyModeSelect, meta: {authorityId: true}},
+
+            {path: 'materialList', name: '教材相关调研表', component: materialSurveyMaterialList, meta: {authorityId: true}},
+
+            {path: 'surveyList', name: '其他调研表', component: materialSurveyMaterialList, meta: {authorityId: true}},
 
             {path: 'launch', name: '发起调查', component: launchSurvey, meta: {authorityId: true}},
             {path: 'reissue', name: '补发消息', component: reIssue, meta: {authorityId: true}},

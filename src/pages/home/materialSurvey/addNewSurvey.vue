@@ -349,8 +349,8 @@
           //this.surveyForm.templateName=surveyData.survey.templateName;
           this.surveyForm.typeId=surveyData.survey.typeId;
           this.surveyForm.intro=surveyData.survey.intro;
-          this.surveyForm.id=surveyData.survey.id;
-          //this.surveyForm.templateId=surveyData.survey.id;
+          this.surveyForm.id=surveyData.survey.id?surveyData.survey.id:'';
+          this.surveyForm.templateId=surveyData.survey.templateId;
           this.surveyForm.preVersionMaterialId = (surveyData.survey.preVersionMaterialId?surveyData.survey.preVersionMaterialId:"");
           this.surveyForm.preVersionMaterialRound = (surveyData.survey.preVersionMaterialRound !=null?surveyData.survey.preVersionMaterialRound:"");
           this.surveyForm.title=surveyData.survey.title;
@@ -367,7 +367,7 @@
             let optionIds=surveyData.qestionAndOption[i].optionIdString?surveyData.qestionAndOption[i].optionIdString.split(','):[];
             for(var t in options){
               this.surveyForm.questionAnswerJosn[i].surveyQuestionOptionList.push(
-                {optionContent:options[t],id:optionIds[t]}
+                {optionContent:options[t],id:(optionIds[t]?optionIds[t]:null)}
               )
             }
           }

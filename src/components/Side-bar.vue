@@ -23,7 +23,7 @@
         </template>
         <el-menu-item index="/materialsurvey/setmodel" v-if="isShowSide(52)||isShowSide(53)">调研表模板管理</el-menu-item>
         <el-menu-item index="/materialsurvey/publishManage" v-if="isShowSide(52)||isShowSide(54)">调研表发布管理</el-menu-item>
-        <el-menu-item index="/materialsurvey/statistic" v-if="isShowSide(52)||isShowSide(55)">教材相关调研统计</el-menu-item>
+        <el-menu-item index="/materialsurvey/materialList" v-if="isShowSide(52)||isShowSide(55)">教材相关调研统计</el-menu-item>
         <el-menu-item index="/materialsurvey/statistic" v-if="isShowSide(52)||isShowSide(56)">其他调研统计</el-menu-item>
       </el-submenu>
 
