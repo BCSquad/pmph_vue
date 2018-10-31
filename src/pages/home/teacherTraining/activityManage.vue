@@ -33,7 +33,7 @@
           <p class="link" @click="openPreventDialog(scope.row)">{{scope.row.activityName}}</p>
         </template>
       </el-table-column>
-      <el-table-column label="活动日期" prop="activityDate"  format="yyyy-MM-dd" align="center">
+      <el-table-column label="活动日期" prop="activityDate"   width="120"  format="yyyy-MM-dd" align="center">
         <template scope="scope">
           {{$commonFun.formatDate(scope.row.activityDate,"yyyy-MM-dd")}}
         </template>
@@ -50,7 +50,7 @@
       </el-table-column>
       <el-table-column label="创建人" prop="realname" align="center">
       </el-table-column>
-      <el-table-column label="创建时间" prop="gmtCreate"  align="center">
+      <el-table-column label="创建时间"  width="120" prop="gmtCreate"  align="center">
         <template scope="scope">
           {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
         </template>

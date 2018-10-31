@@ -86,15 +86,15 @@
             </span>
     </el-dialog>
 
-    <el-dialog title="选择资源" :visible.sync="selectSourceVisible" size="small" width="100%">
-      <p class="header_p" style="margin-top: 5px">
+    <el-dialog title="资源选择" :visible.sync="selectSourceVisible" size="small" width="100%">
+      <p class="header_p" style="margin-top: 0px">
         <span>资源名称：</span>
         <el-input class="input" style="width:300px;margin-right:10px;" v-model="selectParams.sourceName"
                   @keyup.enter.native="selectSearch"
                   placeholder="请输入资源名称"></el-input>
         <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="selectSearch()">搜索</el-button>
 
-        <el-button type="primary" style="float:right;" @click="selectConfirm">确认选择</el-button>
+        <el-button type="primary" style="float:right;;margin-right: 10px" @click="selectConfirm">确认选择</el-button>
       </p>
 
       <el-table :data="selectSourceList"

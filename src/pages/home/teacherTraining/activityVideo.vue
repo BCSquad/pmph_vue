@@ -70,15 +70,15 @@
       </video>
     </el-dialog>
 
-    <el-dialog title="选择视频" :visible.sync="selectVideoVisible" size="small" width="100%">
-      <p class="header_p" style="margin-top: 5px">
+    <el-dialog title="视频选择" :visible.sync="selectVideoVisible" size="small" width="100%">
+      <p class="header_p" style="margin-top: 0px">
         <span>视频标题：</span>
         <el-input class="input" style="width:300px;margin-right:10px;" v-model="videoSearch.title"
                   @keyup.enter.native="searchSelect"
                   placeholder="请输入视频标题"></el-input>
         <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="searchSelect()">搜索</el-button>
 
-        <el-button type="primary" style="float:right;" @click="selectConfirm">确认选择</el-button>
+        <el-button type="primary" style="float:right;margin-right: 10px" @click="selectConfirm">确认选择</el-button>
       </p>
 
       <el-table :data="vListData"
