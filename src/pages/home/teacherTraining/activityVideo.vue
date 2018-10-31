@@ -23,7 +23,7 @@
     </p>
 
         <el-table :data="videoListData" border highlight-current-row style="width:100%;margin:10px 0;">
-          <el-table-column prop="index" width="60" label="序号" align="center">
+          <el-table-column prop="index" width="80" label="序号" align="center">
             <template scope="scope">
               {{scope.$index+1}}
             </template>
@@ -47,7 +47,7 @@
             <template scope="scope" align="center">
               <el-button type="text" style="color:#337ab7;" @click="delVideoByid(scope.row)">删除</el-button>
               <a  style="color:#337ab7;margin-right:5px;" :href="videoDownLoad(scope.row)">下载</a>
-              <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')">上移</el-button>
+              <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')" v-if="scope.sort!=0">上移</el-button>
               <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'down')">下移</el-button>
             </template>
           </el-table-column>
@@ -70,15 +70,15 @@
       </video>
     </el-dialog>
 
-    <el-dialog title="选择视频" :visible.sync="selectVideoVisible" size="small" width="100%">
-      <p class="header_p" style="margin-top: 50px">
+    <el-dialog title="视频选择" :visible.sync="selectVideoVisible" size="small" width="100%">
+      <p class="header_p" style="margin-top: 0px">
         <span>视频标题：</span>
         <el-input class="input" style="width:300px;margin-right:10px;" v-model="videoSearch.title"
                   @keyup.enter.native="searchSelect"
                   placeholder="请输入视频标题"></el-input>
         <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="searchSelect()">搜索</el-button>
 
-        <el-button type="primary" style="float:right;" @click="selectConfirm">确认选择</el-button>
+        <el-button type="primary" style="float:right;margin-right: 10px" @click="selectConfirm">确认选择</el-button>
       </p>
 
       <el-table :data="vListData"
@@ -89,7 +89,7 @@
           type="selection"
           width="55">
         </el-table-column>
-        <el-table-column prop="index" label="序号" width="60" align="center">>
+        <el-table-column prop="index" label="序号" width="80" align="center">>
           <template scope="scope">
             {{scope.$index+1}}
           </template>
@@ -129,7 +129,7 @@
 
 
 
-    <el-dialog title="“视频上传" :visible.sync="dialogVisible" size="tiny" width="100%">
+    <el-dialog title="视频上传" :visible.sync="dialogVisible" size="tiny" width="100%">
       <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules"  label-width="100px" >
         <el-form-item label="视频标题：" prop="videoName">
           <el-input v-model="dialogForm.videoName" placeholder="请输入视频标题"></el-input>
