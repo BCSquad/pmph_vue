@@ -1,8 +1,8 @@
 <template>
   <div class="survey_model_set">
     <p class="header_p">
-       <span>调研表名称：</span>
-       <el-input class="input" v-model="searchParams.templateName"  placeholder="请输入调研表名称" @keyup.enter.native="search()"></el-input>
+       <span>模板名称：</span>
+       <el-input class="input" v-model="searchParams.templateName"  placeholder="请输入模板名称" @keyup.enter.native="search()"></el-input>
        <span>创建日期：</span>
        <el-date-picker
             v-model="searchParams.startTime"
@@ -22,7 +22,7 @@
             placeholder="请选择结束日期">
         </el-date-picker>
         <el-button type="primary" icon="search" @click="search()">搜索</el-button>
-        <el-button type="primary"  style="float:right" @click="$router.push({name:'调研表模板新增',params:{type:'add'}})">模板新增</el-button>
+        <el-button type="primary"  style="float:right" @click="$router.push({name:'调研表新增',params:{type:'add'}})">直接新增</el-button>
     </p>
     <el-table
     :data="tableData"
@@ -31,7 +31,7 @@
     class="table-wrapper"
     >
      <el-table-column
-     label="调研表名称"
+     label="模板名称"
      prop="templateName"
      >
      <template scope="scope">
@@ -81,15 +81,6 @@
      >
      <template scope="scope">
        <el-button type="text"  @click="updataTemplate(scope.row.id)">修改</el-button>
-       <span>|</span>
-       <!--<el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
-       <span>|</span>
-       <el-button type="text" @click="$router.push({name:'发起调查',params:{surveyId:scope.row.id,surverData:scope.row}})">发起调查</el-button>
-       <span>|</span>-->
-       <el-button v-if="isAdmin" type="text" @click="deleteSurvey(scope.row.active,scope.row.id)">{{scope.row.active?'作废':'启用'}}</el-button>
-       <!--<span v-if="isAdmin">|</span>-->
-
-       <!--<el-button type="text" @click="showSend(scope.row.id)">查看发送对象</el-button>-->
      </template>
      </el-table-column>
     </el-table>
@@ -107,25 +98,6 @@
       </el-pagination>
     </div>
 
-    <!--查看发送对象-->
-    <el-dialog title="已发送对象"  :visible.sync="showSendVisible">
-      <el-table :data="sendTable" border >
-        <el-table-column property="orgName" label="机构名称"></el-table-column>
-        <el-table-column property="username" label="管理员姓名" ></el-table-column>
-        <el-table-column property="handphone" label="手机"></el-table-column>
-      </el-table>
-      <el-pagination
-        class="pull-right marginT10 marginB10"
-        v-if="sendTotal>sendPageSize"
-        @size-change="sendSizeChange"
-        @current-change="sendCurrentChange"
-        :current-page="sendPageNumber"
-        :page-sizes="[10,20,30,50]"
-        :page-size="sendPageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="sendTotal">
-      </el-pagination>
-    </el-dialog>
 
   </div>
 </template>
@@ -187,47 +159,11 @@
             }).then((res)=>{
                 console.log(res);
                 if(res.data.code==1){
-                   this.$router.push({name:'调研表模板新增',params:{surveryData:res.data.data,type:str?str:''}});
+                   this.$router.push({name:'调研表新增',params:{surveryData:res.data.data,type:str?str:''}});
                 }
             })
            },
-          deleteSurvey(oriActive,surveyId){
-            let _this = this;
-            this.$confirm("确定"+(oriActive?"作废":"启用")+"选中模板吗?", "提示", {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              type: "warning"
-            })
-              .then(() => {
-                _this.$axios.get('/pmpheep/materialSurvey/template/switchActive',{
-                  params:{
-                    isActive:!oriActive,
-                    templateId:surveyId
-                  }
-                }).then((res)=>{
-                  console.log(res);
-                  if(res.data.code==1){
-                    _this.$message.success("操作成功！");
-                    _this.getSurveyList();
-                  }else{
-                    _this.$confirm(res.data.msg.msgTrim(), "提示",{
-                      confirmButtonText: "确定",
-                      cancelButtonText: "取消",
-                      showCancelButton: false,
-                      type: "error"
-                    });
-                  }
-                })
 
-
-
-              })
-              .catch(() => {});
-
-
-
-
-          },
             startDateChange(val){
              this.searchParams.startTime=val;
             },
@@ -244,32 +180,6 @@
                   this.searchParams.pageNumber=val;
               this.getSurveyList();
             },
-          /**
-           * 查看发送对象
-           */
-          showSend(id){
-            this.showSendVisible = true;
-            this.$axios.get('/pmpheep/survey/send/org',{
-              params:{
-                surveyId: id,
-                pageSize: this.sendPageSize,
-                pageNumber: this.sendPageNumber
-              }
-            }).then(response => {
-              let res = response.data;
-              if (res.code == 1) {
-                this.sendTotal = res.data.total;
-                this.sendTable = res.data.rows;
-              }
-            }).catch(error => {
-              this.$confirm('请求错误请稍后再试！', "提示",{
-              	confirmButtonText: "确定",
-              	cancelButtonText: "取消",
-              	showCancelButton: false,
-              	type: "error"
-              });
-            })
-          },
           /* 分页改变 */
           sendSizeChange(val){
             this.sendPageSize=val;
