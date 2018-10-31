@@ -43,7 +43,7 @@
           {{scope.row.isSetTop==0?'否':'是'}}
         </template>
       </el-table-column>
-      <el-table-column label="状态" prop="status"  width="120"  align="center">
+      <el-table-column label="状态" prop="status"  width="100"  align="center">
         <template scope="scope">
           {{scope.row.status==0?'已暂存':(scope.row.status==1?'已发布':'已撤回')}}
         </template>
@@ -55,7 +55,7 @@
           {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
         </template>
       </el-table-column>
-      <el-table-column label="操作"  header-align="center" align="center">
+      <el-table-column label="操作"  width="180" header-align="center" align="center">
         <template scope="scope">
           <el-button type="text" style="color:#337ab7;" @click="editActivity(scope.row)">修改</el-button>
           <a  style="color:#337ab7;font-size: 18px" >|</a>
