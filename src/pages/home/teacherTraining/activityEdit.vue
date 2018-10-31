@@ -339,7 +339,6 @@
         } else {
           this.activitySubmit(this.formData.status);
         }
-
         this.$router.push({
           name: '视频列表',
           params: this.formData,
@@ -415,6 +414,10 @@
                 .then(res => {
                   console.log(res);
                   if (res.data.code == 1) {
+                    if(res.data.data.code==2){
+                      this.$message.error("活动名称重复");
+                      return;
+                    }
                     switch (num) {
                       case 0:
                         this.$message.success("暂存成功");
@@ -456,6 +459,8 @@
                       break;
                   }
                   this.$router.push({name: this.routerName});
+                }else if(res.data.code == 2){
+                  alert(1);
                 } else {
                   this.$confirm(res.data.msg, "提示", {
                     confirmButtonText: "确定",

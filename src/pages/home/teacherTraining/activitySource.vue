@@ -59,7 +59,7 @@
         :total="pageTotal">
       </el-pagination>
     </div>
-    <el-dialog title="资源上传" :visible.sync="dialogVisible" size="tiny" width="100%">
+    <el-dialog class='upload_dialog' title="资源上传" :visible.sync="dialogVisible" size="tiny" width="100%">
       <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules" label-width="100px">
 
         <el-form-item label="资源名称：" required >
@@ -553,5 +553,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .my-upload-list__item[data-v-5749c197] {
+
+    font-size: 14px;
+    color: #48576a;
+    line-height: 1.8;
+    width: 100%;
+
+  }
+   .upload_dialog {
+    min-width: 660px;
   }
 </style>
