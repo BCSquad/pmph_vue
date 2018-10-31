@@ -97,7 +97,8 @@
         <el-button type="primary" style="float:right;;margin-right: 10px" @click="selectConfirm">确认选择</el-button>
       </p>
 
-      <el-table :data="selectSourceList"
+      <el-table  ref="multipleTable"
+        :data="selectSourceList"
                 border highlight-current-row
                 @selection-change="handleSelectionChange">
                 style="width:100%;margin:10px 0;">
@@ -289,6 +290,10 @@
             console.log(res);
             if (res.data.code == 1) {
               this.sourceChainList=res.data.data;
+              this.sourceChainList.forEach(i => {
+                this.$refs.multipleTable.toggleRowSelection(this.selectSourceList.find(d => parseInt(d.id) === parseInt(i.activitySourceId)), true)  // 设置默认选中
+              })
+
             }
           })
 
@@ -306,8 +311,10 @@
             console.log(res);
             if (res.data.code == 1) {
               this.selectSourceList = res.data.data.rows;
+              this.searchChain();
               this.sourcepageTotal = res.data.data.total;
               console.log(tableData.toString());
+
             }
           })
       },
