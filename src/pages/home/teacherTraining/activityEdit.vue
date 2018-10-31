@@ -154,7 +154,7 @@
     </el-dialog>
 
     <el-dialog
-      title="选择快报"
+      title="选择信息快报"
       :visible.sync="infoExpressDialogVisible"
       class='material_dialog'
       size="small"

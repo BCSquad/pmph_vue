@@ -1,8 +1,8 @@
 <template>
   <div class="survey_model_set">
     <p class="header_p">
-       <span>调查问卷名称：</span>
-       <el-input class="input" v-model="searchParams.title"  placeholder="请输入调查问卷名称" @keyup.enter.native="search()"></el-input>
+       <span>调研表名称：</span>
+       <el-input class="input" v-model="searchParams.title"  placeholder="请输入调研表名称" @keyup.enter.native="search()"></el-input>
        <span>创建日期：</span>
        <el-date-picker
             v-model="searchParams.startTime"
@@ -22,7 +22,8 @@
             placeholder="请选择结束日期">
         </el-date-picker>
         <el-button type="primary" icon="search" @click="search()">搜索</el-button>
-        <el-button type="primary"  style="float:right" @click="$router.push({name:'问卷模板新增',params:{type:'add'}})">添加问卷</el-button>
+
+        <el-button type="primary"  style="float:right" @click="$router.push({name:'选择调研表模板',params:{type:'add'}})">添加问卷</el-button>
     </p>
     <el-table
     :data="tableData"
@@ -31,7 +32,7 @@
     class="table-wrapper"
     >
      <el-table-column
-     label="调查问卷名称"
+     label="调研表名称"
      prop="title"
      >
      <template scope="scope">
@@ -39,13 +40,13 @@
      </template>
      </el-table-column>
       <el-table-column
-     label="调查对象"
+     label="调研对象"
      prop="surveyName"
-     width="100"
+     width="150"
      >
      </el-table-column>
      <el-table-column
-     label="问卷制作人"
+     label="发布人"
      prop="username"
      width="110"
      >
@@ -64,21 +65,32 @@
          {{$commonFun.formatDate(scope.row.gmtCreate,'yyyy-MM-dd')}}
          </template>
      </el-table-column>
+      <el-table-column
+        label="状态"
+        prop="status"
+        width="110"
+      >
+        <template scope="scope">
+          {{scope.row.status == 1?'已发布':(scope.row.status == 0?'未发布':(scope.row.status == 2?'已撤回':'未发布'))}}
+        </template>
+      </el-table-column>
      <el-table-column
       label="操作"
-      :width="isAdmin?350:300"
+      width="120"
      >
+      <!--:width="isAdmin?350:300"
+     >-->
      <template scope="scope">
-       <el-button type="text" :disabled="scope.row.status!=0"  @click="updataTemplate(scope.row.templateId,scope.row.id)">修改</el-button>
+       <el-button type="text"  @click="updataTemplate(scope.row.templateId,scope.row.id)">修改</el-button>
        <span>|</span>
        <!--<el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
        <span>|</span>-->
-       <el-button type="text" @click="$router.push({name:'发起调查',params:{surveyId:scope.row.id,surverData:scope.row}})">发起调查</el-button>
-       <span>|</span>
-       <el-button v-if="isAdmin" type="text" @click="deleteSurvey(scope.row.templateId,scope.row.id)">删除</el-button>
-       <span v-if="isAdmin">|</span>
+       <!--<el-button type="text" @click="$router.push({name:'发起调查',params:{surveyId:scope.row.id,surverData:scope.row}})">发起调查</el-button>
+       <span>|</span>-->
+       <el-button v-if="isAdmin" type="text" @click="deleteSurvey(scope.row.status,scope.row.id)">{{scope.row.status!=1?'发布':'撤回'}}</el-button>
+       <!--<span v-if="isAdmin">|</span>-->
        <!--<el-button type="text" @click="$router.push({name:'问卷模板新增',params:{type:'add'}})">添加问卷</el-button>-->
-       <el-button type="text" @click="showSend(scope.row.id)">查看发送对象</el-button>
+       <!--<el-button type="text" @click="showSend(scope.row.id)">查看发送对象</el-button>-->
      </template>
      </el-table-column>
     </el-table>
@@ -177,23 +189,24 @@
                 }
             })
            },
-          deleteSurvey(templateId,surveyId){
+          deleteSurvey(oldStatus,surveyId){
             let _this = this;
-            this.$confirm("确定删除选中问卷吗?", "提示", {
+            let status = oldStatus!=1?1:2;
+            this.$confirm("确定"+(oldStatus!=1?'发布':'撤回')+"选中调研表吗?", "提示", {
               confirmButtonText: "确定",
               cancelButtonText: "取消",
               type: "warning"
             })
               .then(() => {
-                _this.$axios.delete('/pmpheep/survey/'+surveyId+'/remove',{
+                _this.$axios.get('/pmpheep/materialSurvey/switchActive',{
                   params:{
-                    templateId:templateId,
-                    surveyId:surveyId
+                    id:surveyId,
+                    status:status
                   }
                 }).then((res)=>{
                   console.log(res);
                   if(res.data.code==1){
-                    _this.$message.success("删除成功！");
+                    _this.$message.success("操作成功！");
                     _this.getSurveyList();
                   }else{
                     _this.$confirm(res.data.msg.msgTrim(), "提示",{
