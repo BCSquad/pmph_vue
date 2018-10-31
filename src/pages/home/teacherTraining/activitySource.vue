@@ -72,9 +72,10 @@
               :on-remove="uploadFileRemove"
               :before-upload="beforeAvatarUpload"
               :file-list="fileList">
-                  <span>
-              <i class="fa fa-paperclip fa-lg"></i> 选择文件</span>
-              <div slot="tip" class="el-upload__tip" style="line-height:1;">文件大小不超过200M</div>
+
+              <el-input></el-input >
+              <el-button style="float: right;" type="primary" >选择文件</el-button>
+              <div slot="tip" class="el-upload__tip"  style="line-height:1;">文件大小不超过200M</div>
             </my-upload>
           </div>
         </el-form-item>
@@ -149,10 +150,12 @@
         getActivityUrl:'/pmpheep/activity/getActivity/',
         deleteSourceUrl:'/pmpheep/activitySource/deleteSourceById/',
         updateSortUrl: "/pmpheep/activitySource/updateSort",
+        getSourceChainUrl: "/pmpheep/activitySource/getSourceChain",
         dialogVisible: false,
         selectSourceVisible: false,
         sourceListData: [],
         selectSourceList: [],
+        sourceChainList:[],
         pageTotal:20,
         editData:'',
         searchParams: {
@@ -274,8 +277,27 @@
       },
       selectSource() {
         this.selectSourceVisible = true;
-        this.selectSearch()
+        this.selectSearch();
+        this.searchChain();
       },
+      searchChain(){
+        this.$axios.get(this.getSourceChainUrl, {
+          params: {
+            id:this.editData.id
+          }
+        })
+          .then((res) => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.sourceChainList=res.data.data;
+            }
+          })
+
+
+      },
+
+
+
 
       selectSearch(){
         this.$axios.get(this.getSourceListUrl, {

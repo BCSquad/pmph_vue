@@ -38,7 +38,7 @@
           {{$commonFun.formatDate(scope.row.activityDate,"yyyy-MM-dd")}}
         </template>
       </el-table-column>
-      <el-table-column label="是否置顶"  prop="isSetTop" align="center">
+      <el-table-column label="是否置顶"  width="120"   prop="isSetTop" align="center">
         <template scope="scope">
           {{scope.row.isSetTop==0?'否':'是'}}
         </template>
@@ -48,7 +48,7 @@
           {{scope.row.status==0?'已暂存':(scope.row.status==1?'已发布':'已撤回')}}
         </template>
       </el-table-column>
-      <el-table-column label="创建人" prop="realname" align="center">
+      <el-table-column label="创建人"  width="150"  prop="realname" align="center">
       </el-table-column>
       <el-table-column label="创建时间"  width="120" prop="gmtCreate"  align="center">
         <template scope="scope">
@@ -245,7 +245,6 @@
               this.showPreventDialog = true;
             }
           });
-
       }
     }
   }

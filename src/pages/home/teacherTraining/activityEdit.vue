@@ -28,7 +28,8 @@
             placeholder=" 选择日期"
             value-format="timestamp">
           </el-date-picker>
-          <div v-if="formData.status!=1"  style="float: right;position: relative;width: 400px;margin-right: 50px;margin-top: -60px;">
+          <div v-if="formData.status!=1"
+               style="float: right;position: relative;width: 400px;margin-right: 50px;margin-top: -60px;">
             <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
             <el-button class="but" type="primary" @click="CheckSubmit(0)">暂存</el-button>
             <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
@@ -40,7 +41,8 @@
             </el-button>
           </div>
 
-          <div  v-if="formData.status==1" style="float: right;position: relative;width: 300px;margin-right: 50px;margin-top: -60px;">
+          <div v-if="formData.status==1"
+               style="float: right;position: relative;width: 300px;margin-right: 50px;margin-top: -60px;">
             <el-button class="but" type="primary" @click="openPreventDialog">预览</el-button>
             <el-button class="but" type="primary" @click="CheckSubmit(1)">发布</el-button>
             <el-button class="but" type="primary" style="background-color: #F34141"
@@ -133,10 +135,17 @@
         <el-button type="primary" icon="search" @click="selectmaterial">搜索</el-button>
         <el-button type="primary" @click="confirmMaterial" style="float: right">确认选择</el-button>
       </p>
-      <el-table :data="materialListData" border highlight-current-row
+      <el-table ref="multipleTable"
+                :data="materialListData" border highlight-current-row
                 @current-change="materialSlectRow"
-                style="width:100%;margin:10px 0;">
-        <el-table-column prop="materialName" label="教材名称"  header-align="center" align="left">
+                @row-click="clickRow"
+                @selection-change="handleSelectionChange">
+        style="width:100%;margin:10px 0;">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column prop="materialName" label="教材名称" header-align="center" align="left">
         </el-table-column>
       </el-table>
       <div class="pagination-wrapper">
@@ -173,9 +182,9 @@
             {{scope.$index+1}}
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="信息快报标题"  header-align="center" align="left">
+        <el-table-column prop="title" label="信息快报标题" header-align="center" align="left">
         </el-table-column>
-        <el-table-column prop="materialName" label="所属教材"  header-align="center" align="left">
+        <el-table-column prop="materialName" label="所属教材" header-align="center" align="left">
         </el-table-column>
         <el-table-column prop="gmtCreate" width="120" label="创建时间" align="center">
           <template scope="scope">
@@ -210,7 +219,7 @@
         editLettersUrl: '/pmpheep/cms/letters/update',  //修改信息快报
         getLettersList: '/pmpheep/activity/getLetters',  //获取信息快报列表
         getMaterialistList: "/pmpheep/activity/getMaterialist", //获取教材列表
-
+        nameflag:true,
         formData: {
           activityName: "",
           activityDate: '',
@@ -305,6 +314,19 @@
 
     },
     methods: {
+      clickRow(row) {
+        this.$refs.multipleTable.clearSelection();
+        this.$refs.multipleTable.toggleRowSelection(row)
+      },
+
+      handleSelectionChange(rows) {
+        if (rows.length > 1) {
+          this.$refs.multipleTable.clearSelection();
+          this.$refs.multipleTable.setCurrentRow(rows[rows.length - 1]);
+        } else {
+          this.$refs.multipleTable.setCurrentRow(rows[0]);
+        }
+      },
 
       /* 视频维护 维护之前前先暂存*/
       videoManage() {
@@ -323,7 +345,6 @@
           params: this.formData,
           query: {columnId: 1, type: 'toVideo', isShowCover: true}
         })
-
       },
 
       /* 资源维护之前前先暂存*/
@@ -360,9 +381,9 @@
           type: ''
         };
       },
+
       activitySubmit(num) {
         this.formData.content = this.$refs.editor.getContent();
-
         if (this.formData.activityDate) {
           if (this.formData.activityDate.toString().indexOf('gmt') != 0) {
             this.formData.activityDate = this.formData.activityDate.getTime();
@@ -398,10 +419,12 @@
                       case 0:
                         this.$message.success("暂存成功");
                         this.formData.id = res.data.data.id;
+                        this.formData.activityDescCmsId = res.data.data.activityDescCmsId;
                         this.isEditContent = true;
                         break;
                       case 1:
                         this.$message.success("发布成功");
+
                         this.$router.push({name: '活动管理', query: {columnId: 1, type: 'activityList', isShowCover: true}})
                         break;
                       default:
@@ -423,6 +446,7 @@
                   switch (num) {
                     case 0:
                       this.$message.success("暂存成功");
+                      this.isEditContent = true;
                       break;
                     case 1:
                       this.$message.success("发布成功");
