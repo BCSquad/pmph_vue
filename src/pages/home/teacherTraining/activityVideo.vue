@@ -81,7 +81,8 @@
         <el-button type="primary" style="float:right;margin-right: 10px" @click="selectConfirm">确认选择</el-button>
       </p>
 
-      <el-table :data="vListData"
+      <el-table ref="multipleTable"
+        :data="vListData"
                 border highlight-current-row
                 @selection-change="handleSelectionChange">
         style="width:100%;margin:10px 0;">
@@ -186,6 +187,7 @@
         addNewVideoUrl:'/pmpheep/activityVideo/addActivityVideo',   //添加提交视频url
         transCodingUrl:"/v/query",   //查询视频转码地址
         updateSortUrl:'/pmpheep/activityVideo/updateSort',  //视频列表url
+        getVideoChainUrl: "/pmpheep/activityVideo/getVideoChain",
         videoListData:[],
         bookDialogVisible:false,
         isShowVideoPlayer:false,
@@ -193,6 +195,7 @@
         examDialogVisible:false,
         isUploadVideo:false,
         selectVideoVisible:false,
+        VideoChainList:[],
         dialogForm:{
           videoName:'',
           videoList:[],
@@ -306,9 +309,29 @@
       },
       selectVideo() {
         this.selectVideoVisible = true;
-        this.searchSelect()
+        this.searchSelect();
+        this.searchChain();
+      },
+      searchChain(){
+        this.$axios.get(this.getVideoChainUrl, {
+          params: {
+            id:this.editData.id
+          }
+        })
+          .then((res) => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.VideoChainList=res.data.data;
+              this.VideoChainList.forEach(i => {
+                this.$refs.multipleTable.toggleRowSelection(this.vListData.find(d => parseInt(d.id) === parseInt(i.activityVideoId)), true)  // 设置默认选中
+              })
+
+            }
+          })
+
 
       },
+
       searchSelect(){
         this.$axios.get(this.videoListUrl,{
           params:this.videoSearch
@@ -317,6 +340,7 @@
             console.log(res);
             if(res.data.code==1){
               this.vListData=res.data.data.rows;
+              this.searchChain();
               this.videopageTotal=res.data.data.total;
             }
           })
@@ -745,4 +769,4 @@
     vertical-align: bottom;
     min-height:300px;
   }
-</style>
+</style
