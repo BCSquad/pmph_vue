@@ -72,10 +72,9 @@
               :on-remove="uploadFileRemove"
               :before-upload="beforeAvatarUpload"
               :file-list="fileList">
-
-              <el-input></el-input >
-              <el-button style="float: right;" type="primary" >选择文件</el-button>
-              <div slot="tip" class="el-upload__tip"  style="line-height:1;">文件大小不超过200M</div>
+                  <span>
+              <i class="fa fa-paperclip fa-lg"></i> 选择文件</span>
+              <div slot="tip" class="el-upload__tip" style="line-height:1;">文件大小不超过200M</div>
             </my-upload>
           </div>
         </el-form-item>
