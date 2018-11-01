@@ -11,8 +11,8 @@
 
       <div class="bottom_tab_content">
       <p class="header_p">
-        <span>调研表名称：</span>
-        <el-input class="input" v-model="searchParams.realname"  placeholder="请输入调研表名称" @keyup.enter.native="search()"></el-input>
+        <span>提交人姓名：</span>
+        <el-input class="input" v-model="searchParams.realname"  placeholder="请输入提交人姓名" @keyup.enter.native="search()"></el-input>
 
         <el-button type="primary" icon="search" @click="search()">搜索</el-button>
 
@@ -24,48 +24,42 @@
         class="table-wrapper"
       >
         <el-table-column
-          label="调研表名称"
+          label="提交人姓名"
           prop="realname"
+          width="110"
         >
           <template scope="scope">
             <el-button type="text" @click="updataTemplate(scope.row.templateId,scope.row.id,'check')">{{scope.row.realname}}</el-button>
           </template>
         </el-table-column>
         <el-table-column
-          label="调研对象"
-          prop="surveyName"
+          label="用户类别"
+          prop="userTypeName"
           width="150"
         >
         </el-table-column>
-        <el-table-column
-          label="发布人"
-          prop="username"
-          width="110"
-        >
-        </el-table-column>
+
         <!--<el-table-column
         label="问卷概述"
         prop="intro"
         >
         </el-table-column>-->
         <el-table-column
-          label="创建日期"
-          prop="gmtCreat"
+          label="填写时间"
+          prop="submitTime"
           width="120"
         >
           <template scope="scope">
-            {{$commonFun.formatDate(scope.row.gmtCreate,'yyyy-MM-dd')}}
+            {{$commonFun.formatDate(scope.row.submitTime,'yyyy-MM-dd')}}
           </template>
         </el-table-column>
         <el-table-column
-          label="状态"
-          prop="status"
-          width="110"
+          label="工作单位"
+          prop="orgName"
+
         >
-          <template scope="scope">
-            {{scope.row.status == 1?'已发布':(scope.row.status == 0?'未发布':(scope.row.status == 2?'已撤回':'未发布'))}}
-          </template>
         </el-table-column>
+
         <el-table-column
           label="操作"
           width="120"
@@ -73,14 +67,8 @@
           <!--:width="isAdmin?350:300"
          >-->
           <template scope="scope">
-            <el-button type="text"  @click="toAnswerDetail(scope.row.id,scope.row.title)">查看结果</el-button>
-            <!--<el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
-            <span>|</span>-->
-            <!--<el-button type="text" @click="$router.push({name:'发起调查',params:{surveyId:scope.row.id,surverData:scope.row}})">发起调查</el-button>
-            <span>|</span>-->
-            <!--<span v-if="isAdmin">|</span>-->
-            <!--<el-button type="text" @click="$router.push({name:'问卷模板新增',params:{type:'add'}})">添加问卷</el-button>-->
-            <!--<el-button type="text" @click="showSend(scope.row.id)">查看发送对象</el-button>-->
+            <el-button type="text"  @click="toAnswerDetail(scope.row.surveyId,scope.row.userId,scope.row.userType,title)">查看结果</el-button>
+
           </template>
         </el-table-column>
       </el-table>
@@ -150,18 +138,19 @@
               this.getSurveyList();
             },
            /* 查看调研表填写详情 */
-           toAnswerDetail(sid,title){
-            this.$axios.get(this.toAnswerListUrl,{
+           toAnswerDetail(sid,userId,userType,title){
+             alert("todo:跳转到查看详情界面"+" sid: "+sid+" userId: "+userId+" userType: "+userType+" title: "+title);
+            /*this.$axios.get(this.toAnswerListUrl,{
                 params:{
                   surveyId:sid
                 }
             }).then((res)=>{
                 console.log(res);
 
-                /*if(res.data.code==1){
+                if(res.data.code==1){
                    this.$router.push({name:'调研表新增',params:{surveryData:res.data.data,type:str?str:''}});
-                }*/
-            })
+                }
+            })*/
            },
 
 
