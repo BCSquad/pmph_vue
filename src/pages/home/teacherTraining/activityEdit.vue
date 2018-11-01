@@ -130,7 +130,7 @@
       class='material_dialog'
       size="small"
     >
-      <p class="header_p"><span>教材名称：</span>
+      <p class="header_p" style="margin-bottom: 10px"><span>教材名称：</span>
         <el-input class="input" v-model="materialParams.materialName" placeholder="请输入教材名称"></el-input>
         <el-button type="primary" icon="search" @click="selectmaterial">搜索</el-button>
         <el-button type="primary" @click="confirmMaterial" style="float: right">确认选择</el-button>
@@ -149,7 +149,7 @@
         </el-table-column>
       </el-table>
       <div class="pagination-wrapper">
-        <el-pagination
+        <el-pagination  style="margin-top:10px;margin-bottom: 5px"
           v-if="materialTotal>materialParams.pageSize"
           @size-change="materialSizeChange"
           @current-change="materialCurrentChange"
@@ -173,11 +173,19 @@
         <el-button type="primary" icon="search" @click="selectInfoExpress">搜索</el-button>
         <el-button type="primary" @click="confirmInfoExpress" style="float: right">确认选择</el-button>
       </p>
-      <el-table :data="infoExpressListData"
+      <el-table ref="multipleTable"
+                :data="infoExpressListData"
                 border highlight-current-row
                 @current-change="infoExpressSlectRow"
+                @row-click="clickRow"
+                @selection-change="handleSelectionChange"
                 style="width:100%;margin:10px 0;">
-        <el-table-column prop="index" label="序号" width="55px" align="center">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column prop="index" label="序号" width="75px" align="center">
+
           <template scope="scope">
             {{scope.$index+1}}
           </template>
@@ -339,7 +347,6 @@
         } else {
           this.activitySubmit(this.formData.status);
         }
-
         this.$router.push({
           name: '视频列表',
           params: this.formData,
@@ -415,6 +422,10 @@
                 .then(res => {
                   console.log(res);
                   if (res.data.code == 1) {
+                    if(res.data.data.code==2){
+                      this.$message.error("已存在相同的活动名称");
+                      return;
+                    }
                     switch (num) {
                       case 0:
                         this.$message.success("暂存成功");
@@ -456,6 +467,8 @@
                       break;
                   }
                   this.$router.push({name: this.routerName});
+                }else if(res.data.code == 2){
+                  alert(1);
                 } else {
                   this.$confirm(res.data.msg, "提示", {
                     confirmButtonText: "确定",

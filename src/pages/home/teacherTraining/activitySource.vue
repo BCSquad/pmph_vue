@@ -38,9 +38,12 @@
       </el-table-column>
       <el-table-column prop="infoExpressName" label="操作" align="center">
         <template scope="scope">
-          <el-button type="text" style="color:#337ab7;" @click="delSourceByid(scope.row)">删除</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="delChain(scope.row)">删除</el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="downFile(scope.row)">下载</el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')">上移</el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'down')">下移</el-button>
 
         </template>
@@ -59,7 +62,7 @@
         :total="pageTotal">
       </el-pagination>
     </div>
-    <el-dialog title="资源上传" :visible.sync="dialogVisible" size="tiny" width="100%">
+    <el-dialog class='upload_dialog' title="资源上传" :visible.sync="dialogVisible" size="tiny" width="100%">
       <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules" label-width="100px">
 
         <el-form-item label="资源名称：" required >
@@ -151,6 +154,8 @@
         deleteSourceUrl:'/pmpheep/activitySource/deleteSourceById/',
         updateSortUrl: "/pmpheep/activitySource/updateSort",
         getSourceChainUrl: "/pmpheep/activitySource/getSourceChain",
+        getChainListUrl: "/pmpheep/activitySource/getChainList",
+        deleteChainSourceUrl:'/pmpheep/activitySource/delChainSourceByid',
         dialogVisible: false,
         selectSourceVisible: false,
         sourceListData: [],
@@ -224,6 +229,26 @@
     },
     methods: {
 
+      delChain(obj){
+          this.$axios
+            .get(this.deleteChainSourceUrl, {
+              params:{
+                activityId:this.editData.id,
+                activitySourceId:obj.id
+              }
+            })
+            .then(res => {
+              console.log(res);
+              if (res.data.code == 1) {
+                this.$message.success("删除成功");
+                this.getList();
+              }else{
+                this.$message.error("删除失败");
+                this.getList();
+
+              }
+            })
+      },
 
       updateSort(row,type){
         this.$axios.get(this.updateSortUrl, {
@@ -263,7 +288,7 @@
               if (res.data.code == 1) {
                 this.selectSourceVisible=false;
                 this.$message.success("资源关联成功");
-                this.backEditActivity();
+                this.getList();
               }
             })
         }else{
@@ -402,11 +427,18 @@
           this.$message.error("文件不能为空");
           return;
         }
+        this.dialogForm.activityId=this.editData.id;
         this.$axios
           .post(this.newSourceUrl, this.$commonFun.initPostData(this.dialogForm))
           .then(res => {
             console.log(res);
             if (res.data.code == 1) {
+              if(res.data.data.code==2){
+                this.$message.error("已存在相同的文件名称");
+                return;
+
+              }
+
               this.$message.success("上传资源成功");
               this.dialogVisible = false;
               this.getList();
@@ -443,7 +475,8 @@
       },
       /* 获取视频列表 */
       getList() {
-        this.$axios.get(this.getSourceListUrl, {
+        this.searchParams.activityId=this.editData.id;
+        this.$axios.get(this.getChainListUrl, {
           params: this.searchParams
         })
           .then((res) => {
@@ -554,4 +587,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-</style>
+  .my-upload-list__item{
+    font-size: 14px;
+    color: #48576a;
+    line-height: 1.8;
+    width: 100%;
+
+  }
+   .upload_dialog {
+    min-width: 660px;
+  }
+</styl

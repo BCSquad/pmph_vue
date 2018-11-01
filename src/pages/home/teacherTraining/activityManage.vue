@@ -28,7 +28,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="活动名称" width="300" prop="activityName" header-align="center" align="left">
+      <el-table-column label="活动名称"  prop="activityName" header-align="center" align="left">
         <template scope="scope">
           <p class="link" @click="openPreventDialog(scope.row)">{{scope.row.activityName}}</p>
         </template>
@@ -43,19 +43,19 @@
           {{scope.row.isSetTop==0?'否':'是'}}
         </template>
       </el-table-column>
-      <el-table-column label="状态" prop="status"   align="center">
+      <el-table-column label="状态" prop="status"  width="100"  align="center">
         <template scope="scope">
           {{scope.row.status==0?'已暂存':(scope.row.status==1?'已发布':'已撤回')}}
         </template>
       </el-table-column>
-      <el-table-column label="创建人"  width="150"  prop="realname" align="center">
+      <el-table-column label="创建人"  width="120"  prop="realname" align="center">
       </el-table-column>
-      <el-table-column label="创建时间"  width="120" prop="gmtCreate"  align="center">
+      <el-table-column label="创建时间"  width="110" prop="gmtCreate"  align="center">
         <template scope="scope">
           {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="250" header-align="center">
+      <el-table-column label="操作"  width="180" header-align="center" align="center">
         <template scope="scope">
           <el-button type="text" style="color:#337ab7;" @click="editActivity(scope.row)">修改</el-button>
           <a  style="color:#337ab7;font-size: 18px" >|</a>
