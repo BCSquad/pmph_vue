@@ -15,6 +15,18 @@
         <i class="fa fa-book fa-fw"></i>
         <span slot="title">教材申报</span>
       </el-menu-item>
+
+      <el-submenu index="/materialsurvey" v-if="isShowSide(52)||isShowSide(53)||isShowSide(54)||isShowSide(55)||isShowSide(56)">
+        <template slot="title">
+          <i class="iconfont icon-tiaoyanwenjuan"></i>
+          <span slot="title">调研表</span>
+        </template>
+        <el-menu-item index="/materialsurvey/setmodel" v-if="isShowSide(52)||isShowSide(53)">调研表模板管理</el-menu-item>
+        <el-menu-item index="/materialsurvey/publishManage" v-if="isShowSide(52)||isShowSide(54)">调研表发布管理</el-menu-item>
+        <el-menu-item index="/materialsurvey/materialList" v-if="isShowSide(52)||isShowSide(55)">教材相关调研统计</el-menu-item>
+        <el-menu-item index="/materialsurvey/surveyList" v-if="isShowSide(52)||isShowSide(56)">其他调研统计</el-menu-item>
+      </el-submenu>
+
       <el-submenu index="/clinicalDecisionRouter" v-if="isShowSide(44)||isShowSide(45)||isShowSide(46)||isShowSide(47)||isShowSide(48)||isShowSide(49)||isShowSide(50)||isShowSide(51)">
         <template slot="title">
           <i class="iconfont icon-linchuangjuecetubiao"></i>
@@ -37,7 +49,15 @@
         <span slot="title">系统消息</span>
       </el-menu-item>
 
-      <el-submenu index="/content" v-if="isShowSide(5)||isShowSide(15)||isShowSide(16)||isShowSide(17)||isShowSide(18)">
+      <el-submenu index="/activity" v-if="isShowSide(57)||isShowSide(58)||isShowSide(59)">
+        <template slot="title">
+          <i class="fa  fa-file-text fa-fw"></i>
+          <span slot="title">师资培训</span>
+        </template>
+        <el-menu-item index="/activity/activityList" v-if="isShowSide(57)||isShowSide(58)">活动管理</el-menu-item>
+      </el-submenu>
+
+      <el-submenu index="/content" v-if="isShowSide(5)||isShowSide(15)||isShowSide(16)||isShowSide(17)||isShowSide(18)||isShowSide(58)||isShowSide(57)">
         <template slot="title">
           <i class="fa  fa-file-text fa-fw"></i>
           <span slot="title">内容管理</span>

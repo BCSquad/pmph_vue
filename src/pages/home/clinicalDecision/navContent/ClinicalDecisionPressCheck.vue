@@ -640,7 +640,7 @@
           })
       },
       exportWordProgress(id){
-        var timeout = 3*60*1000;//设置3分钟超时
+        var timeout = 6*60*1000;//设置3分钟超时
         var useTime = 0;
         this.handleExportWordtimer = setInterval(()=>{
           useTime+=1500;

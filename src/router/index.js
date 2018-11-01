@@ -87,6 +87,13 @@ import MyMessageRouter from 'pages/home/myMessage/MessageRouter';
 
 const MyMessageList = () => import('pages/home/myMessage/MessageList')
 const MyMessageDetails = () => import('pages/home/myMessage/MessageDetails')
+/*师资培训*/
+import ActivityRouter from '../pages/home/teacherTraining/activityRouter'
+const activityManager = () => import('../pages/home/teacherTraining/activityManage')
+const activityEdit = () => import('../pages/home/teacherTraining/activityEdit')
+const activityVideo = () => import('../pages/home/teacherTraining/activityVideo')
+const activitySource = () => import('../pages/home/teacherTraining/activitySource')
+
 /* 内容管理 */
 import ContentRouter from '../pages/home/contentManage/contentRouter'
 
@@ -158,6 +165,16 @@ const surveryResultStatistic = () => import('../pages/home/questionSurvey/survey
 const surveryResultDetail = () => import('../pages/home/questionSurvey/surveyResultDetail')
 const launchSurvey = () => import('../pages/home/questionSurvey/launchSurvey')
 const recoveryResult = () => import('../pages/home/questionSurvey/recoveryResult')
+
+/*调研表*/
+const materialSurveyModelSet = () => import('../pages/home/materialSurvey/surveyModelSet');
+const materialSurveyPublishManage = () => import('../pages/home/materialSurvey/surveyPublishManage');
+const materialAddNewModel = () => import('../pages/home/materialSurvey/addNewModel');
+const materialAddNewSurvey = () => import('../pages/home/materialSurvey/addNewSurvey');
+const materialSurveyModeSelect =() => import('../pages/home/materialSurvey/surveyModelSelect');
+const materialSurveyMaterialList = () => import('../pages/home/materialSurvey/materialList');
+const materialSurveyCountList1 = () => import('../pages/home/materialSurvey/materialSurveyCountList');
+const materialSurveyCountList2 = () => import('../pages/home/materialSurvey/materialSurveyCountList');
 /**系统日志 */
 const SystemLog = () => import('pages/home/systemLog/systemLog');
 
@@ -366,6 +383,19 @@ export default new Router({
             {path: 'orgs', name: '学校管理员审核', component: SchoolAdminCheck, meta: {authorityId: true}}
           ]
         },
+
+        {
+          path: 'activity',
+          name: '活动管理',
+          component: ActivityRouter,
+          meta: {replaceName: false, authorityId: 57},
+          children: [
+            {path: 'activityList', name: '活动管理', meta: {authorityId: 58}, component: activityManager},
+            {path: 'newActivity', name: '活动详情',  component: activityEdit,meta: {authorityId: true}},
+            {path: 'toVideo', name: '视频列表',  component: activityVideo,meta: {authorityId: true}},
+            {path: 'toSource', name: '资源列表',  component: activitySource,meta: {authorityId: true}},
+          ]
+        },
         /* 内容管理 */
         {
           path: 'content',
@@ -446,6 +476,38 @@ export default new Router({
             {path: 'reissue', name: '补发消息', component: reIssue, meta: {authorityId: true}},
             {path: 'newmodel', name: '问卷模板新增', component: addNewModel, meta: {authorityId: true}},
             {path: 'newsurvey', name: '新建调查问卷', component: addNewSurvey, meta: {authorityId: true}},
+            {path: 'statistic', name: '调查问卷结果统计', component: surveryResultStatistic, meta: {authorityId: 38}},
+            {path: 'detail', name: '结果明细', component: surveryResultDetail, meta: {authorityId: true}},
+            {path: 'recovery', name: '调查问卷回收', component: surveyRecovery, meta: {authorityId: 39}},
+            {path: 'result', name: '问卷回收结果', component: recoveryResult, meta: {authorityId: true}},
+          ]
+        },
+
+        /* 调研表 */
+        {
+          path: 'materialsurvey',
+          name: '调研表',
+          component: questionSurveyRouter,
+          meta: {replaceName: false, authorityId: 13},
+          children: [
+            {path: 'setmodel', name: '调研表模板管理', component: materialSurveyModelSet, meta: {authorityId: 53}},
+
+            {path: 'publishManage', name: '调研表发布管理', component: materialSurveyPublishManage, meta: {authorityId: 54}},
+
+            {path: 'newmodel', name: '调研表模板新增', component: materialAddNewModel, meta: {authorityId: true}},
+
+            {path: 'newsurvey', name: '调研表新增', component: materialAddNewSurvey, meta: {authorityId: true}},
+
+            {path: 'chooseModel', name: '选择调研表模板', component: materialSurveyModeSelect, meta: {authorityId: true}},
+
+            {path: 'materialList', name: '调研表教材', component: materialSurveyMaterialList, meta: {authorityId: true}},
+            {path:  'materialSurveyList',name:'教材相关调研表',component:materialSurveyCountList1,meta:{authorityId:true}},
+            {path: 'surveyList', name: '其他调研表', component: materialSurveyCountList2, meta: {authorityId: true}},
+
+            {path: 'launch', name: '发起调查', component: launchSurvey, meta: {authorityId: true}},
+            {path: 'reissue', name: '补发消息', component: reIssue, meta: {authorityId: true}},
+
+
             {path: 'statistic', name: '调查问卷结果统计', component: surveryResultStatistic, meta: {authorityId: 38}},
             {path: 'detail', name: '结果明细', component: surveryResultDetail, meta: {authorityId: true}},
             {path: 'recovery', name: '调查问卷回收', component: surveyRecovery, meta: {authorityId: 39}},
