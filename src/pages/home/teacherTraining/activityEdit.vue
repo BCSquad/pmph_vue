@@ -17,11 +17,11 @@
     <div>
       <el-form :model="formData" :rules="formRules" ref="addForm" label-width="150" style="margin:20px 30px 20px 0;">
 
-        <el-form-item id="cs" label="活动名称：" prop="activityName" required>
+        <el-form-item class="cs" label="活动名称：" prop="activityName" required>
           <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName"></el-input>
         </el-form-item>
 
-        <el-form-item label=" 活动日期：" style="height: 35px;">
+        <el-form-item class="cs" label="活动日期：" style="height: 35px;"   prop="activityDate" required>
           <el-date-picker
             v-model="formData.activityDate"
             type="date"
@@ -124,7 +124,7 @@
     </el-dialog>
 
     <!-- 选择书籍弹框  -->
-    <el-dialog
+    <el-dialog ref="InfoExpresstable"
       title="选择教材"
       :visible.sync="materialDialogVisible"
       class='material_dialog'
@@ -162,7 +162,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog
+    <el-dialog ref="materialtable"
       title="选择信息快报"
       :visible.sync="infoExpressDialogVisible"
       class='material_dialog'
@@ -256,7 +256,10 @@
           activityName: [
             {required: true, message: "活动名称不能为空", trigger: "blur"},
             {min: 1, max: 100, message: "活动名称不能超过100个字符", trigger: "change"}
-          ]
+          ],
+          activityDate:[
+            {required: true, message: '活动日期不能为空', trigger: 'blur'},
+          ],
         },
         // materialType:{
         //   value: "id",
@@ -308,12 +311,16 @@
             {required: true, message: '请输入视频名称', trigger: 'blur'},
             {min: 1, max: 50, message: '视频名称不能超过50个字符', trigger: 'blur,change'}
           ],
+          activityDate:[
+            {required: true, message: '活动日期不能为空', trigger: 'blur'},
+          ],
           imgList: [
             {type: 'array', required: true, message: '请上传视频封面', trigger: 'change'}
           ],
           videoList: [
             {type: 'array', required: true, message: '请上传视频内容', trigger: 'change'}
-          ]
+          ],
+
 
         }
 
@@ -454,6 +461,10 @@
               this.$axios.put(this.editActivityUrl, this.$commonFun.initPostData(this.formData)).then((res) => {
                 console.log(res);
                 if (res.data.code == 1) {
+                  if(res.data.data.code==2){
+                    this.$message.error("已存在相同的活动名称");
+                    return;
+                  }
                   switch (num) {
                     case 0:
                       this.$message.success("暂存成功");
@@ -565,6 +576,9 @@
             this.materialListData = res.data.data.rows;
             this.materialTotal = res.data.data.total;
             this.materialDialogVisible = true;
+            this.sourceChainList.forEach(i => {
+              this.$refs.materialtable.toggleRowSelection((this.formData.infoExpressCmsId ===  parseInt(i.id)), true)  // 设置默认选中
+            })
           }
         })
       },
@@ -576,6 +590,9 @@
             this.infoExpressListData = res.data.data.rows;
             this.infoExpressTotal = res.data.data.total;
             this.infoExpressDialogVisible = true;
+            this.infoExpressListData.forEach(i => {
+              this.$refs.InfoExpresstable.toggleRowSelection(this.formData.materialId === parseInt(i.id), true)  // 设置默认选中
+            })
           }
         })
 
@@ -835,6 +852,9 @@
 
   #cs .el-form-item__label {
     margin-left: -10px;
+  }
+  .el-dialog__body thead th:nth-child(1) .cell {
+    display: none;
   }
 
 </style>
