@@ -21,7 +21,7 @@
           <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName"></el-input>
         </el-form-item>
 
-        <el-form-item label=" 活动日期：" prop="activityDate" style="height: 35px;margin-left: -15px" required>
+        <el-form-item label=" 活动日期：" style="height: 35px;margin-left: -15px"   prop="activityDate" required>
           <el-date-picker
             v-model="formData.activityDate"
             type="date"
@@ -256,7 +256,10 @@
           activityName: [
             {required: true, message: "活动名称不能为空", trigger: "blur"},
             {min: 1, max: 100, message: "活动名称不能超过100个字符", trigger: "change"}
-          ]
+          ],
+          activityDate:[
+            {required: true, message: '活动日期不能为空', trigger: 'blur'},
+          ],
         },
         // materialType:{
         //   value: "id",
@@ -458,6 +461,10 @@
               this.$axios.put(this.editActivityUrl, this.$commonFun.initPostData(this.formData)).then((res) => {
                 console.log(res);
                 if (res.data.code == 1) {
+                  if(res.data.data.code==2){
+                    this.$message.error("已存在相同的活动名称");
+                    return;
+                  }
                   switch (num) {
                     case 0:
                       this.$message.success("暂存成功");
