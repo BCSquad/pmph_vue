@@ -21,7 +21,7 @@
           <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName"></el-input>
         </el-form-item>
 
-        <el-form-item class="cs" label="活动日期：" style="height: 35px;"   prop="activityDate" required>
+        <el-form-item class="cs" label="活动日期："  style="height: 35px;" prop="activityDate"   required >
           <el-date-picker
             v-model="formData.activityDate"
             type="date"
@@ -256,9 +256,8 @@
           activityName: [
             {required: true, message: "活动名称不能为空", trigger: "blur"},
             {min: 1, max: 100, message: "活动名称不能超过100个字符", trigger: "change"}
-          ],
-          activityDate:[
-            {required: true, message: '活动日期不能为空', trigger: 'blur'},
+          ],activityDate:[
+            {required:true,message:'活动时间不能为空'},
           ],
         },
         // materialType:{
@@ -400,7 +399,7 @@
         this.formData.content = this.$refs.editor.getContent();
         if (this.formData.activityDate) {
           if (this.formData.activityDate.toString().indexOf('gmt') != 0) {
-            this.formData.activityDate = this.formData.activityDate.getTime();
+            this.formData.activityDate = new Date(this.formData.activityDate).getTime();
           }
         }
         if (!this.formData.content) {
