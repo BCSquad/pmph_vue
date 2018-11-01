@@ -17,11 +17,11 @@
     <div>
       <el-form :model="formData" :rules="formRules" ref="addForm" label-width="150" style="margin:20px 30px 20px 0;">
 
-        <el-form-item id="cs" label="活动名称：" prop="activityName" required>
+        <el-form-item class="cs" label="活动名称：" prop="activityName" required>
           <el-input placeholder="请输入活动名称" class="input" v-model.trim="formData.activityName"></el-input>
         </el-form-item>
 
-        <el-form-item label=" 活动日期：" style="height: 35px;margin-left: -15px"   prop="activityDate" required>
+        <el-form-item class="cs" label="活动日期：" style="height: 35px;"   prop="activityDate" required>
           <el-date-picker
             v-model="formData.activityDate"
             type="date"
