@@ -93,14 +93,14 @@
       <p class="header_p" style="margin-top: 0px">
         <span>资源名称：</span>
         <el-input class="input" style="width:300px;margin-right:10px;" v-model="selectParams.sourceName"
-                  @keyup.enter.native="selectSearch"
+                  @keyup.enter.native="search"
                   placeholder="请输入资源名称"></el-input>
-        <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="selectSearch()">搜索</el-button>
+        <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search()">搜索</el-button>
 
         <el-button type="primary" style="float:right;;margin-right: 10px" @click="selectConfirm">确认选择</el-button>
       </p>
 
-      <el-table  ref="multipleTable"
+      <el-table  ref="table"
         :data="selectSourceList"
                 border highlight-current-row
                 @selection-change="handleSelectionChange">
@@ -147,6 +147,9 @@
   export default {
     data() {
       return {
+        multipleSelectionAll: [],   // 所有选中的数据包含跨页数据
+        multipleSelection: [],   // 当前页选中的数据
+        idKey: 'activitySourceId', // 标识列表数据中每一行的唯一键的名称(需要按自己的数据改一下)
         newSourceUrl: "/pmpheep/activitySource/newSource",
         getSourceListUrl: "/pmpheep/activitySource/getSourceList",
         activitySourceChainUrl:"/pmpheep/activitySource/addActivitySourceChain",
@@ -273,12 +276,14 @@
         this.$commonFun.downloadFile('/pmpheep/file/download/'+obj.fileId);
       },
       selectConfirm() {
+        this.changePageCoreRecordData();
         this.sourceParams.sources="";
         this.sourceParams.activityId='';
-        if(this.selectSourceRow.length>0){
+        if(this.sourceChainList.length>0){
           this.sourceParams.activityId=this.editData.id;
-          this.selectSourceRow.forEach((i) => {
-              this.sourceParams.sources+=i.id+",";
+          this.sourceChainList.forEach(i => {
+            alert(i.activitySourceId);
+            this.sourceParams.sources+=i.activitySourceId+",";
           });
           this.sourceParams.sources= this.sourceParams.sources.substr(0, this.sourceParams.sources.length - 1);
           /*this.sourceParams.sources=this.selectSourceRow;*/
@@ -295,10 +300,9 @@
           this.$message.error("未选择任何资源");
         }
       },
-      handleSelectionChange(rows) {
-        if (rows) {
-          this.selectSourceRow = rows;
-        }
+      handleSelectionChange(val) {
+        // table组件选中事件,记得加上@selection-change="handleSelectionChange"
+        this.multipleSelection = val;
       },
       selectSource() {
         this.selectSourceVisible = true;
@@ -314,19 +318,16 @@
           .then((res) => {
             console.log(res);
             if (res.data.code == 1) {
-              this.sourceChainList=res.data.data;
-              this.sourceChainList.forEach(i => {
-                this.$refs.multipleTable.toggleRowSelection(this.selectSourceList.find(d => parseInt(d.id) === parseInt(i.activitySourceId)), true)  // 设置默认选中
-              })
+              if (this.sourceChainList.length <= 0){
+                this.sourceChainList=res.data.data;
+              }
+              this.setSelectRow();
 
             }
           })
 
 
       },
-
-
-
 
       selectSearch(){
         this.$axios.get(this.getSourceListUrl, {
@@ -336,12 +337,78 @@
             console.log(res);
             if (res.data.code == 1) {
               this.selectSourceList = res.data.data.rows;
-              this.searchChain();
+              for (var i = 0; i < this.selectSourceList.length; i++) {
+                this.selectSourceList[i].activitySourceId = this.selectSourceList[i].id;
+              }
+
               this.sourcepageTotal = res.data.data.total;
               console.log(tableData.toString());
 
             }
           })
+      },
+      setSelectRow() {
+        if (!this.sourceChainList || this.sourceChainList.length <= 0) {
+          return;
+        }
+        // 标识当前行的唯一键的名称
+        let idKey = this.idKey;
+        let selectAllIds = [];
+        let that = this;
+        this.sourceChainList.forEach(row => {
+          selectAllIds.push(row[idKey]);
+        })
+        this.$refs.table.clearSelection();
+        for (var i = 0; i < this.selectSourceList.length; i++) {
+          if (selectAllIds.indexOf(this.selectSourceList[i][idKey]) >= 0) {
+            // 设置选中，记住table组件需要使用ref="table"
+            this.$refs.table.toggleRowSelection(this.selectSourceList[i], true);
+          }
+        }
+      },
+
+      // 记忆选择核心方法
+      changePageCoreRecordData() {
+        // 标识当前行的唯一键的名称
+        let idKey = this.idKey;
+        let that = this;
+        // 如果总记忆中还没有选择的数据，那么就直接取当前页选中的数据，不需要后面一系列计算
+        if (this.sourceChainList.length <= 0) {
+          this.sourceChainList = this.multipleSelection;
+          return;
+        }
+        // 总选择里面的key集合
+        let selectAllIds = [];
+        this.sourceChainList.forEach(row => {
+          selectAllIds.push(row[idKey]);
+        })
+        let selectIds = []
+        // 获取当前页选中的id
+        this.multipleSelection.forEach(row => {
+          selectIds.push(row[idKey]);
+          // 如果总选择里面不包含当前页选中的数据，那么就加入到总选择集合里
+          if (selectAllIds.indexOf(row[idKey]) < 0) {
+            that.sourceChainList.push(row);
+          }
+        })
+        let noSelectIds = [];
+        // 得到当前页没有选中的id
+        this.selectSourceList.forEach(row => {
+          if (selectIds.indexOf(row[idKey]) < 0) {
+            noSelectIds.push(row[idKey]);
+          }
+        })
+        noSelectIds.forEach(id => {
+          if (selectAllIds.indexOf(id) >= 0) {
+            for (let i = 0; i < that.sourceChainList.length; i++) {
+              if (that.sourceChainList[i][idKey] == id) {
+                // 如果总选择中有未被选中的，那么就删除这条
+                that.sourceChainList.splice(i, 1);
+                break;
+              }
+            }
+          }
+        })
       },
       fileUpload() {
         this.dialogVisible = true;
@@ -452,6 +519,10 @@
               });
             }
           });
+      },
+      search(){
+        this.selectParams.pageNumber=1;
+        this.selectSearch();
       }
       ,
       handleSizeChange(val) {
@@ -468,13 +539,16 @@
         this.selectParams.pageSize = val;
         this.selectParams.pageNumber = 1;
         this.selectSearch();
+        this.changePageCoreRecordData();
       },
       selectCurrentChange(val) {
         this.selectParams.pageNumber = val;
         this.selectSearch();
+        this.changePageCoreRecordData();
       },
       /* 获取视频列表 */
       getList() {
+        this.selectParams.pageNumber = 1;
         this.searchParams.activityId=this.editData.id;
         this.$axios.get(this.getChainListUrl, {
           params: this.searchParams
@@ -597,4 +671,4 @@
    .upload_dialog {
     min-width: 660px;
   }
-</styl
+</style>
