@@ -24,7 +24,7 @@
         <el-menu-item index="/materialsurvey/setmodel" v-if="isShowSide(52)||isShowSide(53)">调研表模板管理</el-menu-item>
         <el-menu-item index="/materialsurvey/publishManage" v-if="isShowSide(52)||isShowSide(54)">调研表发布管理</el-menu-item>
         <el-menu-item index="/materialsurvey/materialList" v-if="isShowSide(52)||isShowSide(55)">教材相关调研统计</el-menu-item>
-        <el-menu-item index="/materialsurvey/statistic" v-if="isShowSide(52)||isShowSide(56)">其他调研统计</el-menu-item>
+        <el-menu-item index="/materialsurvey/surveyList" v-if="isShowSide(52)||isShowSide(56)">其他调研统计</el-menu-item>
       </el-submenu>
 
       <el-submenu index="/clinicalDecisionRouter" v-if="isShowSide(44)||isShowSide(45)||isShowSide(46)||isShowSide(47)||isShowSide(48)||isShowSide(49)||isShowSide(50)||isShowSide(51)">
