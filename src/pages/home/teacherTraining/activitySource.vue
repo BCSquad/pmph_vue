@@ -38,9 +38,12 @@
       </el-table-column>
       <el-table-column prop="infoExpressName" label="操作" align="center">
         <template scope="scope">
-          <el-button type="text" style="color:#337ab7;" @click="delSourceByid(scope.row)">删除</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="delChain(scope.row)">删除</el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="downFile(scope.row)">下载</el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')">上移</el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'down')">下移</el-button>
 
         </template>
@@ -151,6 +154,8 @@
         deleteSourceUrl:'/pmpheep/activitySource/deleteSourceById/',
         updateSortUrl: "/pmpheep/activitySource/updateSort",
         getSourceChainUrl: "/pmpheep/activitySource/getSourceChain",
+        getChainListUrl: "/pmpheep/activitySource/getChainList",
+        deleteChainSourceUrl:'/pmpheep/activitySource/delChainSourceByid',
         dialogVisible: false,
         selectSourceVisible: false,
         sourceListData: [],
@@ -224,6 +229,26 @@
     },
     methods: {
 
+      delChain(obj){
+          this.$axios
+            .get(this.deleteChainSourceUrl, {
+              params:{
+                activityId:this.editData.id,
+                activitySourceId:obj.id
+              }
+            })
+            .then(res => {
+              console.log(res);
+              if (res.data.code == 1) {
+                this.$message.success("删除成功");
+                this.getList();
+              }else{
+                this.$message.error("删除失败");
+                this.getList();
+
+              }
+            })
+      },
 
       updateSort(row,type){
         this.$axios.get(this.updateSortUrl, {
@@ -263,7 +288,7 @@
               if (res.data.code == 1) {
                 this.selectSourceVisible=false;
                 this.$message.success("资源关联成功");
-                this.backEditActivity();
+                this.getList();
               }
             })
         }else{
@@ -402,6 +427,7 @@
           this.$message.error("文件不能为空");
           return;
         }
+        this.dialogForm.activityId=this.editData.id;
         this.$axios
           .post(this.newSourceUrl, this.$commonFun.initPostData(this.dialogForm))
           .then(res => {
@@ -449,7 +475,8 @@
       },
       /* 获取视频列表 */
       getList() {
-        this.$axios.get(this.getSourceListUrl, {
+        this.searchParams.activityId=this.editData.id;
+        this.$axios.get(this.getChainListUrl, {
           params: this.searchParams
         })
           .then((res) => {
@@ -570,4 +597,4 @@
    .upload_dialog {
     min-width: 660px;
   }
-</style>
+</styl

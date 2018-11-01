@@ -45,9 +45,12 @@
           </el-table-column>
           <el-table-column  label="操作" align="center">
             <template scope="scope" align="center">
-              <el-button type="text" style="color:#337ab7;" @click="delVideoByid(scope.row)">删除</el-button>
-              <a  style="color:#337ab7;margin-right:5px;" :href="videoDownLoad(scope.row)">下载</a>
+              <el-button type="text" style="color:#337ab7;" @click="delChain(scope.row)">删除</el-button>
+              <a  style="color:#337ab7;font-size: 18px" >|</a>
+              <a  style="color:#337ab7;" :href="videoDownLoad(scope.row)">下载</a>
+              <a  style="color:#337ab7;font-size: 18px" >|</a>
               <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')" v-if="scope.sort!=0">上移</el-button>
+              <a  style="color:#337ab7;font-size: 18px" >|</a>
               <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'down')">下移</el-button>
             </template>
           </el-table-column>
@@ -188,6 +191,8 @@
         transCodingUrl:"/v/query",   //查询视频转码地址
         updateSortUrl:'/pmpheep/activityVideo/updateSort',  //视频列表url
         getVideoChainUrl: "/pmpheep/activityVideo/getVideoChain",
+        getChainListUrl: "/pmpheep/activityVideo/getChainList",
+        deleteChainVideoUrl:"/pmpheep/activityVideo/delChainVideoByid",
         videoListData:[],
         bookDialogVisible:false,
         isShowVideoPlayer:false,
@@ -246,6 +251,28 @@
     },
 
     methods:{
+      delChain(obj){
+        this.$axios
+          .get(this.deleteChainVideoUrl, {
+            params:{
+              activityId:this.editData.id,
+              activityVideoId:obj.id
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.$message.success("删除成功");
+              this.getList();
+            }else{
+              this.$message.error("删除失败");
+              this.getList();
+
+            }
+          })
+      },
+
+
       updateSort(row,type){
         this.$axios.get(this.updateSortUrl, {
           params: {
@@ -295,7 +322,7 @@
             if (res.data.code == 1) {
               this.selectVideoVisible=false;
               this.$message.success("资源关联成功");
-              this.backEditActivity();
+              this.getList();
             }
           })
         }else{
@@ -349,7 +376,8 @@
 
       /* 获取视频列表 */
       getList(){
-        this.$axios.get(this.videoListUrl,{
+        this.searchParams.activityId=this.editData.id;
+        this.$axios.get(this.getChainListUrl,{
           params:this.searchParams
         })
           .then((res)=>{
@@ -606,6 +634,7 @@
           if(valid){
             this.isdisabled = true;
             var submitObj={
+              activityId:this.editData.id,
               title:this.dialogForm.videoName,  //标题
               cover:this.dialogForm.imgList[0].raw,   //封面图片Id
               origPath:this.dialogForm.transCoding.origPath,  //原始视频存放路径
@@ -624,6 +653,7 @@
             for(var i in submitObj){
               formData.append(i,submitObj[i]);
             }
+
             this.$axios.post(this.addNewVideoUrl,formData,config)
               .then((res)=>{
                 console.log(res);
@@ -778,3 +808,4 @@
     min-height:300px;
   }
 </style
+ 
