@@ -852,7 +852,7 @@
   #cs .el-form-item__label {
     margin-left: -10px;
   }
-  .el-dialog__body thead th:nth-child(1) .cell {
+  .activity_edit .el-dialog__body thead th:nth-child(1) .cell {
     display: none;
   }
 

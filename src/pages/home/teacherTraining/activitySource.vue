@@ -282,7 +282,6 @@
         if(this.sourceChainList.length>0){
           this.sourceParams.activityId=this.editData.id;
           this.sourceChainList.forEach(i => {
-            alert(i.activitySourceId);
             this.sourceParams.sources+=i.activitySourceId+",";
           });
           this.sourceParams.sources= this.sourceParams.sources.substr(0, this.sourceParams.sources.length - 1);

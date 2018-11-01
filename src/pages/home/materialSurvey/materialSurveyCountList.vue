@@ -44,9 +44,10 @@
           label="调研表名称"
           prop="title"
         >
-          <template scope="scope">
+
+          <!--<template scope="scope">
             <el-button type="text" @click="updataTemplate(scope.row.templateId,scope.row.id,'check')">{{scope.row.title}}</el-button>
-          </template>
+          </template>-->
         </el-table-column>
         <el-table-column
           label="调研对象"
