@@ -296,9 +296,10 @@
         this.$commonFun.downloadFile('/pmpheep/file/download/'+obj.fileId);
       },
       selectConfirm() {
-        this.changePageCoreRecordData();
+
         this.sourceParams.sources="";
         this.sourceParams.activityId='';
+        this.changePageCoreRecordData();
         if(this.sourceChainList.length>0){
           this.sourceParams.activityId=this.editData.id;
           this.sourceChainList.forEach(i => {
@@ -567,7 +568,6 @@
       },
       /* 获取视频列表 */
       getList() {
-        this.selectParams.pageNumber = 1;
         this.searchParams.activityId=this.editData.id;
         this.$axios.get(this.getChainListUrl, {
           params: this.searchParams
