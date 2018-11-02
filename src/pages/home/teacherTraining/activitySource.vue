@@ -326,7 +326,6 @@
       selectSource() {
         this.selectSourceVisible = true;
         this.selectSearch();
-
         this.searchChain();
       },
       searchChain(){
@@ -341,7 +340,7 @@
               if (this.sourceChainList.length <= 0){
                 this.sourceChainList=res.data.data;
               }
-              setTimeout(this.setSelectRow(), 300);
+              this.setSelectRow();
 
             }
           })
@@ -360,7 +359,7 @@
               for (var i = 0; i < this.selectSourceList.length; i++) {
                 this.selectSourceList[i].activitySourceId = this.selectSourceList[i].id;
               }
-
+              this.searchChain();
               this.sourcepageTotal = res.data.data.total;
               console.log(tableData.toString());
 
