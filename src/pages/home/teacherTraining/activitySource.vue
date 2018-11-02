@@ -326,6 +326,7 @@
       selectSource() {
         this.selectSourceVisible = true;
         this.selectSearch();
+
         this.searchChain();
       },
       searchChain(){
@@ -340,7 +341,7 @@
               if (this.sourceChainList.length <= 0){
                 this.sourceChainList=res.data.data;
               }
-              this.setSelectRow();
+              setTimeout(this.setSelectRow(), 300);
 
             }
           })
