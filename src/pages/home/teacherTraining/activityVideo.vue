@@ -20,7 +20,7 @@
                 placeholder="请输入资源名称"></el-input>
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
 
-      <el-button type="primary" style="float:right;margin-right: 15px" @click="selectVideo">选择视频</el-button>
+      <el-button type="primary" style="float:right;margin-right: 15px" @click="search">选择视频</el-button>
       <el-button type="primary" style="float:right;margin-right: 15px" @click="openAddVideoDialog">上传视频</el-button>
     </p>
 
@@ -481,7 +481,8 @@
       /* 搜索按钮 */
       search() {
         this.searchParams.pageNumber = 1;
-        this.searchSelect();
+        this.videoSearch.pageNumber = 1;
+        this.selectVideo();
       },
       /* 开始时间格式重置 */
       startDateChange(val) {

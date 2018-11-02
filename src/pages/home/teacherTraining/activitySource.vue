@@ -17,7 +17,7 @@
                 @keyup.enter.native="getList()"
                 placeholder="请输入资源名称"></el-input>
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
-      <el-button type="primary" style="float:right;margin-right: 15px;;margin-bottom:10px" @click="selectSource">选择资源</el-button>
+      <el-button type="primary" style="float:right;margin-right: 15px;;margin-bottom:10px" @click="search">选择资源</el-button>
       <el-button type="primary" style="float:right;margin-right: 15px;margin-bottom:10px" @click="fileUpload">上传资源</el-button>
     </p>
 
@@ -542,6 +542,7 @@
       },
       search(){
         this.selectParams.pageNumber=1;
+        this.searchParams.pageNumber = 1;
         this.selectSource();
       }
       ,
