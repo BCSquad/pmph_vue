@@ -42,9 +42,9 @@
           <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="downFile(scope.row)">下载</el-button>
           <a  style="color:#337ab7;font-size: 18px" >|</a>
-          <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')">上移</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="updateChian(scope.row,'up')"  v-if="scope.sort!=0" >上移</el-button>
           <a  style="color:#337ab7;font-size: 18px" >|</a>
-          <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'down')">下移</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="updateChian(scope.row,'down')">下移</el-button>
 
         </template>
         </el-table-column>
@@ -126,7 +126,7 @@
         </el-table-column>
       </el-table>
       <div class="pagination-wrapper">
-        <el-pagination
+        <el-pagination style="margin-top: 10px"
           v-if="sourcepageTotal>selectParams.pageSize"
           @size-change="selectSizeChange"
           @current-change="selectCurrentChange"
@@ -159,6 +159,7 @@
         getSourceChainUrl: "/pmpheep/activitySource/getSourceChain",
         getChainListUrl: "/pmpheep/activitySource/getChainList",
         deleteChainSourceUrl:'/pmpheep/activitySource/delChainSourceByid',
+        updateChianUrl: "/pmpheep/activitySource/updateChainSort",
         dialogVisible: false,
         selectSourceVisible: false,
         sourceListData: [],
@@ -251,6 +252,25 @@
 
               }
             })
+      },
+
+      updateChian(row,type){
+        this.$axios.get(this.updateChianUrl, {
+          params: {
+            activityId:this.editData.id,
+            activitySourceId:row.id,
+            sort:row.sort,
+            type:type
+          }
+        }).then((res) => {
+          if (res.data.code == 1) {
+            if(res.data.data.code==0){
+              this.$message.error("移动错误");
+              return;
+            }
+            this.getList();
+          }
+        })
       },
 
       updateSort(row,type){
@@ -521,7 +541,7 @@
       },
       search(){
         this.selectParams.pageNumber=1;
-        this.selectSearch();
+        this.selectSource();
       }
       ,
       handleSizeChange(val) {
@@ -537,12 +557,12 @@
       selectSizeChange(val) {
         this.selectParams.pageSize = val;
         this.selectParams.pageNumber = 1;
-        this.selectSearch();
+        this.selectSource();
         this.changePageCoreRecordData();
       },
       selectCurrentChange(val) {
         this.selectParams.pageNumber = val;
-        this.selectSearch();
+        this.selectSource();
         this.changePageCoreRecordData();
       },
       /* 获取视频列表 */

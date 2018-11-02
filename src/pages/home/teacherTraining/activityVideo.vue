@@ -51,10 +51,9 @@
           <a style="color:#337ab7;font-size: 18px">|</a>
           <a style="color:#337ab7;" :href="videoDownLoad(scope.row)">下载</a>
           <a style="color:#337ab7;font-size: 18px">|</a>
-          <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'up')" v-if="scope.sort!=0">上移
-          </el-button>
+          <el-button type="text" style="color:#337ab7;" @click="updateChian(scope.row,'up')" v-if="scope.sort!=0">上移</el-button>
           <a style="color:#337ab7;font-size: 18px">|</a>
-          <el-button type="text" style="color:#337ab7;" @click="updateSort(scope.row,'down')">下移</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="updateChian(scope.row,'down')">下移</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -119,7 +118,7 @@
         </el-table-column>
       </el-table>
       <div class="pagination-wrapper">
-        <el-pagination
+        <el-pagination style="margin-top: 10px"
           v-if="videopageTotal>videoSearch.pageSize"
           @size-change="videoSizeChange"
           @current-change="videoCurrentChange"
@@ -194,6 +193,7 @@
         getVideoChainUrl: "/pmpheep/activityVideo/getVideoChain",
         getChainListUrl: "/pmpheep/activityVideo/getChainList",
         deleteChainVideoUrl: "/pmpheep/activityVideo/delChainVideoByid",
+        updateChainUrl: '/pmpheep/activityVideo/updateChainSort',  //视频列表url
         videoListData: [],
         bookDialogVisible: false,
         isShowVideoPlayer: false,
@@ -272,7 +272,24 @@
             }
           })
       },
-
+      updateChian(row,type){
+        this.$axios.get(this.updateChainUrl, {
+          params: {
+            activityId:this.editData.id,
+            activityVideoId:row.id,
+            sort:row.sort,
+            type:type
+          }
+        }).then((res) => {
+          if (res.data.code == 1) {
+            if(res.data.data.code==0){
+              this.$message.error("移动错误");
+              return;
+            }
+            this.getList();
+          }
+        })
+      },
 
       updateSort(row, type) {
         this.$axios.get(this.updateSortUrl, {
@@ -307,7 +324,9 @@
           });
 
       },
+
       selectConfirm() {
+        let activityVideoChainList=[];
         this.videoParams.videos = "";
         this.videoParams.activityId = '';
         this.changePageCoreRecordData();
@@ -462,7 +481,7 @@
       /* 搜索按钮 */
       search() {
         this.searchParams.pageNumber = 1;
-        this.getList();
+        this.searchSelect();
       },
       /* 开始时间格式重置 */
       startDateChange(val) {
