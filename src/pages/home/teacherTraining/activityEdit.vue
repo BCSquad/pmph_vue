@@ -238,6 +238,7 @@
           imgFile: [],
           status: 0,
         },
+        chainflag:false,
         materialExpressTag: {},
         infoExpressTag: {},
         materialListData: [],
@@ -352,6 +353,7 @@
           this.activitySubmit(0);
         } else {
           this.activitySubmit(this.formData.status);
+          this.chainflag=true;
         }
         this.$router.push({
           name: '视频列表',
@@ -371,6 +373,7 @@
 
         } else {
           this.activitySubmit(this.formData.status);
+          this.chainflag=true;
         }
         this.$router.push({
           name: '资源列表',
@@ -470,8 +473,10 @@
                       this.isEditContent = true;
                       break;
                     case 1:
-                      this.$message.success("发布成功");
-                      this.$router.push({name: '活动管理', query: {columnId: 1, type: 'activityList', isShowCover: true}})
+                      if(!this.chainflag){
+                        this.$message.success("发布成功");
+                        this.$router.push({name: '活动管理', query: {columnId: 1, type: 'activityList', isShowCover: true}})
+                      }
                       break;
                     default:
                       break;
