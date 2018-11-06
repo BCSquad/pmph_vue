@@ -489,7 +489,7 @@ export default new Router({
           path: 'materialsurvey',
           name: '调研表',
           component: questionSurveyRouter,
-          meta: {replaceName: false, authorityId: 13},
+          meta: {replaceName: false, authorityId: 52},
           children: [
             {path: 'setmodel', name: '调研表模板管理', component: materialSurveyModelSet, meta: {authorityId: 53}},
 
