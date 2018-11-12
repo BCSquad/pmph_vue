@@ -51,7 +51,7 @@
      >
      </el-table-column>
      <el-table-column
-     label="问卷概述"
+     label="调研表概述"
      prop="intro"
      >
      </el-table-column>
@@ -135,7 +135,7 @@
             return{
 
 
-              surveyLsitUrl:'/pmpheep/materialSurvey/template/list', //调查问卷列表url
+              surveyLsitUrl:'/pmpheep/materialSurvey/template/list', //调研表模板列表url
               editTemplateUrl:'/pmpheep/materialSurvey/template/question/look', //获取修改信息url
 
                 searchParams:{
@@ -160,7 +160,7 @@
          this.getSurveyList();
         },
         methods:{
-            /* 获取问卷列表 */
+            /* 获取调研表模板列表 */
             getSurveyList(){
               this.$axios.get(this.surveyLsitUrl,{
                   params:this.searchParams
