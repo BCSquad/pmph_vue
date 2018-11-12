@@ -51,7 +51,7 @@
           <a style="color:#337ab7;font-size: 18px">|</a>
           <a style="color:#337ab7;" :href="videoDownLoad(scope.row)">下载</a>
           <a style="color:#337ab7;font-size: 18px">|</a>
-          <el-button type="text" style="color:#337ab7;" @click="updateChian(scope.row,'up')" v-if="scope.sort!=0">上移</el-button>
+          <el-button type="text" style="color:#337ab7;" @click="updateChian(scope.row,'up')">上移</el-button>
           <a style="color:#337ab7;font-size: 18px">|</a>
           <el-button type="text" style="color:#337ab7;" @click="updateChian(scope.row,'down')">下移</el-button>
         </template>
@@ -653,7 +653,7 @@
           return false;
         }
         if (exStr != 'avi' && exStr != 'mpg' && exStr != 'wmv' && exStr != '3gp' && exStr != 'mov' && exStr != 'mp4' && exStr != 'asf' && exStr != 'asx' && exStr != 'flv') {
-          this.$confirm('图片的格式必须为以下格式之一：avi,mpg,wmv,3gp,mov,mp4,asf,asx或flv！', "提示", {
+          this.$confirm('视频的格式必须为以下格式之一：avi,mpg,wmv,3gp,mov,mp4,asf,asx或flv！', "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             showCancelButton: false,

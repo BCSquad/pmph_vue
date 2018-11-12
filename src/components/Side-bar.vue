@@ -51,7 +51,7 @@
 
       <el-submenu index="/activity" v-if="isShowSide(57)||isShowSide(58)||isShowSide(59)">
         <template slot="title">
-          <i class="fa  fa-file-text fa-fw"></i>
+          <i class="fa  fa fa-graduation-cap fa-fw"></i>
           <span slot="title">师资培训</span>
         </template>
         <el-menu-item index="/activity/activityList" v-if="isShowSide(57)||isShowSide(58)">活动管理</el-menu-item>
