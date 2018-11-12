@@ -168,6 +168,8 @@
                   .replace(/(\s*?"optionIdString"\s*?:\s*?").*?"(?=[,\]\}])\s*?/ig,'"optionIdString":",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"');
 
                 jsonData = JSON.parse(strDataWithoutId);
+                jsonData.survey.requiredForMaterial = false;
+                jsonData.survey.allTextbookUsed = false;
 
                 if(res.data.code==1){
                    this.$router.push({name:'调研表新增',params:{surveryData:jsonData,type:str?str:''}});
