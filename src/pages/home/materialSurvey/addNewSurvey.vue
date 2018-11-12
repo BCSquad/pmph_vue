@@ -29,8 +29,9 @@
         <el-form-item label="调查概述:" prop="intro">
           <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
         </el-form-item>
-        <el-form-item label="调查教材:" prop="preVersionMaterialId" >
-          <el-select v-model="surveyForm.preVersionMaterialId" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
+        <el-form-item label="调查教材:" prop="materialId" >
+          <el-select v-model="surveyForm.materialId" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
+            <el-option :key="''" :label="'-未选择-'" value=""></el-option>
             <el-option
               v-for="item in materialOptions"
               :key="item.id"
@@ -38,10 +39,18 @@
               :value="item.id">
             </el-option>
           </el-select>
-          <el-form-item label="调查教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
+          <el-checkbox v-model="surveyForm.allTextbookUsed">应用于该教材所有书籍</el-checkbox>
+          <!--<el-form-item label="调查教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
             <el-input type="text"  v-model="surveyForm.preVersionMaterialRound"  placeholder="版次"></el-input>
-          </el-form-item>
+          </el-form-item>-->
         </el-form-item>
+        <el-form-item v-show="!surveyForm.allTextbookUsed">
+          <el-checkbox-group>
+            <el-checkbox v-for="item in textbookList" :label="item.textbook.id" >{{item.textbook.textbookName}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+
+
 
       </el-form>
       <!-- 调查对象弹框 -->
@@ -214,13 +223,15 @@
           templateName:'',
           typeId:'',
           intro:'',
-          preVersionMaterialId:'',
+          materialId:'',
           preVersionMaterialRound:'',
           tempReCreat:false,
+          allTextbookUsed:false,
           questionAnswerJosn:[
           ]
         },
         tempReCreat:false,
+        textbookList:[],
         materialOptions:[],
         del_question:[],
         del_dialog_option:[],
@@ -322,6 +333,9 @@
     created(){
       this.getMaterialLists();
       this.initFormData();
+      if(!this.surveyForm.allTextbookUsed&&this.surveyForm.materialId){
+        this.getTextbookLists();
+      }
       this.getObjList();
     },
     watch:{
@@ -347,13 +361,16 @@
           var surveyData=this.$route.params.surveryData;
           console.log(surveyData) ;
           //this.surveyForm.templateName=surveyData.survey.templateName;
+
           this.surveyForm.typeId=surveyData.survey.typeId;
           this.surveyForm.intro=surveyData.survey.intro;
           this.surveyForm.id=surveyData.survey.id?surveyData.survey.id:'';
           this.surveyForm.templateId=surveyData.survey.templateId;
-          this.surveyForm.preVersionMaterialId = (surveyData.survey.preVersionMaterialId?surveyData.survey.preVersionMaterialId:"");
+          this.surveyForm.materialId = (surveyData.survey.materialId?surveyData.survey.materialId:"");
           this.surveyForm.preVersionMaterialRound = (surveyData.survey.preVersionMaterialRound !=null?surveyData.survey.preVersionMaterialRound:"");
           this.surveyForm.title=surveyData.survey.title;
+          this.surveyForm.requiredForMaterial=surveyData.survey.requiredForMaterial;
+          this.surveyForm.allTextbookUsed=surveyData.survey.allTextbookUsed;
 
           for(var i in surveyData.qestionAndOption){
             this.surveyForm.questionAnswerJosn[i]={};
@@ -647,6 +664,15 @@
           let res = response.data;
           if (res.code == '1') {
             this.materialOptions=res.data;
+          }
+        })
+      },
+      /**获取教材列表 */
+      getTextbookLists(){
+        this.$axios.get('/pmpheep/textBook/list/textbooks',{params:{materialId:this.surveyForm.materialId}}).then(response => {
+          let res = response.data;
+          if (res.code == '1') {
+            this.textbookList=res.data;
           }
         })
       },

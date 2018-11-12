@@ -18,6 +18,7 @@ const PressCheck = () => import('../pages/home/teachingMaterial/navContent/press
 const PressCheck_pmph = () => import('../pages/home/teachingMaterial/navContent/pressCheck-pmph')
 const ExpertInfo = () => import('../pages/home/teachingMaterial/navContent/expertInfo')
 const BookList = () => import('../pages/home/teachingMaterial/navContent/BookList')
+const BookSurveyList = () => import('../pages/home/teachingMaterial/navContent/setSurvey')
 const Notice = () => import('../pages/home/teachingMaterial/navContent/Notice')
 const Chief = () => import('../pages/home/teachingMaterial/navContent/Chief')
 const NewChooseBooks = () => import('pages/home/teachingMaterial/navContent/newChooseBooks')
@@ -176,6 +177,7 @@ const materialSurveyMaterialList = () => import('../pages/home/materialSurvey/ma
 const materialSurveyCountList1 = () => import('../pages/home/materialSurvey/materialSurveyCountList');
 const materialSurveyCountList2 = () => import('../pages/home/materialSurvey/materialSurveyCountList');
 const materialSurveyAnswerCount = () => import('../pages/home/materialSurvey/materialSurveyAnswerCount');
+const materialSurveyAnswerDetail = () => import('../pages/home/materialSurvey/resultDetail');
 /**系统日志 */
 const SystemLog = () => import('pages/home/systemLog/systemLog');
 
@@ -227,6 +229,7 @@ export default new Router({
                 },
                 {path: 'newchoosebooks', name: '新建通知', component: NewChooseBooks, meta: {isShowTags: true}},
                 {path: 'book-list', name: '设置书目录', component: BookList, meta: {isShowTags: true}},
+                {path: 'survey-list', name: '设置教材调研表', component: BookSurveyList, meta: {isShowTags: true}},
                 {path: 'expertinfo', name: '专家信息', component: ExpertInfo,},
                 {path: 'chief', name: '遴选', component: Chief, meta: { applicationName: '1v3'},},
                 {
@@ -489,7 +492,7 @@ export default new Router({
           path: 'materialsurvey',
           name: '调研表',
           component: questionSurveyRouter,
-          meta: {replaceName: false, authorityId: 13},
+          meta: {replaceName: false, authorityId: 52},
           children: [
             {path: 'setmodel', name: '调研表模板管理', component: materialSurveyModelSet, meta: {authorityId: 53}},
 
@@ -506,6 +509,8 @@ export default new Router({
             {path: 'surveyList', name: '其他调研表', component: materialSurveyCountList2, meta: {authorityId: true}},
 
             {path: 'answerCount', name: '调研表回答列表', component: materialSurveyAnswerCount, meta: {authorityId: true}},
+            {path: 'answerDetail', name: '调研表回答详情', component: materialSurveyAnswerDetail, meta: {authorityId: true}},
+
 
 
             {path: 'launch', name: '发起调查', component: launchSurvey, meta: {authorityId: true}},

@@ -20,12 +20,12 @@
                     :value="item.id">
                     </el-option>
                 </el-select>
-                <el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调查对象</el-button>
+                <!--<el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调查对象</el-button>-->
           </el-form-item>
           <el-form-item label="调查概述:" prop="intro">
              <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
           </el-form-item>
-          <el-form-item label="调查教材:" prop="preVersionMaterialId" >
+          <!--<el-form-item label="调查教材:" prop="preVersionMaterialId" >
             <el-select v-model="surveyForm.preVersionMaterialId" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
               <el-option
                 v-for="item in materialOptions"
@@ -37,7 +37,7 @@
             <el-form-item label="调查教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
               <el-input type="text"  v-model="surveyForm.preVersionMaterialRound"  placeholder="版次"></el-input>
             </el-form-item>
-          </el-form-item>
+          </el-form-item>-->
 
       </el-form>
       <!-- 调查对象弹框 -->

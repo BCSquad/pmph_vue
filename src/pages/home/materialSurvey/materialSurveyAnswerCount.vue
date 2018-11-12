@@ -67,7 +67,7 @@
           <!--:width="isAdmin?350:300"
          >-->
           <template scope="scope">
-            <el-button type="text"  @click="toAnswerDetail(scope.row.surveyId,scope.row.userId,scope.row.userType,title)">查看结果</el-button>
+            <el-button type="text"  @click="toAnswerDetail(scope.row.surveyId,scope.row.userId,scope.row.userType,title,scope.row.realname)">查看结果</el-button>
 
           </template>
         </el-table-column>
@@ -138,9 +138,10 @@
               this.getSurveyList();
             },
            /* 查看调研表填写详情 */
-           toAnswerDetail(sid,userId,userType,title){
-             alert("todo:跳转到查看详情界面"+" sid: "+sid+" userId: "+userId+" userType: "+userType+" title: "+title);
-            /*this.$axios.get(this.toAnswerListUrl,{
+           toAnswerDetail(sid,userId,userType,title,realname){
+             //alert("todo:跳转到查看详情界面"+" sid: "+sid+" userId: "+userId+" userType: "+userType+" title: "+title);
+             this.$router.push({name:'调研表回答详情',query:{surveyId:sid,userId:userId,userType:userType,realname:realname}});
+             /*this.$axios.get(this.toAnswerListUrl,{
                 params:{
                   surveyId:sid
                 }
@@ -148,7 +149,7 @@
                 console.log(res);
 
                 if(res.data.code==1){
-                   this.$router.push({name:'调研表新增',params:{surveryData:res.data.data,type:str?str:''}});
+                   this.$router.push({name:'调研表回答详情',query:{surveyId:sid,type:str?str:''}});
                 }
             })*/
            },

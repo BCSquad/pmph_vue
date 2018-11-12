@@ -1,12 +1,15 @@
 <template>
   <div class="school-query">
     <choose-school ref="chooseSchool" @selectChange="selectChange" :default-history-id="materialId">
+
       <el-button type="primary" @click="exportExcel"  size="large">导出已发布学校名单</el-button>
 
       <el-button type="primary" @click="publishBtn" size="large" :disabled="!hasCheckedOrgList.length>0">
         发布
         <span v-if="hasCheckedOrgList.length>0">({{hasCheckedOrgList.length}})</span>
       </el-button>
+
+      <!--<el-button type="primary" @click="toSetSurvey(materialId)"  size="large">保存配置调研表</el-button>-->
     </choose-school>
 
 
@@ -103,6 +106,9 @@
       selectChange(list){
         this.hasCheckedOrgList = list;
         this.able=false;
+      },
+      toSetSurvey(){
+
       },
       /**
        * 确认提交表单
