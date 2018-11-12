@@ -30,7 +30,7 @@
           <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
         </el-form-item>
         <el-form-item label="调查教材:" prop="materialId" >
-          <el-select v-model="surveyForm.materialId" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
+          <el-select v-model="surveyForm.materialId" @change="getTextbookLists" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
             <el-option :key="''" :label="'-未选择-'" value=""></el-option>
             <el-option
               v-for="item in materialOptions"
@@ -669,12 +669,22 @@
       },
       /**获取教材列表 */
       getTextbookLists(){
-        this.$axios.get('/pmpheep/textBook/list/textbooks',{params:{materialId:this.surveyForm.materialId}}).then(response => {
-          let res = response.data;
-          if (res.code == '1') {
-            this.textbookList=res.data;
-          }
-        })
+        if(this.surveyForm.materialId == ""){
+          this.textbookList = [];
+        }else{
+          this.$axios.get('/pmpheep/textBook/list/textbooks',{params:{materialId:this.surveyForm.materialId}})
+            .then(response => {
+              console.log(response);
+              let res = response.data;
+              if (res.code == '1') {
+                this.textbookList=res.data;
+              }else{
+                this.textbookList = [];
+              }
+            })
+        }
+
+
       },
     }
   };
