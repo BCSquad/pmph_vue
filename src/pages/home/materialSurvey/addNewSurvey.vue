@@ -30,8 +30,8 @@
           <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
         </el-form-item>
         <el-form-item label="调查教材:" prop="materialId" >
-          <el-select v-model="surveyForm.materialId" @change="getTextbookLists" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
-            <el-option :key="''" :label="'-未选择-'" value=""></el-option>
+          <el-select v-model="surveyForm.materialId" @change="getTextbookLists" filterable :defaultFirstOption="true" placeholder="请选择调查教材" style="width:60%;">
+            <el-option :key="0" :label="'-无-'" value="0"></el-option>
             <el-option
               v-for="item in materialOptions"
               :key="item.id"
@@ -39,15 +39,72 @@
               :value="item.id">
             </el-option>
           </el-select>
-          <el-checkbox v-model="surveyForm.allTextbookUsed">应用于该教材所有书籍</el-checkbox>
+          <el-checkbox v-show="surveyForm.materialId>0" v-model="surveyForm.allTextbookUsed">应用于该教材(不绑定具体书籍)</el-checkbox>
           <!--<el-form-item label="调查教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
             <el-input type="text"  v-model="surveyForm.preVersionMaterialRound"  placeholder="版次"></el-input>
           </el-form-item>-->
         </el-form-item>
-        <el-form-item v-show="!surveyForm.allTextbookUsed">
-          <el-checkbox-group>
-            <el-checkbox v-for="item in textbookList" :label="item.textbook.id" >{{item.textbook.textbookName}}</el-checkbox>
+
+        <el-form-item :label="(!surveyForm.allTextbookUsed&&surveyForm.materialId>0)?'调研书籍:':''" v-show="!surveyForm.allTextbookUsed">
+          <el-checkbox-group v-model="checkedTextbookList">
+            <el-checkbox v-for="item in textbookList" :label="item" style="min-width: 15em;margin-left: 15px;">{{item.textbookName}}</el-checkbox>
           </el-checkbox-group>
+          <el-table
+            v-if="checkedTextbookList&&checkedTextbookList.length"
+            ref="textbookTable"
+            border
+            stripe
+            :data="checkedTextbookList"
+            tooltip-effect="dark">
+            <el-table-column
+              prop="preVersionMaterialName"
+              label="上本教材名称"
+              min-width="160">
+              <template scope="scope">
+                <div class="paddingB15 paddingT10 relative">
+                  <el-input
+                    placeholder="请输入"
+                    class="searchInputEle border-radius-4"
+                    icon="edit"
+                    v-model.trim="scope.row.preVersionMaterialName"
+                  ></el-input>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="preVersionMaterialRound"
+              label="上本教材版次"
+              width="160">
+              <template scope="scope">
+                <div class="paddingB15 paddingT10 relative">
+                  <el-input
+                    placeholder="请输入"
+                    class="searchInputEle border-radius-4"
+                    icon="edit"
+                    v-model.trim="scope.row.preVersionMaterialRound"
+                  ></el-input>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="textbookName"
+              label="书名"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="requiredForWriter"
+              label="是否必填"
+              width="100">
+              <template scope="scope">
+                <div class="paddingB15 paddingT10 relative">
+                  <el-checkbox v-model="scope.row.required"></el-checkbox>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+
+
+
         </el-form-item>
 
 
@@ -232,6 +289,7 @@
         },
         tempReCreat:false,
         textbookList:[],
+        checkedTextbookList:[],
         materialOptions:[],
         del_question:[],
         del_dialog_option:[],
@@ -333,7 +391,7 @@
     created(){
       this.getMaterialLists();
       this.initFormData();
-      if(!this.surveyForm.allTextbookUsed&&this.surveyForm.materialId){
+      if(this.surveyForm.materialId){
         this.getTextbookLists();
       }
       this.getObjList();
@@ -413,6 +471,14 @@
             this.surveyForm.questionAnswerJosn='['+this.surveyForm.questionAnswerJosn+']';
             this.surveyForm.del_question = JSON.stringify(this.del_question);
             this.surveyForm.del_question_option = JSON.stringify(this.del_question_option);
+
+            let checkedTemp = [];
+            for(var i in this.checkedTextbookList){
+              //arr[i]=this.checkedTextbookList[i];
+              checkedTemp[i]=JSON.stringify(this.checkedTextbookList[i]);
+            }
+            this.surveyForm.checkedTextbookList='['+checkedTemp+']';
+
             this.$axios(
               {
                 url:str=='add'?this.addTemplateUrl:this.editTemplateUrl,
@@ -671,8 +737,9 @@
       getTextbookLists(){
         if(this.surveyForm.materialId == ""){
           this.textbookList = [];
+          this.checkedTextbookList = [];
         }else{
-          this.$axios.get('/pmpheep/textBook/list/textbooks',{params:{materialId:this.surveyForm.materialId}})
+          /*this.$axios.get('/pmpheep/textBook/list/textbooks',{params:{materialId:this.surveyForm.materialId}})
             .then(response => {
               console.log(response);
               let res = response.data;
@@ -681,7 +748,39 @@
               }else{
                 this.textbookList = [];
               }
+            })*/
+          this.$axios.get('/pmpheep/materialSurvey/chainBookList',
+            {params:{
+                materialId:this.surveyForm.materialId,
+                materialSurveyId:this.surveyForm.id
+            }})
+            .then(response => {
+              console.log(response);
+              if(response.data.code==1){
+                this.checkedTextbookList = [];
+                this.textbookList = response.data.data;
+                let _this= this;
+                this.textbookList.forEach(function(item){
+                  if(!item.preVersionMaterialId){
+                    item.preVersionMaterialId = _this.surveyForm.materialId;
+
+                  }
+                  item.materialSurveyId = _this.surveyForm.id;
+                  item.materialId = _this.surveyForm.materialId;
+                  if(item.id){
+                    _this.checkedTextbookList.push(item);
+                  }
+                });
+
+              }else{
+                this.textbookList = [];
+                this.checkedTextbookList=[]
+              }
+
+
+
             })
+
         }
 
 
