@@ -5,26 +5,34 @@
       <p class="header_p">
          <span>模板名称：</span>
          <el-input class="input" v-model="searchParams.templateName"  placeholder="请输入模板名称" @keyup.enter.native="search()"></el-input>
-         <span>创建日期：</span>
-         <el-date-picker
-              v-model="searchParams.startTime"
-              class="input data"
-              type="date"
-              clearable
-              @change="startDateChange"
-              placeholder="请选择开始日期">
-          </el-date-picker>
-          <span>-</span>
-          <el-date-picker
-              v-model="searchParams.endTime"
-              class="input data"
-              type="date"
-              clearable
-              @change="endDateChange"
-              placeholder="请选择结束日期">
-          </el-date-picker>
+        <span>调研对象：</span>
+        <el-select v-model="searchParams.typeId" @change="search()" style="width: 12em;margin-right:10px;">
+          <el-option :key="''" :value="''" :label="'全部'"></el-option>
+          <el-option v-for="item in typeList" :key="item.id" :value="item.id" :label="item.surveyName">{{item.surveyName}}</el-option>
+        </el-select>
+
+        <span style="display: inline-block;">
+          <span>创建日期：</span>
+           <el-date-picker
+                v-model="searchParams.startTime"
+                class="input data"
+                type="date"
+                clearable
+                @change="startDateChange"
+                placeholder="请选择开始日期">
+            </el-date-picker>
+            <span>-</span>
+            <el-date-picker
+                v-model="searchParams.endTime"
+                class="input data"
+                type="date"
+                clearable
+                @change="endDateChange"
+                placeholder="请选择结束日期">
+            </el-date-picker>
+        </span>
           <el-button type="primary" icon="search" @click="search()">搜索</el-button>
-          <el-button type="primary"  style="float:right" @click="$router.push({name:'调研表新增',params:{type:'add'}})">直接新增</el-button>
+          <el-button type="primary"  style="float:right;" @click="$router.push({name:'调研表新增',params:{type:'add'}})">直接新增</el-button>
       </p>
       <el-table
       :data="tableData"
@@ -41,22 +49,26 @@
        </template>
        </el-table-column>
         <el-table-column
-       label="调查对象"
+          label="问卷概述"
+          prop="intro"
+        >
+        </el-table-column>
+        <el-table-column
+       label="调研对象"
        prop="surveyName"
        width="100"
+       :className="'justify td-center'"
        >
        </el-table-column>
-       <el-table-column
-       label="创建人"
-       prop="username"
-       width="110"
-       >
-       </el-table-column>
-       <el-table-column
-       label="问卷概述"
-       prop="intro"
-       >
-       </el-table-column>
+
+
+        <el-table-column
+          label="创建人"
+          prop="username"
+          width="110"
+          :className="'justify'"
+        >
+        </el-table-column>
        <el-table-column
        label="创建日期"
        prop="gmtCreat"
@@ -100,22 +112,24 @@
             return{
 
 
-              surveyLsitUrl:'/pmpheep/materialSurvey/template/list', //调查问卷列表url
+              surveyLsitUrl:'/pmpheep/materialSurvey/template/list', //调研问卷列表url
               editTemplateUrl:'/pmpheep/materialSurvey/template/question/look', //获取修改信息url
-
-                searchParams:{
-                    templateName:'',
-                    startTime:'',
-                    endTime:'',
-                    pageSize:10,
-                    pageNumber:1,
-                    active:1,
-                    isActive:1,
-                },
-                pageTotal:100,
-                tableData:[],
-               showSendVisible: false,
-                sendTable: [],
+              typeListUrl:'/pmpheep/materialSurvey/typeList',
+              searchParams:{
+                  templateName:'',
+                  startTime:'',
+                  endTime:'',
+                  pageSize:10,
+                  pageNumber:1,
+                  active:1,
+                  isActive:1,
+                  typeId:''
+              },
+              typeList:[],
+              pageTotal:100,
+              tableData:[],
+              showSendVisible: false,
+              sendTable: [],
               sendPageSize: 20,
               sendPageNumber: 1,
               sendTotal: 0,
@@ -125,6 +139,7 @@
         created(){
           this.isAdmin = this.$getUserData().userInfo.isAdmin;
          this.getSurveyList();
+          this.getTypeList();
         },
         methods:{
             /* 获取问卷列表 */
@@ -137,6 +152,14 @@
                       this.pageTotal=res.data.data.total;
                       this.tableData=res.data.data.rows;
                   }
+              })
+            },
+            /* 获取问卷列表 */
+            getTypeList(){
+              this.$axios.get(this.typeListUrl,{
+                params:{}
+              }).then((res)=>{
+                this.typeList = res.data.data;
               })
             },
             /* 搜索按钮 */

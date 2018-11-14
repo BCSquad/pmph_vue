@@ -89,7 +89,7 @@
                 <template scope="scope">
                     <p class="operation_p">
                       <el-button type="text"  @click="resultCount(scope.row.id,scope.row.materialName);">结果统计</el-button>
-                      <!--<router-link :to="{name:'教材相关调研表',query:{materialId:scope.row.id,materialName:scope.row.materialName,materialRelative:true}}">结果统计</router-link>-->
+                      <!--<router-link :to="{name:'教材相关调研统计',query:{materialId:scope.row.id,materialName:scope.row.materialName,materialRelative:true}}">结果统计</router-link>-->
                     </p>
                 </template>
             </el-table-column>
@@ -188,7 +188,7 @@ export default {
           })
       },
       resultCount(materialId,materialName){
-        this.$router.push({name:'教材相关调研表',query:{materialId:materialId,materialName:materialName,materialRelative:true}});
+        this.$router.push({name:'教材相关调研统计',query:{materialId:materialId,materialName:materialName,materialRelative:true}});
       },
       /**
        * 点击搜索按钮

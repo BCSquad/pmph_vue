@@ -42,4 +42,10 @@
 .fade-enter, .fade-leave-active {
   opacity: 0;
 }
+  td.justify{
+    text-align-last: justify;
+  }
+  td.td-center{
+    text-align: center;
+  }
 </style>

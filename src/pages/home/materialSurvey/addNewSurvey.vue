@@ -1,21 +1,23 @@
 <template>
   <div class="add_new_model">
     <div style="width:100%;float:left;">
+      <el-button v-if="$route.params.type=='check'" lass="back_button" style="float: right;margin-right: 1em;" type="primary" icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>
       <p class="left_header_p">
         调研表信息
         <span></span>
       </p>
     </div>
     <div style="width:100%;float:left;">
-      <el-form :model="surveyForm" ref="surveyForm" :rules="rules"   label-width="120px" style="margin:30px 0;width:80%;">
-        <el-form-item label="调研表名称:" prop="templateName" >
-          <el-input placeholder="请输入调研表名称" v-model="surveyForm.templateName" style="width:100%"></el-input>
+      <el-form :model="surveyForm" ref="surveyForm" :rules="$route.params.type!='check'?rules:{}"   label-width="120px" style="margin:30px 0;width:80%;">
+
+        <el-form-item label="调研表名称:" prop="title" >
+          <el-input placeholder="请输入调研表名称" :disabled="$route.params.type=='check'" v-model="surveyForm.title" style="width:100%"></el-input>
         </el-form-item>
-        <el-form-item label="新调研表名称:" prop="title" >
-          <el-input placeholder="请输入调研表名称" v-model="surveyForm.title" style="width:100%"></el-input>
+        <el-form-item label="新调研表名称:" prop="templateName" v-show="tempReCreat">
+          <el-input placeholder="请输入调研表名称" :disabled="$route.params.type=='check'" v-model="surveyForm.templateName" style="width:100%"></el-input>
         </el-form-item>
-        <el-form-item label="调查对象:" prop="typeId">
-          <el-select v-model="surveyForm.typeId"  placeholder="请选择调查对象" style="margin-right: 2em;">
+        <el-form-item label="调研对象:" prop="typeId">
+          <el-select v-model="surveyForm.typeId" :disabled="$route.params.type=='check'"  placeholder="请选择调研对象" style="margin-right: 2em;">
             <el-option
               v-for="item in objTableData"
               :key="item.id"
@@ -23,14 +25,14 @@
               :value="item.id">
             </el-option>
           </el-select>
-          <!--<el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调查对象</el-button>-->
-          <el-checkbox v-model="tempReCreat">是否新增调研表模板</el-checkbox>
+          <!--<el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调研对象</el-button>-->
+          <el-checkbox v-if="$route.params.type!='check'" v-model="tempReCreat">是否新增调研表模板</el-checkbox>
         </el-form-item>
-        <el-form-item label="调查概述:" prop="intro">
-          <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
+        <el-form-item label="调研概述:" prop="intro">
+          <el-input type="textarea" :rows="3" v-model="surveyForm.intro" :disabled="$route.params.type=='check'"  placeholder="调研概述"></el-input>
         </el-form-item>
-        <el-form-item label="调查教材:" prop="materialId" >
-          <el-select v-model="surveyForm.materialId" @change="getTextbookLists" filterable :defaultFirstOption="true" placeholder="请选择调查教材" style="width:60%;">
+        <el-form-item label="调研教材:" prop="materialId" >
+          <el-select v-model="surveyForm.materialId" :disabled="$route.params.type=='check'" @change="getTextbookLists" filterable :defaultFirstOption="true" placeholder="请选择调研教材" style="width:60%;">
             <el-option :key="0" :label="'-无-'" value="0"></el-option>
             <el-option
               v-for="item in materialOptions"
@@ -39,14 +41,14 @@
               :value="item.id">
             </el-option>
           </el-select>
-          <el-checkbox v-show="surveyForm.materialId>0" v-model="surveyForm.allTextbookUsed">应用于该教材(不绑定具体书籍)</el-checkbox>
-          <!--<el-form-item label="调查教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
+          <el-checkbox v-show="surveyForm.materialId>0" :disabled="$route.params.type=='check'" v-model="surveyForm.allTextbookUsed">应用于该教材(不绑定具体书籍)</el-checkbox>
+          <!--<el-form-item label="调研教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
             <el-input type="text"  v-model="surveyForm.preVersionMaterialRound"  placeholder="版次"></el-input>
           </el-form-item>-->
         </el-form-item>
 
         <el-form-item :label="(!surveyForm.allTextbookUsed&&surveyForm.materialId>0)?'调研书籍:':''" v-show="!surveyForm.allTextbookUsed">
-          <el-checkbox-group v-model="checkedTextbookList">
+          <el-checkbox-group v-model="checkedTextbookList" v-show="$route.params.type!='check'">
             <el-checkbox v-for="item in textbookList" :label="item" style="min-width: 15em;margin-left: 15px;">{{item.textbookName}}</el-checkbox>
           </el-checkbox-group>
           <el-table
@@ -67,6 +69,7 @@
                     class="searchInputEle border-radius-4"
                     icon="edit"
                     v-model.trim="scope.row.preVersionMaterialName"
+                    :disabled="$route.params.type=='check'"
                   ></el-input>
                 </div>
               </template>
@@ -82,6 +85,7 @@
                     class="searchInputEle border-radius-4"
                     icon="edit"
                     v-model.trim="scope.row.preVersionMaterialRound"
+                    :disabled="$route.params.type=='check'"
                   ></el-input>
                 </div>
               </template>
@@ -97,7 +101,7 @@
               width="100">
               <template scope="scope">
                 <div class="paddingB15 paddingT10 relative">
-                  <el-checkbox v-model="scope.row.required"></el-checkbox>
+                  <el-checkbox v-model="scope.row.required" :disabled="$route.params.type=='check'"></el-checkbox>
                 </div>
               </template>
             </el-table-column>
@@ -110,8 +114,8 @@
 
 
       </el-form>
-      <!-- 调查对象弹框 -->
-      <el-dialog :visible.sync="objDialogVisible" title="调查类型（对象）列表" size="tiny" class="obj_dialog table-wrapper">
+      <!-- 调研对象弹框 -->
+      <el-dialog :visible.sync="objDialogVisible" title="调研类型（对象）列表" size="tiny" class="obj_dialog table-wrapper">
         <p style="overflow:hidden;">
           <el-button type="primary" style="float:right" @click="addObjInfo">增加对象</el-button>
         </p>
@@ -149,7 +153,7 @@
 
 
       <p class="left_header_p">
-        调查内容
+        调研内容
         <span></span>
       </p>
     </div>
@@ -268,7 +272,7 @@
   export default {
     data() {
       return {
-        objListUrl:'/pmpheep/materialSurvey/type/list',   //调查对象列表url
+        objListUrl:'/pmpheep/materialSurvey/type/list',   //调研对象列表url
 
         addNewObjUrl:'/pmpheep/survey/type/create', //添加新对象url
         editObjUrl:'/pmpheep/survey/type/update',  //修改对象url
@@ -348,10 +352,10 @@
             {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'}
           ],
           typeId:[
-            {type:'number', required: true, message: '请选择调查对象', trigger: 'blur' },
+            {type:'number', required: true, message: '请选择调研对象', trigger: 'blur' },
           ],
           intro:[
-            { required: true, message: '请输入调查概述', trigger: 'blur' },
+            { required: true, message: '请输入调研概述', trigger: 'blur' },
             {min:1,max:200,message:'概述不能超过200个字符',trigger:'change,blur'}
           ],
           surveyName:[
