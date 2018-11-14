@@ -28,10 +28,11 @@
             @change="endDateChange"
             placeholder="请选择结束日期">
         </el-date-picker>
+        <el-button type="primary" icon="search" @click="search()">搜索</el-button>
       </span>
 
-        <el-button type="primary" icon="search" @click="search()">搜索</el-button>
-      <el-button type="primary"  style="float:right;margin-top: 0.7em;" @click="$router.push({name:'选择调研表模板',params:{type:'add'}})">新增</el-button>
+
+      <el-button type="primary"  style="float:right;margin-top: 10px;" @click="$router.push({name:'选择调研表模板',params:{type:'add'}})">新增</el-button>
 
     </p>
 
@@ -65,7 +66,7 @@
      >
      </el-table-column>
      <!--<el-table-column
-     label="问卷概述"
+     label="调研表概述"
      prop="intro"
      >
      </el-table-column>-->
@@ -105,7 +106,7 @@
        <span>|</span>-->
        <el-button v-if="isAdmin" type="text" @click="deleteSurvey(scope.row.status,scope.row.id)">{{scope.row.status!=1?'发布':'撤回'}}</el-button>
        <!--<span v-if="isAdmin">|</span>-->
-       <!--<el-button type="text" @click="$router.push({name:'问卷模板新增',params:{type:'add'}})">新增</el-button>-->
+       <!--<el-button type="text" @click="$router.push({name:'调研表模板新增',params:{type:'add'}})">新增</el-button>-->
        <!--<el-button type="text" @click="showSend(scope.row.id)">查看发送对象</el-button>-->
      </template>
      </el-table-column>
@@ -150,7 +151,7 @@
     export default{
         data(){
             return{
-              surveyLsitUrl:'/pmpheep/materialSurvey/list', //调查问卷列表url
+              surveyLsitUrl:'/pmpheep/materialSurvey/list', //调查调研表列表url
               editTemplateUrl:'/pmpheep/materialSurvey/question/look', //获取修改信息url
               typeListUrl:'/pmpheep/materialSurvey/typeList',
                 searchParams:{
@@ -178,7 +179,7 @@
           this.getTypeList();
         },
         methods:{
-          /* 获取问卷列表 */
+          /* 获取调研表列表 */
           getSurveyList(){
             this.$axios.get(this.surveyLsitUrl,{
                 params:this.searchParams
