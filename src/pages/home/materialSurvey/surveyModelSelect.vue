@@ -32,7 +32,7 @@
             </el-date-picker>
         </span>
           <el-button type="primary" icon="search" @click="search()">搜索</el-button>
-          <el-button type="primary"  style="float:right;" @click="$router.push({name:'调研表新增',params:{type:'add'}})">直接新增</el-button>
+          <el-button type="primary"  style="float:right;margin-top: 10px;" @click="$router.push({name:'调研表新增',params:{type:'add'}})">直接新增</el-button>
       </p>
       <el-table
       :data="tableData"
@@ -49,15 +49,15 @@
        </template>
        </el-table-column>
         <el-table-column
-          label="问卷概述"
+          label="调研表概述"
           prop="intro"
         >
         </el-table-column>
         <el-table-column
        label="调研对象"
        prop="surveyName"
-       width="100"
-       :className="'justify td-center'"
+       width="150"
+       :className="'td-center'"
        >
        </el-table-column>
 
@@ -112,7 +112,7 @@
             return{
 
 
-              surveyLsitUrl:'/pmpheep/materialSurvey/template/list', //调研问卷列表url
+              surveyLsitUrl:'/pmpheep/materialSurvey/template/list', //调研调研表列表url
               editTemplateUrl:'/pmpheep/materialSurvey/template/question/look', //获取修改信息url
               typeListUrl:'/pmpheep/materialSurvey/typeList',
               searchParams:{
@@ -142,7 +142,7 @@
           this.getTypeList();
         },
         methods:{
-            /* 获取问卷列表 */
+            /* 获取调研表列表 */
             getSurveyList(){
               this.$axios.get(this.surveyLsitUrl,{
                   params:this.searchParams
@@ -154,7 +154,7 @@
                   }
               })
             },
-            /* 获取问卷列表 */
+            /* 获取调研表列表 */
             getTypeList(){
               this.$axios.get(this.typeListUrl,{
                 params:{}
@@ -243,5 +243,9 @@
 }
 .survey_model_set .header_p .data{
     width:200px;
+}
+.header_p div {
+  margin-right: 10px;
+  margin-top: 10px;
 }
 </style>

@@ -9,26 +9,28 @@
         <el-option v-for="item in typeList" :key="item.id" :value="item.id" :label="item.surveyName">{{item.surveyName}}</el-option>
       </el-select>
 
-      <span>创建日期：</span>
-       <el-date-picker
-            v-model="searchParams.startTime"
-            class="input data"
-            type="date"
-            clearable
-            @change="startDateChange"
-            placeholder="请选择开始日期">
-        </el-date-picker>
-        <span>-</span>
-        <el-date-picker
-            v-model="searchParams.endTime"
-            class="input data"
-            type="date"
-            clearable
-            @change="endDateChange"
-            placeholder="请选择结束日期">
-        </el-date-picker>
-        <el-button type="primary" icon="search" @click="search()">搜索</el-button>
-        <el-button type="primary"  style="float:right" @click="$router.push({name:'调研表模板新增',params:{type:'add'}})">新增模板</el-button>
+      <span style="display: inline-block;">
+        <span>创建日期：</span>
+         <el-date-picker
+              v-model="searchParams.startTime"
+              class="input data"
+              type="date"
+              clearable
+              @change="startDateChange"
+              placeholder="请选择开始日期">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+              v-model="searchParams.endTime"
+              class="input data"
+              type="date"
+              clearable
+              @change="endDateChange"
+              placeholder="请选择结束日期">
+          </el-date-picker>
+          <el-button type="primary" icon="search" @click="search()">搜索</el-button>
+      </span>
+        <el-button type="primary"  style="float:right;margin-top: 10px;" @click="$router.push({name:'调研表模板新增',params:{type:'add'}})">新增模板</el-button>
     </p>
     <el-table
     :data="tableData"
@@ -52,7 +54,7 @@
       <el-table-column
      label="调研对象"
      prop="surveyName"
-     width="100"
+     width="150"
      :className="'td-center'"
      >
      </el-table-column>
@@ -319,6 +321,10 @@
 }
 .table-wrapper .el-button.el-button--text {
   white-space: normal;
+}
+.header_p div {
+  margin-right: 10px;
+  margin-top: 10px;
 }
 
 </style>
