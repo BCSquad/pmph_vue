@@ -27,6 +27,7 @@
           label="提交人姓名"
           prop="realname"
           width="110"
+          :class-name="'td-center'"
         >
           <template scope="scope">
             <el-button type="text" @click="updataTemplate(scope.row.templateId,scope.row.id,'check')">{{scope.row.realname}}</el-button>
@@ -36,6 +37,7 @@
           label="用户类别"
           prop="userTypeName"
           width="150"
+          :class-name="'td-center'"
         >
         </el-table-column>
 
@@ -48,6 +50,7 @@
           label="填写时间"
           prop="submitTime"
           width="120"
+          :class-name="'td-center'"
         >
           <template scope="scope">
             {{$commonFun.formatDate(scope.row.submitTime,'yyyy-MM-dd')}}
@@ -63,6 +66,7 @@
         <el-table-column
           label="操作"
           width="120"
+          :class-name="'td-center'"
         >
           <!--:width="isAdmin?350:300"
          >-->

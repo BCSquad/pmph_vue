@@ -53,12 +53,14 @@
           label="调研对象"
           prop="surveyName"
           width="150"
+          :class-name="'td-center'"
         >
         </el-table-column>
         <el-table-column
           label="发布人"
           prop="username"
           width="110"
+          :class-name="'td-center'"
         >
         </el-table-column>
         <!--<el-table-column
@@ -70,6 +72,7 @@
           label="创建日期"
           prop="gmtCreat"
           width="120"
+          :class-name="'td-center'"
         >
           <template scope="scope">
             {{$commonFun.formatDate(scope.row.gmtCreate,'yyyy-MM-dd')}}
@@ -79,6 +82,7 @@
           label="状态"
           prop="status"
           width="110"
+          :class-name="'td-center'"
         >
           <template scope="scope">
             {{scope.row.status == 1?'已发布':(scope.row.status == 0?'未发布':(scope.row.status == 2?'已撤回':'未发布'))}}
@@ -87,6 +91,7 @@
         <el-table-column
           label="操作"
           width="120"
+          :class-name="'td-center'"
         >
           <!--:width="isAdmin?350:300"
          >-->
@@ -358,5 +363,10 @@
 }
   .bottom_tab_content{
 
+  }
+</style>
+<style>
+  .survey_model_set th {
+    text-align: center;
   }
 </style>
