@@ -273,8 +273,8 @@
           "http://192.168.200.109:8090/pmpheep/messages/message/file", */
         editorConfig: {
           initialFrameWidth: null,
-          initialFrameHeight: 500
-
+          initialFrameHeight: 500,
+          wordCount:true, //是否开启字数统计
         },
         pickerOptions: {
           disabledDate(time) {
@@ -618,7 +618,10 @@
       },
       coverUploadRemove(file, flielist) {
         if (file.url) {
-          this.formData.imgAttachment = file.url.split('/').pop();
+          this.formData.imgAttachment = "";
+          this.imgList=[];
+          this.formData.imgFile ="";
+          this.formData.cover="";
         }
       },
       coverBeforeUpload(file) {
