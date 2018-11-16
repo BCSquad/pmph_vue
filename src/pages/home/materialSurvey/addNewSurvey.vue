@@ -427,7 +427,7 @@
           this.surveyForm.typeId=surveyData.survey.typeId;
           this.surveyForm.intro=surveyData.survey.intro;
           this.surveyForm.id=surveyData.survey.id?surveyData.survey.id:'';
-          this.surveyForm.templateId=surveyData.survey.templateId;
+          this.surveyForm.templateId=(surveyData.survey.templateId?surveyData.survey.templateId:"");
           this.surveyForm.materialId = (surveyData.survey.materialId?surveyData.survey.materialId:"");
           this.surveyForm.preVersionMaterialRound = (surveyData.survey.preVersionMaterialRound !=null?surveyData.survey.preVersionMaterialRound:"");
           this.surveyForm.title=surveyData.survey.title;
