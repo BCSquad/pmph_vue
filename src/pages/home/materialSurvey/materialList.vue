@@ -1,14 +1,15 @@
 <template>
     <div class="application_list">
         <p class="header_search_p">
-            <el-select v-model="selectValue" class="select_input" placeholder="请选择">
+            <!--<el-select v-model="selectValue" class="select_input" placeholder="请选择">
                 <el-option v-for="item in selectOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
-            </el-select>
-            <el-input class="input" v-model.trim="searchForm.materialName" @keyup.enter.native="handleSearchCLick" v-if="selectValue==1"></el-input>
-            <el-input class="input" v-model.trim="searchForm.contactUserName" @keyup.enter.native="handleSearchCLick" v-if="selectValue==2"></el-input>
+            </el-select>-->
+            <span style="margin-left:25px;">教材名称：</span>
+            <el-input class="input" v-model.trim="searchForm.materialName" @keyup.enter.native="handleSearchCLick" ></el-input>
+            <!--<el-input class="input" v-model.trim="searchForm.contactUserName" @keyup.enter.native="handleSearchCLick" v-if="selectValue==2"></el-input>-->
             <span style="margin-left:25px;">状态：</span>
-            <el-select v-model="searchForm.state" class="select_input" @change="handleSearchCLick" style="float:none;" placeholder="全部">
+            <el-select v-model="searchForm.state" class="select_input" @change="handleSearchCLick"  placeholder="全部">
                 <el-option label="全部" value=""></el-option>
               <el-option label="未发布" value="未发布"></el-option>
                 <el-option label="已发布" value="已发布"></el-option>
@@ -156,9 +157,6 @@ export default {
             selectOptions: [{
                 value: 1,
                 label: '教材名称'
-            }, {
-                value: 2,
-                label: '联系人'
             }],
             tableData: [],
           dialogVisible:false,
@@ -427,7 +425,14 @@ export default {
     margin-top: 20px;
 }
 
-
+.header_search_p span,.header_search_p button{
+  float: left;
+  display: inline-block;
+}
+.header_search_p span{
+  height: 36px;
+  line-height: 36px;
+}
 
 </style>
 <style>
