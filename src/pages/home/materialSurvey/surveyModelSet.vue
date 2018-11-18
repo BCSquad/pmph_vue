@@ -11,7 +11,18 @@
 
       <span style="display: inline-block;">
         <span>创建日期：</span>
-         <el-date-picker
+        <el-date-picker
+          v-model="dateTimeRange"
+          type="datetimerange"
+          :picker-options="pickerOptions"
+          :editable="false"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          @change="dateTimeRangeChange"
+          align="right">
+        </el-date-picker>
+         <!--<el-date-picker
               v-model="searchParams.startTime"
               class="input data"
               type="date"
@@ -27,7 +38,7 @@
               clearable
               @change="endDateChange"
               placeholder="请选择结束日期">
-          </el-date-picker>
+          </el-date-picker>-->
           <el-button type="primary" icon="search" @click="search()">搜索</el-button>
       </span>
         <el-button type="primary"  style="float:right;margin-top: 10px;" @click="$router.push({name:'调研表模板新增',params:{type:'add'}})">新增模板</el-button>
@@ -160,6 +171,34 @@
                 pageNumber:1,
                 typeId:''
               },
+              dateTimeRange:[],
+              pickerOptions:{
+                shortcuts: [{
+                  text: '最近一周',
+                  onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                    picker.$emit('pick', [start, end]);
+                  }
+                }, {
+                  text: '最近一个月',
+                  onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                    picker.$emit('pick', [start, end]);
+                  }
+                }, {
+                  text: '最近三个月',
+                  onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                    picker.$emit('pick', [start, end]);
+                  }
+                }]
+              },
               typeList:[],
               pageTotal:100,
               tableData:[],
@@ -253,12 +292,21 @@
 
 
           },
-            startDateChange(val){
+          dateTimeRangeChange(val){
+            if(val){
+              this.searchParams.startTime=val.split("至")[0];
+              this.searchParams.endTime=val.split("至")[1];
+            }else{
+              this.searchParams.startTime='';
+              this.searchParams.endTime='';
+            }
+          },
+            /*startDateChange(val){
              this.searchParams.startTime=val;
             },
             endDateChange(val){
               this.searchParams.endTime=val;
-            },
+            },*/
             /* 分页改变 */
             handleSizeChange(val){
               this.searchParams.pageSize=val;
