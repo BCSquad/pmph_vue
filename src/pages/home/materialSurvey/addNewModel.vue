@@ -722,4 +722,11 @@ export default {
     margin-left:50%;
     transform: translateX(-50%);
 }
+label.el-checkbox {
+  margin-left: 15px;
+}
+label.el-radio {
+  margin-left: 15px;
+  line-height: 36px;
+}
 </style>

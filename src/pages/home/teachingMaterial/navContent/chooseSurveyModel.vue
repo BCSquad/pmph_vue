@@ -22,16 +22,16 @@
         </el-table-column>
 
         <el-table-column
-          prop="preVersionMaterialName"
-          label="教材名称"
+          prop="intro"
+          label="概述"
           >
         </el-table-column>
 
-        <el-table-column
+       <!-- <el-table-column
           prop="preVersionMaterialRound"
           label="版次"
           width="100">
-        </el-table-column>
+        </el-table-column>-->
 
         <el-table-column
           prop="surveyName"
@@ -88,7 +88,8 @@ export default {
             endTime:'',
             pageSize:10,
             pageNumber:1,
-            duplicateIds:''
+            duplicateIds:'',
+            isActive:true
           },
           isGetTableDataDone:false,
           currentUserId:this.$getUserData().userInfo.id,
