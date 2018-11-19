@@ -756,7 +756,7 @@
           this.$axios.get('/pmpheep/materialSurvey/chainBookList',
             {params:{
                 materialId:this.surveyForm.materialId,
-                materialSurveyId:this.surveyForm.id
+                materialSurveyId:this.surveyForm.id?this.surveyForm.id:0
             }})
             .then(response => {
               console.log(response);

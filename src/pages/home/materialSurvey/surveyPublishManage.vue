@@ -85,12 +85,12 @@
      </el-table-column>-->
      <el-table-column
      label="发布日期"
-     prop="gmtCreat"
+     prop="gmtPublish"
      width="120"
      :className="'td-center'"
      >
      <template scope="scope">
-         {{$commonFun.formatDate(scope.row.gmtCreate,'yyyy-MM-dd')}}
+         {{$commonFun.formatDate(scope.row.gmtPublish,'yyyy-MM-dd')}}
          </template>
      </el-table-column>
       <el-table-column
