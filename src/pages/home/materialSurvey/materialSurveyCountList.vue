@@ -43,8 +43,12 @@
           placeholder="请选择结束日期">
         </el-date-picker>-->
         <el-button type="primary" icon="search" @click="search()">搜索</el-button>
-
+        <span class="operation-wrapper">
+          <el-button type="primary" :disabled="!tableData.length" @click="exportWordStart">导出Word</el-button>
+          <!--<el-button type="primary" :disabled="!tableData.length" @click="exportExcel">导出Excel</el-button>-->
+        </span>
       </p>
+
       <el-table
         :data="tableData"
         style="width:100%"
@@ -134,6 +138,35 @@
       </div>
     </div>
 
+    <el-dialog
+      title="正在导出..."
+      :visible.sync="exportDialog"
+      size="tiny"
+      :close-on-click-modal="false"
+      :before-close="exportDialogClose">
+      <div class="paddingT50 paddingB50">
+        <el-progress :text-inside="true" :stroke-width="18" :percentage="exportLoading" status="success"></el-progress>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="下载word"
+      :visible.sync="downloadWordDialog"
+      size="tiny"
+    >
+      <div class="paddingT20 paddingB50 text-center">
+        <div class="width100 inline-block">
+          <el-progress type="circle" :percentage="100" status="success"></el-progress>
+        </div>
+        <div class="paddingT10">
+          <el-button type="text" class="link" @click="downloadWord">点击此链接下载word</el-button>
+          <el-button type="text" @click="copyDownloadUrl">
+            <i class="fa fa-copy"></i>
+          </el-button>
+        </div>
+      </div>
+    </el-dialog>
+
 
     <!--查看发送对象-->
     <el-dialog title="已发送对象"  :visible.sync="showSendVisible">
@@ -163,6 +196,9 @@
             return{
               surveyLsitUrl:'/pmpheep/materialSurvey/list', //调查问卷列表url
               toAnswerListUrl:'/pmpheep/materialSurvey/toAnswerList', //获取修改信息url
+              api_export_word_start:'/pmpheep/word/material/survey',
+              api_export_word_progress:'/pmpheep/word/progress',
+              api_export_word_download:'/pmpheep/zip/download',
 
                 searchParams:{
                     title:'',
@@ -201,6 +237,12 @@
                     }
                   }]
                 },
+              exportDialog:false,
+              exportLoading:0,
+              exportLoadingTimerHandle:undefined,
+              handleExportWordtimer:null,
+              downloadWordDialog:false,
+              wordUrl:'',
                 materialName:'',
                 pageTotal:100,
                 tableData:[],
@@ -266,6 +308,106 @@
                   this.searchParams.pageNumber=val;
               this.getSurveyList();
             },
+
+
+          exportWordStart(id){
+            this.exportDialog=true;
+            this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.bort();
+            this.exportLoadingTimerHandle = this.$commonFun.perfectAnimate(0,100,60000,(val)=>{
+              this.exportLoading = val;
+              if(this.exportLoading==100){
+                this.exportDialog=false;
+              }
+            },true);
+            this.$axios.get(this.api_export_word_start,{params:this.searchParams})
+              .then(response=>{
+                this.exportWordProgress(response.data);
+              })
+              .catch(e=>{
+                console.log(e);
+                this.exportDialog=false;
+                clearInterval(this.handleExportWordtimer);
+                this.$confirm('导出失败，请重试！', "提示",{
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  showCancelButton: false,
+                  type: "error"
+                })
+              })
+          },
+          exportWordProgress(id){
+            var timeout = 6*60*1000;//设置3分钟超时
+            var useTime = 0;
+            this.handleExportWordtimer = setInterval(()=>{
+              useTime+=1500;
+              this.$axios.get(this.api_export_word_progress,{params:{
+                  id:id
+                }})
+                .then(response=>{
+                  let res = response.data;
+                  if(res.state==1){
+                    clearInterval(this.handleExportWordtimer);
+                    console.log("exportWordDownload  "+res.detail);
+                    this.exportWordDownload(res.detail);
+                  }
+                })
+                .catch(e=>{
+                  console.log(e);
+                  if(this.exportDialog){
+                    this.$confirm('导出失败，请重试！', "提示",{
+                      confirmButtonText: "确定",
+                      cancelButtonText: "取消",
+                      showCancelButton: false,
+                      type: "error"
+                    });
+                    this.exportDialog=false;
+                    clearInterval(this.handleExportWordtimer);
+                    this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.end();
+                  }
+                })
+              //超时提醒
+              if(useTime>timeout){
+                this.$confirm('导出请求超时，请重试！', "提示",{
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  showCancelButton: false,
+                  type: "error"
+                });
+                clearInterval(this.handleExportWordtimer);
+                this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.end();
+              }
+            },1500)
+
+          },
+          exportWordDownload(url){
+            console.log("url   "+url);
+            //this.$commonFun.downloadFile('/pmpheep'+url);
+            this.exportDialog=false;
+            this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.end();
+            this.downloadWordDialog=true;
+            console.log("url   /pmpheep"+url);
+            this.wordUrl='/pmpheep'+url;
+
+          },
+          downloadWord(){
+            if(this.wordUrl){
+              this.$commonFun.downloadFile(this.wordUrl);
+            }
+          },
+          copyDownloadUrl(){
+            if(this.wordUrl){
+              this.$commonFun.copy(window.location.origin+this.wordUrl);
+            }
+          },
+          /**
+           * 导出进度条关闭前
+           */
+          exportDialogClose(done){
+            this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.bort();
+            clearInterval(this.handleExportWordtimer)
+            done();
+          },
+
           /**
            * 查看发送对象
            */
@@ -411,6 +553,9 @@
   .bottom_tab_content{
 
   }
+.header_p button {
+  margin-bottom: 10px;
+}
 </style>
 <style>
   .survey_model_set th {
