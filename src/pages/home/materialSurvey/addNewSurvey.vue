@@ -32,7 +32,7 @@
           <el-input type="textarea" :rows="3" v-model="surveyForm.intro" :disabled="$route.params.type=='check'"  placeholder="调研概述"></el-input>
         </el-form-item>
         <el-form-item label="调研教材:" prop="materialId" >
-          <el-select v-model="surveyForm.materialId" :disabled="$route.params.type=='check'" @change="getTextbookLists" filterable :defaultFirstOption="true" placeholder="请选择调研教材" style="width:60%;">
+          <el-select v-model="surveyForm.materialId" :disabled="$route.params.type=='check'" @change="surveyForm.templateId = '';getTextbookLists()" filterable :defaultFirstOption="true" placeholder="请选择调研教材" style="width:60%;">
             <el-option :key="0" :label="'-无-'" value="0"></el-option>
             <el-option
               v-for="item in materialOptions"
@@ -271,13 +271,30 @@
 <script type="text/javascript">
   export default {
     data() {
+      var duplicateTitleVali= (rule, value, callback) => {
+        let _this = this;
+        _this.duplicateTitle = false;
+        console.log(_this.existedTitleList);
+        _this.existedTitleList.forEach(function (et) {
+          if(et.title == value
+            && et.id!=_this.surveyForm.id
+            && !(et.templateId == _this.surveyForm.templateId && et.materialId == _this.surveyForm.materialId)
+          ){
+            _this.duplicateTitle = true;
+            return false;
+          }
+        })
+        if (_this.duplicateTitle) {
+          return callback(new Error('调研表名称已存在'));
+        }
+      };
       return {
         objListUrl:'/pmpheep/materialSurvey/type/list',   //调研对象列表url
 
         addNewObjUrl:'/pmpheep/survey/type/create', //添加新对象url
         editObjUrl:'/pmpheep/survey/type/update',  //修改对象url
         deleteObjUrl:'/pmpheep/survey/type/',  //删除对象url
-
+        api_get_titles:'/pmpheep/materialSurvey/getTitleAndTemplateId',
         addTemplateUrl:'/pmpheep/materialSurvey/create', //新增模板url
         editTemplateUrl:'/pmpheep/materialSurvey/create', //修改提交urls
         surveyForm:{          //调研表信息抬头
@@ -291,6 +308,8 @@
           questionAnswerJosn:[
           ]
         },
+        existedTitleList:[],
+        duplicateTitle:false,
         tempReCreat:false,
         textbookList:[],
         checkedTextbookList:[],
@@ -349,7 +368,8 @@
           ],
           title:[
             { required: true, message: '请输入调研表名称', trigger: 'blur' },
-            {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'}
+            {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'},
+            {validator: duplicateTitleVali, trigger: 'change,blur' }
           ],
           typeId:[
             {type:'number', required: true, message: '请选择调研对象', trigger: 'blur' },
@@ -399,6 +419,7 @@
         this.getTextbookLists();
       }
       this.getObjList();
+      this.getTitleAndTemplateId();
     },
     watch:{
       tempReCreat(curVal,oldVal){
@@ -406,6 +427,7 @@
         this.rules.templateName[0].required = curVal;
         this.surveyForm.templateName = (curVal && !this.surveyForm.templateName)?this.surveyForm.title+'_默认模板_'+this.$commonFun.getNowFormatDate():this.surveyForm.templateName;
       },
+
     },
     methods:{
       /* 获取对象列表 */
@@ -464,7 +486,7 @@
       },
       /* 新增或修改 */
       updateTemplate(str){
-        str = 'add';
+        //str = 'add';
         this.$refs.surveyForm.validate((valid)=>{
           if(valid){
             var arr=[];
@@ -485,8 +507,8 @@
 
             this.$axios(
               {
-                url:str=='add'?this.addTemplateUrl:this.editTemplateUrl,
-                method: str=='add'?'POST':'PUT',
+                url:this.addTemplateUrl,
+                method: 'POST',
                 data:this.$commonFun.initPostData(this.surveyForm)
               }).then((res)=>{
               console.log(res);
@@ -786,8 +808,15 @@
             })
 
         }
-
-
+      },
+      getTitleAndTemplateId(){
+        this.$axios.get(this.api_get_titles)
+          .then((response) => {
+            let res = response.data;
+            if (res.code == '1') {
+              this.existedTitleList = res.data;
+            }
+          })
       },
     }
   };
