@@ -95,7 +95,7 @@
         width="120"
        >
        <template scope="scope">
-         <el-button type="text"  @click="updataTemplate(scope.row.id)">选择模板</el-button>
+         <el-button type="text"  @click="updataTemplate(scope.row.id,'add')">选择模板</el-button>
        </template>
        </el-table-column>
       </el-table>

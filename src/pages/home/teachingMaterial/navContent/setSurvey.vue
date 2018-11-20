@@ -35,9 +35,10 @@
                         class="searchInputEle border-radius-4"
                         icon="edit"
                         v-model.trim="scope.row.title"
-                        :class="{'border-red':!scope.row.title}"
+                        :class="{'border-red':(!scope.row.title||scope.row.duplicateTitle)}"
                       ></el-input>
                       <span class="error fontsize-sm table-input-tips" v-if="!scope.row.title" style="left: 1.5em;bottom: 0em;line-height: 12px;">请输入调研表名称</span>
+                      <span class="error fontsize-sm table-input-tips" v-if="scope.row.duplicateTitle" style="left: 1.5em;bottom: 0em;line-height: 12px;">调研表名称已存在</span>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -191,9 +192,10 @@
                             class="searchInputEle border-radius-4"
                             icon="edit"
                             v-model.trim="scope.row.title"
-                            :class="{'border-red':!scope.row.title}"
+                            :class="{'border-red':(!scope.row.title||scope.row.duplicateTitle)}"
                           ></el-input>
                           <span class="error fontsize-sm table-input-tips" v-if="!scope.row.title" style="left: 1.5em;bottom: 0em;line-height: 12px;">请输入调研表名称</span>
+                          <span class="error fontsize-sm table-input-tips" v-if="scope.row.duplicateTitle" style="left: 1.5em;bottom: 0em;line-height: 12px;">调研表名称已存在</span>
                         </template>
                       </el-table-column>
                       <el-table-column
@@ -240,6 +242,7 @@
             api_save:'/pmpheep/textBook/add/textbook',
             api_save_book_survey:'/pmpheep/materialSurvey/saveBookSurvey',
             api_get_survey:'/pmpheep/materialSurvey/getSurveyByTextbook',
+            api_get_titles:'/pmpheep/materialSurvey/getTitleAndTemplateId',
             api_upload:'/pmpheep/textBook/import/excel',
             formData: {
               materialId:'',
@@ -262,6 +265,7 @@
 
             ],
             materialSurveyList:[],
+            existedTitleList:[],
             uploadLoading:false,
             extendListData: [{
               id:'',
@@ -324,7 +328,7 @@
         this.getSurveyList(false);
       },
       getSurveyList(allTextbookUsed){
-
+        this.getTitleAndTemplateId();
         this.$axios.post(this.api_get_survey,this.$commonFun.initPostData({
           materialId:this.formData.materialId,
           textbookId:this.curSurveyBook.id,
@@ -487,6 +491,16 @@
       save(next){
         this.$router.push({name:'教材申报选择学校'});
       },
+      getTitleAndTemplateId(){
+        this.$axios.get(this.api_get_titles)
+          .then((response) => {
+            let res = response.data;
+            console.log(res)
+            if (res.code == '1') {
+              this.existedTitleList = res.data;
+            }
+          })
+      },
     },
   created(){
     this.formData.materialId = this.$route.params.materialId;
@@ -499,6 +513,41 @@
     }
     this.getSurveyList(true);
   },
+  watch:{
+    materialSurveyList:{
+      //注意：当观察的数据为对象或数组时，curVal和oldVal是相等的，因为这两个形参指向的是同一个数据对象
+      handler:function(newValue,oldVal){
+        let _this = this;
+        newValue.forEach(function (it) {
+          it.duplicateTitle = false;
+          _this.existedTitleList.forEach(function (et) {
+            if(et.title == it.title && et.id!=it.id && et.templateId != it.templateId ){
+              it.duplicateTitle = true;
+              return false;
+            }
+          })
+        })
+      },
+      deep:true
+    },
+    bookSurveyList:{
+      //注意：当观察的数据为对象或数组时，curVal和oldVal是相等的，因为这两个形参指向的是同一个数据对象
+      handler:function(newValue,oldVal){
+        let _this = this;
+        newValue.forEach(function (it) {
+          it.duplicateTitle = false;
+          _this.existedTitleList.forEach(function (et) {
+            if(et.title == it.title && et.id!=it.id && et.templateId != it.templateId ){
+              it.duplicateTitle = true;
+              return false;
+            }
+          })
+        })
+      },
+      deep:true
+    },
+  },
+
   components:{
     chooseSurveyModel
   },
@@ -632,4 +681,7 @@
   .underline{
     border-bottom: 2px solid black;
   }
+ tr.el-table__row {
+   height: 5em;
+ }
 </style>
