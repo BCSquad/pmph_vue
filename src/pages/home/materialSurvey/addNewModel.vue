@@ -198,6 +198,23 @@
 <script type="text/javascript">
 export default {
   data() {
+    var duplicateTempNameVali= (rule, value, callback) => {
+      let _this = this;
+      _this.duplicateTempName = false;
+      _this.existedTemplateNameList.forEach(function (et) {
+        if(et.templateName == value
+        && et.id!=_this.surveyForm.id
+        ){
+          _this.duplicateTempName = true;
+          return false;
+        }
+      })
+      if (_this.duplicateTempName) {
+        return callback(new Error('调研表模板名称已存在'));
+      }else{
+        callback();
+      }
+    };
     return {
         objListUrl:'/pmpheep/materialSurvey/type/list',   //调研对象列表url
         addNewObjUrl:'/pmpheep/survey/type/create', //添加新对象url
@@ -205,6 +222,7 @@ export default {
         deleteObjUrl:'/pmpheep/survey/type/',  //删除对象url
         addTemplateUrl:'/pmpheep/materialSurvey/template/create', //新增模板url
         editTemplateUrl:'/pmpheep/materialSurvey/template/create', //修改提交urls
+        api_get_TemplateName:'/pmpheep/materialSurvey/template/getTemplateName',
         surveyForm:{          //调研表信息抬头
           templateName:'',
           typeId:'',
@@ -214,6 +232,8 @@ export default {
           questionAnswerJosn:[
           ]
         },
+      duplicateTempName:false,
+      existedTemplateNameList:[],
         materialOptions:[],
         del_question:[],
         del_dialog_option:[],
@@ -265,7 +285,8 @@ export default {
         rules:{
             templateName:[
                { required: true, message: '请输入调研表名称', trigger: 'blur' },
-               {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'}
+               {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'},
+                {validator: duplicateTempNameVali, trigger: 'change,blur' }
             ],
             typeId:[
                 {type:'number', required: true, message: '请选择调研对象', trigger: 'blur' },
@@ -312,6 +333,7 @@ export default {
       this.getMaterialLists();
       this.initFormData();
       this.getObjList();
+      this.getExistedTemplateNameList();
   },
   methods:{
       /* 获取对象列表 */
@@ -404,6 +426,15 @@ export default {
                  return false;
              }
          })
+      },
+      getExistedTemplateNameList(){
+        this.$axios.get(this.api_get_TemplateName)
+          .then((response) => {
+            let res = response.data;
+            if (res.code == '1') {
+              this.existedTemplateNameList = res.data;
+            }
+          })
       },
       /* 新增对象 */
       addObjInfo(){
