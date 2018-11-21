@@ -521,7 +521,9 @@
         newValue.forEach(function (it) {
           it.duplicateTitle = false;
           _this.existedTitleList.forEach(function (et) {
-            if(et.title == it.title && et.id!=it.id && et.templateId != it.templateId ){
+            if(et.title == it.title
+              && et.id!=it.id
+              && !(et.templateId == it.templateId && et.materialId == _this.formData.materialId)){
               it.duplicateTitle = true;
               return false;
             }
