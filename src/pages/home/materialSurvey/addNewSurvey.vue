@@ -289,6 +289,23 @@
           callback();
         }
       };
+      var duplicateTempNameVali= (rule, value, callback) => {
+        let _this = this;
+        _this.duplicateTempName = false;
+        _this.existedTemplateNameList.forEach(function (et) {
+          if(et.templateName == value
+            //&& et.id!=_this.surveyForm.templateId
+          ){
+            _this.duplicateTempName = true;
+            return false;
+          }
+        })
+        if (_this.duplicateTempName) {
+          return callback(new Error('调研表模板名称已存在'));
+        }else{
+          callback();
+        }
+      };
       return {
         objListUrl:'/pmpheep/materialSurvey/type/list',   //调研对象列表url
 
@@ -296,6 +313,7 @@
         editObjUrl:'/pmpheep/survey/type/update',  //修改对象url
         deleteObjUrl:'/pmpheep/survey/type/',  //删除对象url
         api_get_titles:'/pmpheep/materialSurvey/getTitleAndTemplateId',
+        api_get_TemplateName:'/pmpheep/materialSurvey/template/getTemplateName',
         addTemplateUrl:'/pmpheep/materialSurvey/create', //新增模板url
         editTemplateUrl:'/pmpheep/materialSurvey/create', //修改提交urls
         surveyForm:{          //调研表信息抬头
@@ -310,7 +328,9 @@
           ]
         },
         existedTitleList:[],
+        existedTemplateNameList:[],
         duplicateTitle:false,
+        duplicateTempName:false,
         tempReCreat:false,
         textbookList:[],
         checkedTextbookList:[],
@@ -365,7 +385,8 @@
         rules:{
           templateName:[
             { required: false, message: '请输入调研表模板名称', trigger: 'blur' },
-            {min:1,max:50,message:'调研表模板名称不能超过50个字符',trigger:'change,blur'}
+            {min:1,max:50,message:'调研表模板名称不能超过50个字符',trigger:'change,blur'},
+            {validator: duplicateTempNameVali, trigger: 'change,blur' }
           ],
           title:[
             { required: true, message: '请输入调研表名称', trigger: 'blur' },
@@ -816,6 +837,13 @@
             let res = response.data;
             if (res.code == '1') {
               this.existedTitleList = res.data;
+            }
+          })
+        this.$axios.get(this.api_get_TemplateName)
+          .then((response) => {
+            let res = response.data;
+            if (res.code == '1') {
+              this.existedTemplateNameList = res.data;
             }
           })
       },
