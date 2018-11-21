@@ -8,10 +8,10 @@
       </p>
     </div>
     <div style="width:100%;float:left;">
-      <el-form :model="surveyForm" ref="surveyForm" :rules="$route.params.type!='check'?rules:{}"   label-width="120px" style="margin:30px 0;width:80%;">
+      <el-form :model="surveyForm" status-icon ref="surveyForm" :rules="$route.params.type!='check'?rules:{}"   label-width="120px" style="margin:30px 0;width:80%;">
 
         <el-form-item label="调研表名称:" prop="title" >
-          <el-input placeholder="请输入调研表名称" :disabled="$route.params.type=='check'" v-model="surveyForm.title" style="width:100%"></el-input>
+          <el-input placeholder="请输入调研表名称" id="title_input" :disabled="$route.params.type=='check'" v-model="surveyForm.title" style="width:100%"></el-input>
         </el-form-item>
         <el-form-item label="新调研表名称:" prop="templateName" v-show="tempReCreat">
           <el-input placeholder="请输入调研表名称" :disabled="$route.params.type=='check'" v-model="surveyForm.templateName" style="width:100%"></el-input>
@@ -274,7 +274,6 @@
       var duplicateTitleVali= (rule, value, callback) => {
         let _this = this;
         _this.duplicateTitle = false;
-        console.log(_this.existedTitleList);
         _this.existedTitleList.forEach(function (et) {
           if(et.title == value
             && et.id!=_this.surveyForm.id
@@ -286,6 +285,8 @@
         })
         if (_this.duplicateTitle) {
           return callback(new Error('调研表名称已存在'));
+        }else{
+          callback();
         }
       };
       return {
@@ -433,7 +434,6 @@
       /* 获取对象列表 */
       getObjList(){
         this.$axios.get(this.objListUrl).then((res)=>{
-          console.log(res);
           if(res.data.code==1){
             this.objTableData=res.data.data;
           }
@@ -441,9 +441,9 @@
       },
       /* 修改初始化 */
       initFormData(){
-        if(this.$route.params.type!='add'&&this.$route.params.surveryData){
+        let _this = this;
+        if(this.$route.params.surveryData){
           var surveyData=this.$route.params.surveryData;
-          console.log(surveyData) ;
           //this.surveyForm.templateName=surveyData.survey.templateName;
 
           this.surveyForm.typeId=surveyData.survey.typeId;
@@ -472,8 +472,9 @@
               )
             }
           }
-          console.log(this.surveyForm);
+
         }
+
       },
       /* 确定提交按钮 */
       submitTemplate(){
