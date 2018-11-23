@@ -1,21 +1,23 @@
 <template>
   <div class="add_new_model">
     <div style="width:100%;float:left;">
+      <el-button v-if="$route.params.type=='check'" lass="back_button" style="float: right;margin-right: 1em;" type="primary" icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>
       <p class="left_header_p">
         调研表信息
         <span></span>
       </p>
     </div>
     <div style="width:100%;float:left;">
-      <el-form :model="surveyForm" ref="surveyForm" :rules="rules"   label-width="120px" style="margin:30px 0;width:80%;">
-        <el-form-item label="调研表名称:" prop="templateName" >
-          <el-input placeholder="请输入调研表名称" v-model="surveyForm.templateName" style="width:100%"></el-input>
+      <el-form :model="surveyForm" status-icon ref="surveyForm" :rules="$route.params.type!='check'?rules:{}"   label-width="120px" style="margin:30px 0;width:80%;">
+
+        <el-form-item label="调研表名称:" prop="title" >
+          <el-input placeholder="请输入调研表名称" id="title_input" :disabled="$route.params.type=='check'" v-model="surveyForm.title" style="width:100%"></el-input>
         </el-form-item>
-        <el-form-item label="新调研表名称:" prop="title" >
-          <el-input placeholder="请输入调研表名称" v-model="surveyForm.title" style="width:100%"></el-input>
+        <el-form-item label="新调研表名称:" prop="templateName" v-show="tempReCreat">
+          <el-input placeholder="请输入调研表名称" :disabled="$route.params.type=='check'" v-model="surveyForm.templateName" style="width:100%"></el-input>
         </el-form-item>
-        <el-form-item label="调查对象:" prop="typeId">
-          <el-select v-model="surveyForm.typeId"  placeholder="请选择调查对象" style="margin-right: 2em;">
+        <el-form-item label="调研对象:" prop="typeId">
+          <el-select v-model="surveyForm.typeId" :disabled="$route.params.type=='check'"  placeholder="请选择调研对象" style="margin-right: 2em;">
             <el-option
               v-for="item in objTableData"
               :key="item.id"
@@ -23,14 +25,15 @@
               :value="item.id">
             </el-option>
           </el-select>
-          <!--<el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调查对象</el-button>-->
-          <el-checkbox v-model="tempReCreat">是否新增调研表模板</el-checkbox>
+          <!--<el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调研对象</el-button>-->
+          <el-checkbox v-if="$route.params.type!='check'" v-model="tempReCreat">是否新增调研表模板</el-checkbox>
         </el-form-item>
-        <el-form-item label="调查概述:" prop="intro">
-          <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
+        <el-form-item label="调研概述:" prop="intro">
+          <el-input type="textarea" :rows="3" v-model="surveyForm.intro" :disabled="$route.params.type=='check'"  placeholder="调研概述"></el-input>
         </el-form-item>
-        <el-form-item label="调查教材:" prop="preVersionMaterialId" >
-          <el-select v-model="surveyForm.preVersionMaterialId" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
+        <el-form-item label="调研教材:" prop="materialId" >
+          <el-select v-model="surveyForm.materialId" :disabled="$route.params.type=='check'" @change="surveyForm.templateId = '';getTextbookLists()" filterable :defaultFirstOption="true" placeholder="请选择调研教材" style="width:60%;">
+            <el-option :key="0" :label="'-无-'" value="0"></el-option>
             <el-option
               v-for="item in materialOptions"
               :key="item.id"
@@ -38,14 +41,81 @@
               :value="item.id">
             </el-option>
           </el-select>
-          <el-form-item label="调查教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
+          <el-checkbox v-show="surveyForm.materialId>0" :disabled="$route.params.type=='check'" v-model="surveyForm.allTextbookUsed">应用于该教材(不绑定具体书籍)</el-checkbox>
+          <!--<el-form-item label="调研教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
             <el-input type="text"  v-model="surveyForm.preVersionMaterialRound"  placeholder="版次"></el-input>
-          </el-form-item>
+          </el-form-item>-->
         </el-form-item>
 
+        <el-form-item :label="(!surveyForm.allTextbookUsed&&surveyForm.materialId>0)?'调研书籍:':''" v-show="!surveyForm.allTextbookUsed">
+          <el-checkbox-group v-model="checkedTextbookList" v-show="$route.params.type!='check'">
+            <el-checkbox v-for="item in textbookList" :label="item" style="min-width: 15em;margin-left: 15px;">{{item.textbookName}}</el-checkbox>
+          </el-checkbox-group>
+          <el-table
+            v-if="checkedTextbookList&&checkedTextbookList.length"
+            ref="textbookTable"
+            border
+            stripe
+            :data="checkedTextbookList"
+            tooltip-effect="dark">
+            <el-table-column
+              prop="preVersionMaterialName"
+              label="上本教材名称"
+              min-width="160">
+              <template scope="scope">
+                <div class="paddingB15 paddingT10 relative">
+                  <el-input
+                    placeholder="请输入"
+                    class="searchInputEle border-radius-4"
+                    icon="edit"
+                    v-model.trim="scope.row.preVersionMaterialName"
+                    :disabled="$route.params.type=='check'"
+                  ></el-input>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="preVersionMaterialRound"
+              label="上本教材版次"
+              width="160">
+              <template scope="scope">
+                <div class="paddingB15 paddingT10 relative">
+                  <el-input
+                    placeholder="请输入"
+                    class="searchInputEle border-radius-4"
+                    icon="edit"
+                    v-model.trim="scope.row.preVersionMaterialRound"
+                    :disabled="$route.params.type=='check'"
+                  ></el-input>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="textbookName"
+              label="书名"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="requiredForWriter"
+              label="是否必填"
+              width="100">
+              <template scope="scope">
+                <div class="paddingB15 paddingT10 relative">
+                  <el-checkbox v-model="scope.row.required" :disabled="$route.params.type=='check'"></el-checkbox>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+
+
+
+        </el-form-item>
+
+
+
       </el-form>
-      <!-- 调查对象弹框 -->
-      <el-dialog :visible.sync="objDialogVisible" title="调查类型（对象）列表" size="tiny" class="obj_dialog table-wrapper">
+      <!-- 调研对象弹框 -->
+      <el-dialog :visible.sync="objDialogVisible" title="调研类型（对象）列表" size="tiny" class="obj_dialog table-wrapper">
         <p style="overflow:hidden;">
           <el-button type="primary" style="float:right" @click="addObjInfo">增加对象</el-button>
         </p>
@@ -83,7 +153,7 @@
 
 
       <p class="left_header_p">
-        调查内容
+        调研内容
         <span></span>
       </p>
     </div>
@@ -201,26 +271,69 @@
 <script type="text/javascript">
   export default {
     data() {
+      var duplicateTitleVali= (rule, value, callback) => {
+        let _this = this;
+        _this.duplicateTitle = false;
+        _this.existedTitleList.forEach(function (et) {
+          if(et.title == value
+            && et.id!=_this.surveyForm.id
+            && !(et.templateId == _this.surveyForm.templateId && et.materialId == _this.surveyForm.materialId)
+          ){
+            _this.duplicateTitle = true;
+            return false;
+          }
+        })
+        if (_this.duplicateTitle) {
+          return callback(new Error('调研表名称已存在'));
+        }else{
+          callback();
+        }
+      };
+      var duplicateTempNameVali= (rule, value, callback) => {
+        let _this = this;
+        _this.duplicateTempName = false;
+        _this.existedTemplateNameList.forEach(function (et) {
+          if(et.templateName == value
+            //&& et.id!=_this.surveyForm.templateId
+          ){
+            _this.duplicateTempName = true;
+            return false;
+          }
+        })
+        if (_this.duplicateTempName) {
+          return callback(new Error('调研表模板名称已存在'));
+        }else{
+          callback();
+        }
+      };
       return {
-        objListUrl:'/pmpheep/materialSurvey/type/list',   //调查对象列表url
+        objListUrl:'/pmpheep/materialSurvey/type/list',   //调研对象列表url
 
         addNewObjUrl:'/pmpheep/survey/type/create', //添加新对象url
         editObjUrl:'/pmpheep/survey/type/update',  //修改对象url
         deleteObjUrl:'/pmpheep/survey/type/',  //删除对象url
-
+        api_get_titles:'/pmpheep/materialSurvey/getTitleAndTemplateId',
+        api_get_TemplateName:'/pmpheep/materialSurvey/template/getTemplateName',
         addTemplateUrl:'/pmpheep/materialSurvey/create', //新增模板url
         editTemplateUrl:'/pmpheep/materialSurvey/create', //修改提交urls
         surveyForm:{          //调研表信息抬头
           templateName:'',
           typeId:'',
           intro:'',
-          preVersionMaterialId:'',
+          materialId:'',
           preVersionMaterialRound:'',
           tempReCreat:false,
+          allTextbookUsed:false,
           questionAnswerJosn:[
           ]
         },
+        existedTitleList:[],
+        existedTemplateNameList:[],
+        duplicateTitle:false,
+        duplicateTempName:false,
         tempReCreat:false,
+        textbookList:[],
+        checkedTextbookList:[],
         materialOptions:[],
         del_question:[],
         del_dialog_option:[],
@@ -272,17 +385,19 @@
         rules:{
           templateName:[
             { required: false, message: '请输入调研表模板名称', trigger: 'blur' },
-            {min:1,max:50,message:'调研表模板名称不能超过50个字符',trigger:'change,blur'}
+            {min:1,max:50,message:'调研表模板名称不能超过50个字符',trigger:'change,blur'},
+            {validator: duplicateTempNameVali, trigger: 'change,blur' }
           ],
           title:[
             { required: true, message: '请输入调研表名称', trigger: 'blur' },
-            {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'}
+            {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'},
+            {validator: duplicateTitleVali, trigger: 'change,blur' }
           ],
           typeId:[
-            {type:'number', required: true, message: '请选择调查对象', trigger: 'blur' },
+            {type:'number', required: true, message: '请选择调研对象', trigger: 'blur' },
           ],
           intro:[
-            { required: true, message: '请输入调查概述', trigger: 'blur' },
+            { required: true, message: '请输入调研概述', trigger: 'blur' },
             {min:1,max:200,message:'概述不能超过200个字符',trigger:'change,blur'}
           ],
           surveyName:[
@@ -322,7 +437,11 @@
     created(){
       this.getMaterialLists();
       this.initFormData();
+      if(this.surveyForm.materialId){
+        this.getTextbookLists();
+      }
       this.getObjList();
+      this.getTitleAndTemplateId();
     },
     watch:{
       tempReCreat(curVal,oldVal){
@@ -330,12 +449,12 @@
         this.rules.templateName[0].required = curVal;
         this.surveyForm.templateName = (curVal && !this.surveyForm.templateName)?this.surveyForm.title+'_默认模板_'+this.$commonFun.getNowFormatDate():this.surveyForm.templateName;
       },
+
     },
     methods:{
       /* 获取对象列表 */
       getObjList(){
         this.$axios.get(this.objListUrl).then((res)=>{
-          console.log(res);
           if(res.data.code==1){
             this.objTableData=res.data.data;
           }
@@ -343,17 +462,20 @@
       },
       /* 修改初始化 */
       initFormData(){
-        if(this.$route.params.type!='add'&&this.$route.params.surveryData){
+        let _this = this;
+        if(this.$route.params.surveryData){
           var surveyData=this.$route.params.surveryData;
-          console.log(surveyData) ;
           //this.surveyForm.templateName=surveyData.survey.templateName;
+
           this.surveyForm.typeId=surveyData.survey.typeId;
           this.surveyForm.intro=surveyData.survey.intro;
           this.surveyForm.id=surveyData.survey.id?surveyData.survey.id:'';
-          this.surveyForm.templateId=surveyData.survey.templateId;
-          this.surveyForm.preVersionMaterialId = (surveyData.survey.preVersionMaterialId?surveyData.survey.preVersionMaterialId:"");
+          this.surveyForm.templateId=(surveyData.survey.templateId?surveyData.survey.templateId:"");
+          this.surveyForm.materialId = (surveyData.survey.materialId?surveyData.survey.materialId:"");
           this.surveyForm.preVersionMaterialRound = (surveyData.survey.preVersionMaterialRound !=null?surveyData.survey.preVersionMaterialRound:"");
           this.surveyForm.title=surveyData.survey.title;
+          this.surveyForm.requiredForMaterial=surveyData.survey.requiredForMaterial;
+          this.surveyForm.allTextbookUsed=surveyData.survey.allTextbookUsed;
 
           for(var i in surveyData.qestionAndOption){
             this.surveyForm.questionAnswerJosn[i]={};
@@ -371,8 +493,9 @@
               )
             }
           }
-          console.log(this.surveyForm);
+
         }
+
       },
       /* 确定提交按钮 */
       submitTemplate(){
@@ -385,7 +508,7 @@
       },
       /* 新增或修改 */
       updateTemplate(str){
-        str = 'add';
+        //str = 'add';
         this.$refs.surveyForm.validate((valid)=>{
           if(valid){
             var arr=[];
@@ -396,10 +519,18 @@
             this.surveyForm.questionAnswerJosn='['+this.surveyForm.questionAnswerJosn+']';
             this.surveyForm.del_question = JSON.stringify(this.del_question);
             this.surveyForm.del_question_option = JSON.stringify(this.del_question_option);
+
+            let checkedTemp = [];
+            for(var i in this.checkedTextbookList){
+              //arr[i]=this.checkedTextbookList[i];
+              checkedTemp[i]=JSON.stringify(this.checkedTextbookList[i]);
+            }
+            this.surveyForm.checkedTextbookList='['+checkedTemp+']';
+
             this.$axios(
               {
-                url:str=='add'?this.addTemplateUrl:this.editTemplateUrl,
-                method: str=='add'?'POST':'PUT',
+                url:this.addTemplateUrl,
+                method: 'POST',
                 data:this.$commonFun.initPostData(this.surveyForm)
               }).then((res)=>{
               console.log(res);
@@ -650,6 +781,72 @@
           }
         })
       },
+      /**获取教材列表 */
+      getTextbookLists(){
+        if(this.surveyForm.materialId == ""){
+          this.textbookList = [];
+          this.checkedTextbookList = [];
+        }else{
+          /*this.$axios.get('/pmpheep/textBook/list/textbooks',{params:{materialId:this.surveyForm.materialId}})
+            .then(response => {
+              console.log(response);
+              let res = response.data;
+              if (res.code == '1') {
+                this.textbookList=res.data;
+              }else{
+                this.textbookList = [];
+              }
+            })*/
+          this.$axios.get('/pmpheep/materialSurvey/chainBookList',
+            {params:{
+                materialId:this.surveyForm.materialId,
+                materialSurveyId:this.surveyForm.id?this.surveyForm.id:0
+            }})
+            .then(response => {
+              console.log(response);
+              if(response.data.code==1){
+                this.checkedTextbookList = [];
+                this.textbookList = response.data.data;
+                let _this= this;
+                this.textbookList.forEach(function(item){
+                  if(!item.preVersionMaterialId){
+                    item.preVersionMaterialId = _this.surveyForm.materialId;
+
+                  }
+                  item.materialSurveyId = _this.surveyForm.id;
+                  item.materialId = _this.surveyForm.materialId;
+                  if(item.id){
+                    _this.checkedTextbookList.push(item);
+                  }
+                });
+
+              }else{
+                this.textbookList = [];
+                this.checkedTextbookList=[]
+              }
+
+
+
+            })
+
+        }
+      },
+      getTitleAndTemplateId(){
+        this.$axios.get(this.api_get_titles)
+          .then((response) => {
+            let res = response.data;
+            if (res.code == '1') {
+              this.existedTitleList = res.data;
+            }
+          })
+        this.$axios.get(this.api_get_TemplateName)
+          .then((response) => {
+            let res = response.data;
+            if (res.code == '1') {
+              this.existedTemplateNameList = res.data;
+            }
+          })
+      },
     }
   };
 </script>
@@ -740,5 +937,12 @@
     float: left;
     margin-left:50%;
     transform: translateX(-50%);
+  }
+  label.el-checkbox {
+    margin-left: 15px;
+  }
+  label.el-radio {
+    margin-left: 15px;
+    line-height: 36px;
   }
 </style>

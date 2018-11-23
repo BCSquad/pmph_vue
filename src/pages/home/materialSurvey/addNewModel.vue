@@ -1,18 +1,19 @@
 <template>
   <div class="add_new_model">
       <div style="width:100%;float:left;">
-      <p class="left_header_p">
+        <el-button v-if="$route.params.type=='check'" lass="back_button" style="float: right;margin-right: 1em;" type="primary" icon="arrow-left" @click="$router.go(-1)">返回上一步</el-button>
+        <p class="left_header_p">
          调研表信息
        <span></span>
        </p>
        </div>
       <div style="width:100%;float:left;">
-      <el-form :model="surveyForm" ref="surveyForm" :rules="rules"   label-width="120px" style="margin:30px 0;width:80%;">
+      <el-form :model="surveyForm" ref="surveyForm" :rules="$route.params.type!='check'?rules:{}"   label-width="120px" style="margin:30px 0;width:80%;">
           <el-form-item label="调研表名称:" prop="templateName" >
-             <el-input placeholder="请输入调研表名称" v-model="surveyForm.templateName" style="width:100%"></el-input>
+             <el-input placeholder="请输入调研表名称" :disabled="$route.params.type=='check'" v-model="surveyForm.templateName" style="width:100%"></el-input>
           </el-form-item>
-          <el-form-item label="调查对象:" prop="typeId">
-             <el-select v-model="surveyForm.typeId"  placeholder="请选择调查对象">
+          <el-form-item label="调研对象:" prop="typeId">
+             <el-select v-model="surveyForm.typeId" :disabled="$route.params.type=='check'"  placeholder="请选择调研对象">
                     <el-option
                     v-for="item in objTableData"
                     :key="item.id"
@@ -20,13 +21,13 @@
                     :value="item.id">
                     </el-option>
                 </el-select>
-                <el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调查对象</el-button>
+                <!--<el-button type="text" style="margin-left:10px;color:#337ab7" v-if="$route.params.type!='check'"  @click="objDialogVisible=true">编辑调研对象</el-button>-->
           </el-form-item>
-          <el-form-item label="调查概述:" prop="intro">
-             <el-input type="textarea" :rows="3" v-model="surveyForm.intro"  placeholder="调查概述"></el-input>
+          <el-form-item label="调研概述:" prop="intro">
+             <el-input type="textarea" :rows="3" v-model="surveyForm.intro" :disabled="$route.params.type=='check'" placeholder="调研概述"></el-input>
           </el-form-item>
-          <el-form-item label="调查教材:" prop="preVersionMaterialId" >
-            <el-select v-model="surveyForm.preVersionMaterialId" clearable filterable :defaultFirstOption="false" placeholder="请选择调查教材" style="width:60%;">
+          <!--<el-form-item label="调研教材:" prop="preVersionMaterialId" >
+            <el-select v-model="surveyForm.preVersionMaterialId" clearable filterable :defaultFirstOption="false" placeholder="请选择调研教材" style="width:60%;">
               <el-option
                 v-for="item in materialOptions"
                 :key="item.id"
@@ -34,14 +35,14 @@
                 :value="item.id">
               </el-option>
             </el-select>
-            <el-form-item label="调查教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
+            <el-form-item label="调研教材版次:" prop="preVersionMaterialRound" style="width:39%;display: inline-block;float: right;">
               <el-input type="text"  v-model="surveyForm.preVersionMaterialRound"  placeholder="版次"></el-input>
             </el-form-item>
-          </el-form-item>
+          </el-form-item>-->
 
       </el-form>
-      <!-- 调查对象弹框 -->
-     <el-dialog :visible.sync="objDialogVisible" title="调查类型（对象）列表" size="tiny" class="obj_dialog table-wrapper">
+      <!-- 调研对象弹框 -->
+     <el-dialog :visible.sync="objDialogVisible" title="调研类型（对象）列表" size="tiny" class="obj_dialog table-wrapper">
         <p style="overflow:hidden;">
             <el-button type="primary" style="float:right" @click="addObjInfo">增加对象</el-button>
         </p>
@@ -79,7 +80,7 @@
 
 
       <p class="left_header_p">
-         调查内容
+         调研内容
        <span></span>
        </p>
        </div>
@@ -197,13 +198,31 @@
 <script type="text/javascript">
 export default {
   data() {
+    var duplicateTempNameVali= (rule, value, callback) => {
+      let _this = this;
+      _this.duplicateTempName = false;
+      _this.existedTemplateNameList.forEach(function (et) {
+        if(et.templateName == value
+        && et.id!=_this.surveyForm.id
+        ){
+          _this.duplicateTempName = true;
+          return false;
+        }
+      })
+      if (_this.duplicateTempName) {
+        return callback(new Error('调研表模板名称已存在'));
+      }else{
+        callback();
+      }
+    };
     return {
-        objListUrl:'/pmpheep/materialSurvey/type/list',   //调查对象列表url
+        objListUrl:'/pmpheep/materialSurvey/type/list',   //调研对象列表url
         addNewObjUrl:'/pmpheep/survey/type/create', //添加新对象url
         editObjUrl:'/pmpheep/survey/type/update',  //修改对象url
         deleteObjUrl:'/pmpheep/survey/type/',  //删除对象url
         addTemplateUrl:'/pmpheep/materialSurvey/template/create', //新增模板url
         editTemplateUrl:'/pmpheep/materialSurvey/template/create', //修改提交urls
+        api_get_TemplateName:'/pmpheep/materialSurvey/template/getTemplateName',
         surveyForm:{          //调研表信息抬头
           templateName:'',
           typeId:'',
@@ -213,6 +232,8 @@ export default {
           questionAnswerJosn:[
           ]
         },
+      duplicateTempName:false,
+      existedTemplateNameList:[],
         materialOptions:[],
         del_question:[],
         del_dialog_option:[],
@@ -264,13 +285,14 @@ export default {
         rules:{
             templateName:[
                { required: true, message: '请输入调研表名称', trigger: 'blur' },
-               {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'}
+               {min:1,max:50,message:'调研表名称不能超过50个字符',trigger:'change,blur'},
+                {validator: duplicateTempNameVali, trigger: 'change,blur' }
             ],
             typeId:[
-                {type:'number', required: true, message: '请选择调查对象', trigger: 'blur' },
+                {type:'number', required: true, message: '请选择调研对象', trigger: 'blur' },
             ],
             intro:[
-                { required: true, message: '请输入调查概述', trigger: 'blur' },
+                { required: true, message: '请输入调研概述', trigger: 'blur' },
                 {min:1,max:200,message:'概述不能超过200个字符',trigger:'change,blur'}
             ],
             surveyName:[
@@ -311,6 +333,7 @@ export default {
       this.getMaterialLists();
       this.initFormData();
       this.getObjList();
+      this.getExistedTemplateNameList();
   },
   methods:{
       /* 获取对象列表 */
@@ -403,6 +426,15 @@ export default {
                  return false;
              }
          })
+      },
+      getExistedTemplateNameList(){
+        this.$axios.get(this.api_get_TemplateName)
+          .then((response) => {
+            let res = response.data;
+            if (res.code == '1') {
+              this.existedTemplateNameList = res.data;
+            }
+          })
       },
       /* 新增对象 */
       addObjInfo(){
@@ -720,5 +752,12 @@ export default {
     float: left;
     margin-left:50%;
     transform: translateX(-50%);
+}
+label.el-checkbox {
+  margin-left: 15px;
+}
+label.el-radio {
+  margin-left: 15px;
+  line-height: 36px;
 }
 </style>

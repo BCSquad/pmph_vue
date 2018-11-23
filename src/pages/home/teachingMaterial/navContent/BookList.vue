@@ -392,7 +392,8 @@ export default {
                 console.log(res)
                 if (res.code == '1') {
                   if(next){
-                    this.$router.push({name:'教材申报选择学校'});
+                    //this.$router.push({name:'教材申报选择学校'});
+                    this.$router.push({name:'设置教材调研表'});
                   }else{
                     this.$message.success('保存成功！');
                     this.getBookList();

@@ -27,15 +27,17 @@
           label="提交人姓名"
           prop="realname"
           width="110"
+          :class-name="'td-center'"
         >
           <template scope="scope">
-            <el-button type="text" @click="updataTemplate(scope.row.templateId,scope.row.id,'check')">{{scope.row.realname}}</el-button>
+            <el-button type="text" @click="updataTemplate(scope.row.templateId,scope.row.id,'check')">{{scope.row.realname?scope.row.realname:(scope.row.userType!=1?'管理员':'')}}</el-button>
           </template>
         </el-table-column>
         <el-table-column
           label="用户类别"
           prop="userTypeName"
           width="150"
+          :class-name="'td-center'"
         >
         </el-table-column>
 
@@ -48,6 +50,7 @@
           label="填写时间"
           prop="submitTime"
           width="120"
+          :class-name="'td-center'"
         >
           <template scope="scope">
             {{$commonFun.formatDate(scope.row.submitTime,'yyyy-MM-dd')}}
@@ -63,11 +66,12 @@
         <el-table-column
           label="操作"
           width="120"
+          :class-name="'td-center'"
         >
           <!--:width="isAdmin?350:300"
          >-->
           <template scope="scope">
-            <el-button type="text"  @click="toAnswerDetail(scope.row.surveyId,scope.row.userId,scope.row.userType,title)">查看结果</el-button>
+            <el-button type="text"  @click="toAnswerDetail(scope.row.surveyId,scope.row.userId,scope.row.userType,title,scope.row.realname)">查看结果</el-button>
 
           </template>
         </el-table-column>
@@ -138,9 +142,10 @@
               this.getSurveyList();
             },
            /* 查看调研表填写详情 */
-           toAnswerDetail(sid,userId,userType,title){
-             alert("todo:跳转到查看详情界面"+" sid: "+sid+" userId: "+userId+" userType: "+userType+" title: "+title);
-            /*this.$axios.get(this.toAnswerListUrl,{
+           toAnswerDetail(sid,userId,userType,title,realname){
+             //alert("todo:跳转到查看详情界面"+" sid: "+sid+" userId: "+userId+" userType: "+userType+" title: "+title);
+             this.$router.push({name:'调研表回答详情',query:{surveyId:sid,userId:userId,userType:userType,realname:realname}});
+             /*this.$axios.get(this.toAnswerListUrl,{
                 params:{
                   surveyId:sid
                 }
@@ -148,7 +153,7 @@
                 console.log(res);
 
                 if(res.data.code==1){
-                   this.$router.push({name:'调研表新增',params:{surveryData:res.data.data,type:str?str:''}});
+                   this.$router.push({name:'调研表回答详情',query:{surveyId:sid,type:str?str:''}});
                 }
             })*/
            },
