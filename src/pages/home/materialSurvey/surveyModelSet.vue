@@ -42,6 +42,20 @@
           <el-button type="primary" icon="search" @click="search()">搜索</el-button>
       </span>
         <el-button type="primary"  style="float:right;margin-top: 10px;" @click="$router.push({name:'调研表模板新增',params:{type:'add'}})">新增模板</el-button>
+
+      <my-upload
+        class="pull-right "
+        ref="upload"
+        :action="api_upload_survey"
+        :before-upload="beforeUploadFile"
+        :on-success="upLoadFileSuccess"
+        :on-error="uploadError"
+        :show-file-list="false">
+        <el-button type="primary" :disabled="uploadLoading"  :loading="uploadLoading" >{{uploadLoading?'上传解析中...':'点击导入'}}</el-button>
+        <!-- <el-button type="primary" :disabled="!productbtn"  v-else>{{'请先维护产品信息'}}</el-button>-->
+      </my-upload>
+      <span class="pull-right" style="padding-top: 10px;"><a style="color: #337ab7;line-height:36px;margin-right:10px;" href="/static/调研表（模板）导入模板.xlsx">模板下载.xls</a></span>
+
     </p>
     <el-table
     :data="tableData"
@@ -163,6 +177,7 @@
               surveyLsitUrl:'/pmpheep/materialSurvey/template/list', //调研表模板列表url
               editTemplateUrl:'/pmpheep/materialSurvey/template/question/look', //获取修改信息url
               typeListUrl:'/pmpheep/materialSurvey/typeList',
+              api_upload_survey: '/pmpheep/materialSurvey/template/importExcel',
               searchParams:{
                 templateName:'',
                 startTime:'',
@@ -171,6 +186,7 @@
                 pageNumber:1,
                 typeId:''
               },
+              uploadLoading:false,
               dateTimeRange:[],
               pickerOptions:{
                 shortcuts: [{
@@ -228,6 +244,101 @@
                   }
               })
             },
+
+
+          /**
+           * 当上传按钮添加excel
+           * @param file
+           */
+          beforeUploadFile(file){
+            let flag = true;
+
+            var filedata = file.raw;
+            var ext=file.name.substring(file.name.lastIndexOf(".")+1).toLowerCase();
+            // 类型判断
+            if(!(ext=='xls'||ext=='xlsx')){
+              this.$confirm("请按照模板格式的文档上传文件", "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+              return;
+            }
+            //文件名不超过40个字符
+            /* if(file.name.length>40){
+             this.$confirm("文件名不能超过40个字符", "提示",{
+                 confirmButtonText: "确定",
+                 cancelButtonText: "取消",
+                 showCancelButton: false,
+                 type: "error"
+             });
+             return;
+             } */
+            // 判断文件大小是否符合 文件不为0
+            if(file.size<1){
+              this.$confirm("文件大小不能小于1bt", "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+              return;
+            }
+            this.uploadLoading=flag;
+            return flag;
+            //this.loadingInstance = Loading.service({ fullscreen: true });
+          },
+          /**
+           * 上传文件请求成功的回调
+           */
+          upLoadFileSuccess(res, file, fileList){
+            if (res.code == '1') {
+              /* this.excelVisible = true;
+               this.excelTableData = res.data.list;
+               this.uuid=res.data.uuid;*/
+              this.getSurveyList();
+
+              this.$message.success("导入成功");
+              console.log(res);
+            }else{
+              this.$confirm(res.msg.msgTrim(), "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+            }
+            var _this = this;
+            // this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
+            //   _this.loadingInstance.close();
+            // });
+            this.uploadLoading = false;
+          },
+          /**
+           * 上传文件请求失败的回调
+           */
+          uploadError(err, file, fileList){
+            console.log(err);
+            this.$confirm(err.msg.msgTrim(), "提示",{
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
+            });
+            var _this = this;
+            // this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
+            //   _this.loadingInstance.close();
+            // });
+            this.uploadLoading = false;
+          },
+
+
+
+
+
+
+
             /* 获取类型列表 */
             getTypeList(){
               this.$axios.get(this.typeListUrl,{

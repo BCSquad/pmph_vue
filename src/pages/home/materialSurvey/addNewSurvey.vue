@@ -484,6 +484,7 @@
             this.surveyForm.questionAnswerJosn[i].type=surveyData.qestionAndOption[i].type+'';
             this.surveyForm.questionAnswerJosn[i].direction=surveyData.qestionAndOption[i].direction;
             this.surveyForm.questionAnswerJosn[i].sort=surveyData.qestionAndOption[i].sort+'';
+            this.surveyForm.questionAnswerJosn[i].categoryId=surveyData.qestionAndOption[i].categoryId+'';
             this.surveyForm.questionAnswerJosn[i].surveyQuestionOptionList=[];
             var options=surveyData.qestionAndOption[i].optionContent?surveyData.qestionAndOption[i].optionContent.split(','):[];
             let optionIds=surveyData.qestionAndOption[i].optionIdString?surveyData.qestionAndOption[i].optionIdString.split(','):[];
