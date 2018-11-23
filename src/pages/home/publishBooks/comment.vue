@@ -134,7 +134,7 @@
       size="tiny"
       width="150px">
       <el-form>
-        <el-form-item label=" 退回理由：">
+        <el-form-item label="退回理由：">
           <el-input  type="textarea"  :rows="2"
                      placeholder="请输入退回理由" v-model.trim="reasons.reason"></el-input>
         </el-form-item>
