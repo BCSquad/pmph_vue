@@ -397,7 +397,7 @@
             {type:'number', required: true, message: '请选择调研对象', trigger: 'blur' },
           ],
           intro:[
-            { required: true, message: '请输入调研概述', trigger: 'blur' },
+            /*{ required: true, message: '请输入调研概述', trigger: 'blur' },*/
             {min:1,max:200,message:'概述不能超过200个字符',trigger:'change,blur'}
           ],
           surveyName:[

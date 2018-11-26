@@ -38,7 +38,7 @@
                         :class="{'border-red':(!scope.row.title||scope.row.duplicateTitle)}"
                       ></el-input>
                       <span class="error fontsize-sm table-input-tips" v-if="!scope.row.title" style="left: 1.5em;bottom: 0em;line-height: 12px;">请输入调研表名称</span>
-                      <span class="error fontsize-sm table-input-tips" v-if="scope.row.duplicateTitle" style="left: 1.5em;bottom: 0em;line-height: 12px;">调研表名称已存在</span>
+                      <span class="error fontsize-sm table-input-tips" v-if="scope.row.duplicateTitle" style="left: 1.5em;bottom: 0em;line-height: 12px;">调研表名称已存在,请重命名</span>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -195,7 +195,7 @@
                             :class="{'border-red':(!scope.row.title||scope.row.duplicateTitle)}"
                           ></el-input>
                           <span class="error fontsize-sm table-input-tips" v-if="!scope.row.title" style="left: 1.5em;bottom: 0em;line-height: 12px;">请输入调研表名称</span>
-                          <span class="error fontsize-sm table-input-tips" v-if="scope.row.duplicateTitle" style="left: 1.5em;bottom: 0em;line-height: 12px;">调研表名称已存在</span>
+                          <span class="error fontsize-sm table-input-tips" v-if="scope.row.duplicateTitle" style="left: 1.5em;bottom: 0em;line-height: 12px;">调研表名称已存在,请重命名</span>
                         </template>
                       </el-table-column>
                       <el-table-column
