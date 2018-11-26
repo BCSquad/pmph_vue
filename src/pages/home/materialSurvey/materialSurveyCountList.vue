@@ -349,16 +349,20 @@
                     clearInterval(this.handleExportWordtimer);
                     console.log("exportWordDownload  "+res.detail);
                     this.exportWordDownload(res.detail);
+                  }else if(res.state == 2){
+                    throw new DOMException(res.detail,res.detail);
                   }
                 })
                 .catch(e=>{
-                  console.log(e);
+                  console.log(e.message);
                   if(this.exportDialog){
-                    this.$confirm('导出失败，请重试！', "提示",{
+                    this.$confirm(e?e.message:'导出失败，请重试！', "提示",{
                       confirmButtonText: "确定",
                       cancelButtonText: "取消",
                       showCancelButton: false,
                       type: "error"
+                    }).then(() => {
+
                     });
                     this.exportDialog=false;
                     clearInterval(this.handleExportWordtimer);
