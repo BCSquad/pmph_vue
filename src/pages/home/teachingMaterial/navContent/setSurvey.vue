@@ -45,6 +45,11 @@
                     prop="surveyName"
                     label="调研对象"
                     width="160">
+                    <template scope="scope">
+                      <el-select v-model="scope.row.typeId" >
+                        <el-option :value="type.id" :key="type.id" :label="type.surveyName"  v-for="type in typeList" >{{type.surveyName}}</el-option>
+                      </el-select>
+                    </template>
                   </el-table-column>
                   <el-table-column
                     prop="requiredForMaterial"
@@ -104,25 +109,26 @@
                   <el-table-column
                     prop="sort"
                     label="书序"
-                    width="160">
+                    width="80">
                   </el-table-column>
                   <el-table-column
                     prop="textbookName"
                     label="书籍名称"
-                    width="420">
+                    min-width="120">
                   </el-table-column>
                   <el-table-column
                     prop="textbookRound"
                     label="版次"
-                    width="160">
+                    width="80">
                   </el-table-column>
                   <el-table-column
                     prop="surveyNum"
                     label="调研表数量"
-                    width="160">
+                    width="120">
                   </el-table-column>
                   <el-table-column
-                    label="操作">
+                    label="操作"
+                    width="120">
                     <template scope="scope">
                       <el-button type="text" :disabled="!(scope.row.textbookName&&scope.row.sort&&scope.row.textbookRound)" style="text-align-last: justify;width: 6.9em;margin: 0px;"
                                  @click="toSetServeyForBook(scope.row)">配置调研表</el-button>
@@ -202,6 +208,11 @@
                         prop="surveyName"
                         label="调研对象"
                         width="160">
+                        <template scope="scope">
+                          <el-select v-model="scope.row.typeId" >
+                            <el-option :value="type.id" :key="type.id" :label="type.surveyName"  v-for="type in typeList" >{{type.surveyName}}</el-option>
+                          </el-select>
+                        </template>
                       </el-table-column>
                       <el-table-column
                         prop="requiredForWriter"
@@ -244,6 +255,7 @@
             api_get_survey:'/pmpheep/materialSurvey/getSurveyByTextbook',
             api_get_titles:'/pmpheep/materialSurvey/getTitleAndTemplateId',
             api_upload:'/pmpheep/textBook/import/excel',
+            typeListUrl:'/pmpheep/materialSurvey/typeList',
             formData: {
               materialId:'',
               materialName: '',
@@ -276,6 +288,7 @@
               nameIsOk : true,
               roundIsOk : true,
             }],
+            typeList:[],
             currentUserId:this.$getUserData().userInfo.id,
         }
     },
@@ -318,6 +331,14 @@
           .catch(e=>{
             console.log(e);
           })
+      },
+      /* 获取类型列表 */
+      getTypeList(){
+        this.$axios.get(this.typeListUrl,{
+          params:{}
+        }).then((res)=>{
+          this.typeList = res.data.data;
+        })
       },
 
       /**
@@ -511,7 +532,9 @@
     if(this.formData.materialId!='new'){
       this.getBookList();
     }
+    this.getTypeList();
     this.getSurveyList(true);
+
   },
   watch:{
     materialSurveyList:{
