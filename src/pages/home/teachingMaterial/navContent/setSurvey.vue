@@ -1,5 +1,5 @@
 <template>
-    <div class="new_book_release">
+    <div class="new_book_release setBookSurvey_wrapper">
         <el-form ref="form" :model="formData" class="release_form" label-width="110px">
             <el-form-item label="教材名称：" class="marginB10">
                 <span class="grey_span">{{formData.materialName}}</span>
@@ -539,7 +539,9 @@
         newValue.forEach(function (it) {
           it.duplicateTitle = false;
           _this.existedTitleList.forEach(function (et) {
-            if(et.title == it.title && et.id!=it.id && et.templateId != it.templateId ){
+            if(et.title == it.title
+              && et.id!=it.id
+              && !(et.templateId == it.templateId && et.materialId == _this.formData.materialId) ){
               it.duplicateTitle = true;
               return false;
             }
@@ -683,7 +685,9 @@
   .underline{
     border-bottom: 2px solid black;
   }
- tr.el-table__row {
-   height: 5em;
- }
+
 </style>
+<style>
+  .setBookSurvey_wrapper tr.el-table__row {
+  height: 5em;
+}</style>
