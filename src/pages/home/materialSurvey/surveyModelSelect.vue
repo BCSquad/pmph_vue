@@ -56,7 +56,7 @@
        prop="templateName"
        >
        <template scope="scope">
-         <el-button type="text" @click="updataTemplate(scope.row.id,'check')">{{scope.row.templateName}}</el-button>
+         <el-button :class="'templateName'" type="text" @click="updataTemplate(scope.row.id,'check')">{{scope.row.templateName}}</el-button>
        </template>
        </el-table-column>
         <el-table-column
@@ -294,5 +294,9 @@
 .header_p div {
   margin-right: 10px;
   margin-top: 10px;
+}
+button.el-button.el-button--text {
+  white-space: normal;
+  text-align: left;
 }
 </style>
