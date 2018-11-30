@@ -338,8 +338,8 @@
     text-align: center;
   }
   .add_new_model .form_list .form_input{
-    width:calc(100% - 120px);
-    margin-right:10px;
+    width:calc(100% - 15px);
+    margin-left:15px;
   }
   .add_new_model .form_list  .form_button{
     color:#337ab7;

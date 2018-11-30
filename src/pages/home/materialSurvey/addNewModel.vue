@@ -122,9 +122,9 @@
                     <el-checkbox :label="it.optionContent" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-checkbox>
                 </el-checkbox-group>
                 <!-- 单行文本 -->
-                <el-input  class="form_input" v-if="item.type==4"></el-input>
+                <el-input  class="form_input" :class="{edit:$route.params.type!='check'}" v-if="item.type==4"></el-input>
                 <!-- 多行文本 -->
-                <el-input   type="textarea" :rows="3" class="form_input" v-if="item.type==5"></el-input>
+                <el-input   type="textarea" :rows="3" class="form_input" :class="{edit:$route.params.type!='check'}" v-if="item.type==5"></el-input>
                 <!-- 操作按钮 -->
                 <el-button type="text" class="form_button" style="margin-left:15px;" v-if="$route.params.type!='check'"  @click="editFormItem(item,index)">修改</el-button>
                 <el-button type="text" class="form_button"  v-if="$route.params.type!='check'" @click="deleteFormItem(index)">删除</el-button>
@@ -729,8 +729,12 @@ export default {
     text-align: center;
 }
 .add_new_model .form_list .form_input{
-    width:calc(100% - 120px);
-    margin-right:10px;
+  margin-left:15px;
+  width:calc(100% - 15px);
+}
+.add_new_model .form_list .form_input.edit{
+  width:calc(100% - 120px);
+  margin-right:10px;
 }
 .add_new_model .form_list  .form_button{
     color:#337ab7;
