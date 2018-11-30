@@ -7,7 +7,7 @@
       </p>
     </div>
     <div style="width:100%;float:left;">
-      <el-form :model="surveyForm" ref="surveyForm"    label-width="120px" style="margin:30px 0;width:80%;">
+      <el-form :model="surveyForm" ref="surveyForm"    label-width="120px" style="margin:30px 0;width:85%;">
         <el-form-item label="调研表名称:" prop="title" >
           {{surveyForm.title}}
           <!--<el-input placeholder="请输入调研表名称" v-model="surveyForm.title" style="width:100%"></el-input>-->
@@ -323,10 +323,10 @@
   }
   .add_new_model .form_list{
     float: left;
-    width:80%;
+    width:85%;
     margin:35px 0;
     padding-left:35px;
-    padding-right:12%;
+    /*padding-right:12%;*/
     /*border-left:1px solid #dadada;*/
     min-height:765px;
     box-sizing: border-box;

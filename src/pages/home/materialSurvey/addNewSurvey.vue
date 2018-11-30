@@ -8,7 +8,7 @@
       </p>
     </div>
     <div style="width:100%;float:left;">
-      <el-form :model="surveyForm" status-icon ref="surveyForm" :rules="$route.params.type!='check'?rules:{}"   label-width="120px" style="margin:30px 0;width:80%;">
+      <el-form :model="surveyForm" status-icon ref="surveyForm" :rules="$route.params.type!='check'?rules:{}"   label-width="120px" style="margin:30px 0;width:85%;">
 
         <el-form-item label="调研表名称:" prop="title" >
           <el-input placeholder="请输入调研表名称" id="title_input" :disabled="$route.params.type=='check'" v-model="surveyForm.title" style="width:100%"></el-input>
@@ -181,7 +181,7 @@
       </ul>
     </div>
     <!-- 表单列表 -->
-    <div class="form_list">
+    <div class="form_list" :class="{edit:$route.params.type!='check'}">
       <h3 v-if="surveyForm.questionAnswerJosn.length==0">题目为空，请在左侧选择题目添加</h3>
       <el-form  ref="form" label-width="100px" label-position="top">
 
@@ -900,13 +900,17 @@
   }
   .add_new_model .form_list{
     float: left;
-    width:80%;
+    width:85%;
     margin:35px 0;
     padding-left:35px;
-    padding-right:12%;
+
     border-left:1px solid #dadada;
     min-height:765px;
     box-sizing: border-box;
+  }
+  .add_new_model .form_list.edit{
+    width:80%;
+    padding-right:12%;
   }
   .add_new_model .form_list h3{
     font-size: 18px;
