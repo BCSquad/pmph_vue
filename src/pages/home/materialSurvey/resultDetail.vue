@@ -74,9 +74,9 @@
             <el-checkbox :label="it.id" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-checkbox>
           </el-checkbox-group>
           <!-- 单行文本 -->
-          <el-input  class="form_input" v-if="item.type==4" :disabled="true" v-model="item.surveyQuestionOptionList[0].optionContent"></el-input>
+          <el-input  class="form_input" v-if="item.type==4" :disabled="true" :value="textContent(item)"></el-input>
           <!-- 多行文本 -->
-          <el-input   type="textarea" :rows="3" class="form_input" v-if="item.type==5" :disabled="true" v-model="item.surveyQuestionOptionList[0].optionContent"></el-input>
+          <el-input   type="textarea" :rows="3" class="form_input" v-if="item.type==5" :disabled="true" :value="textContent(item)"></el-input>
 
         </el-form-item>
       </el-form>
@@ -192,6 +192,18 @@
             this.objTableData=res.data.data;
           }
         })
+      },
+      /**
+       * 单项多项答案item.surveyQuestionOptionList[0].optionContent
+       * 因有可能出现未填写 造成从undefined中取[0]
+       * */
+      textContent(item){
+        return
+          item?
+            (item.surveyQuestionOptionList?
+                (item.surveyQuestionOptionList[0]?item.surveyQuestionOptionList[0].optionContent:'')
+            :'')
+          :'';
       },
       /* 获取问题和答案 */
       getQuestionResult(){
