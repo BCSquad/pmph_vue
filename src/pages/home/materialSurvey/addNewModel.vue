@@ -215,6 +215,17 @@ export default {
         callback();
       }
     };
+    var checkOrderNumberVali= (rule, value, callback) => {
+      let _this = this;
+
+      for(var i in this.surveyForm.questionAnswerJosn){
+        if(_this.dialogForm.id != this.surveyForm.questionAnswerJosn[i].id &&
+          (value==this.surveyForm.questionAnswerJosn[i].sort && !this.surveyForm.questionAnswerJosn[i].isDeleted)){
+          return callback(new Error('问题序号已存在'));
+        }
+      }
+      callback();
+    };
     return {
         objListUrl:'/pmpheep/materialSurvey/type/list',   //调研对象列表url
         addNewObjUrl:'/pmpheep/survey/type/create', //添加新对象url
@@ -311,8 +322,10 @@ export default {
                  {min:1,max:200,message:'题目不能超过200个字符',trigger:'change,blur'}
              ],
              sort:[
+                 { required: true, message: '请输入题目序号', trigger: 'blur' },
                  { min:1,max:10, message: "序号不能超过10个字符", trigger: "change,blur" },
-                 {validator:this.$formCheckedRules.numberChecked,trigger: "blur"}
+                 {validator:this.$formCheckedRules.numberChecked,trigger: "blur"},
+                 {validator:checkOrderNumberVali,trigger: "change,blur"}
              ],
              type:[
                  { required: true, message: '请选择题目类型', trigger: 'blur' },
@@ -589,21 +602,21 @@ export default {
         this.$refs.dialogForm.validate((valid)=>{
               if(valid&&this.dialogValid()){
                 this.del_question_option = this.del_question_option.concat(this.del_dialog_option) ;
-                    if(this.isEdit){
-                        this.surveyForm.questionAnswerJosn[this.editIndex]=this.dialogForm;
-                    }else{
-                        if(this.checkOrderNumber(this.dialogForm)){
-                         this.surveyForm.questionAnswerJosn.push(this.dialogForm);
-                        }else{
-                            this.$confirm('该问题序号已存在', "提示",{
-                              confirmButtonText: "确定",
-                              cancelButtonText: "取消",
-                              showCancelButton: false,
-                              type: "error"
-                            });
-                            return ;
-                        }
-                    }
+                if(this.checkOrderNumber(this.dialogForm)){
+                  if(this.isEdit){
+                    this.surveyForm.questionAnswerJosn[this.editIndex]=this.dialogForm;
+                  }else{
+                    this.surveyForm.questionAnswerJosn.push(this.dialogForm);
+                  }
+                }else{
+                  this.$confirm('该问题序号已存在', "提示",{
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    showCancelButton: false,
+                    type: "error"
+                  });
+                  return ;
+                }
                 this.dialogForm={
                             title:'',
                             type:'',
@@ -647,7 +660,8 @@ export default {
       /* 核验问题序号 */
       checkOrderNumber(obj){
        for(var i in this.surveyForm.questionAnswerJosn){
-           if(obj.sort==this.surveyForm.questionAnswerJosn[i].sort && !this.surveyForm.questionAnswerJosn[i].isDeleted){
+           if(obj.id != this.surveyForm.questionAnswerJosn[i].id &&
+             (obj.sort==this.surveyForm.questionAnswerJosn[i].sort && !this.surveyForm.questionAnswerJosn[i].isDeleted)){
                return false;
            }
        }
