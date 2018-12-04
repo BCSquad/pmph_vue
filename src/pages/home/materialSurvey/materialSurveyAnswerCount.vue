@@ -30,7 +30,7 @@
           :class-name="'td-center'"
         >
           <template scope="scope">
-            <el-button type="text" @click="updataTemplate(scope.row.templateId,scope.row.id,'check')">{{scope.row.realname?scope.row.realname:(scope.row.userType!=1?'管理员':'')}}</el-button>
+            {{scope.row.realname?scope.row.realname:(scope.row.userType!=1?'管理员':'')}}
           </template>
         </el-table-column>
         <el-table-column
