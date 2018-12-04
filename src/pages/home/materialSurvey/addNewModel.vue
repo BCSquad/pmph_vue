@@ -219,7 +219,7 @@ export default {
       let _this = this;
 
       for(var i in this.surveyForm.questionAnswerJosn){
-        if(_this.dialogForm.id != this.surveyForm.questionAnswerJosn[i].id &&
+        if(this.editIndex != i &&
           (value==this.surveyForm.questionAnswerJosn[i].sort && !this.surveyForm.questionAnswerJosn[i].isDeleted)){
           return callback(new Error('问题序号已存在'));
         }
@@ -544,6 +544,7 @@ export default {
       /* 添加题目 */
       addNewFormItem(i){
           this.isEdit=false;
+          this.editIndex = '';
           this.dialogForm.type=i;
           this.dialogVisible=true;
       },
@@ -660,7 +661,7 @@ export default {
       /* 核验问题序号 */
       checkOrderNumber(obj){
        for(var i in this.surveyForm.questionAnswerJosn){
-           if(obj.id != this.surveyForm.questionAnswerJosn[i].id &&
+           if(this.editIndex != i &&
              (obj.sort==this.surveyForm.questionAnswerJosn[i].sort && !this.surveyForm.questionAnswerJosn[i].isDeleted)){
                return false;
            }
