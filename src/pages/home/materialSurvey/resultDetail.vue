@@ -74,9 +74,17 @@
             <el-checkbox :label="it.id" v-for="(it,index) in item.surveyQuestionOptionList" :key="index">{{it.optionContent}}</el-checkbox>
           </el-checkbox-group>
           <!-- 单行文本 -->
-          <el-input  class="form_input" v-if="item.type==4" :disabled="true" :value="textContent(item)"></el-input>
+          <el-input  class="form_input" v-if="item.type==4" :disabled="true" :value="item?
+            (item.surveyQuestionOptionList?
+                (item.surveyQuestionOptionList[0]?item.surveyQuestionOptionList[0].optionContent:'')
+            :'')
+          :''"></el-input>
           <!-- 多行文本 -->
-          <el-input   type="textarea" :rows="3" class="form_input" v-if="item.type==5" :disabled="true" :value="textContent(item)"></el-input>
+          <el-input   type="textarea" :rows="3" class="form_input" v-if="item.type==5" :disabled="true" :value="item?
+            (item.surveyQuestionOptionList?
+                (item.surveyQuestionOptionList[0]?item.surveyQuestionOptionList[0].optionContent:'')
+            :'')
+          :''"></el-input>
 
         </el-form-item>
       </el-form>

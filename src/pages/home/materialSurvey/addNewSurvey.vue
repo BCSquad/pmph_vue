@@ -522,7 +522,9 @@
       },
       /* 新增或修改 */
       updateTemplate(str){
-        //str = 'add';
+        //vue的输入框，在聚焦状态下提交，因缺少了失焦步骤，此框绑定变量将会为null(若失焦将为''),人工修改为''
+        //因post方法的公用转化方法中null会被转化为'null'
+        this.surveyForm.intro = this.surveyForm.intro?this.surveyForm.intro:'';
         this.$refs.surveyForm.validate((valid)=>{
           if(valid){
             var arr=[];
@@ -568,6 +570,9 @@
             return false;
           }
         })
+
+        //str = 'add';
+
       },
       /* 新增对象 */
       addObjInfo(){
