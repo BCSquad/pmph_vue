@@ -2,7 +2,7 @@
   <div class="launch_survey">
       <div style="width:100%;float:left;">
       <p class="left_header_p">
-         {{$route.params.surverData?$route.params.surverData.title:'问卷信息'}}
+         {{$route.params.surverData?$route.params.surverData.title:'调研信息'}}
        <span></span>
        </p>
        </div>
@@ -35,15 +35,15 @@
                      </el-table-column>
                   <el-table-column label="操作" width="90">
                      <template scope="scope">
-                         <el-button type="text" @click="removeCheckedData(scope.$index)">移除</el-button>
+                         <el-button type="text" :title="!scope.row.removeable?'已发起':''" :disabled="!scope.row.removeable" @click="removeCheckedData(scope.$index)">移除</el-button>
                      </template>
                      </el-table-column>
              </el-table>
            </el-form-item>
            <el-form-item label="">
              <p style="margin-top:10px;">
-             <el-button type="primary" icon="arrow-left" @click="$router.push({name:'调查问卷模板设置'})">返回</el-button>
-             <el-button type="primary" @click="submitSurvery">发起问卷调查</el-button>
+             <el-button type="primary" icon="arrow-left" @click="$router.push({name:'调研表发布管理'})">返回</el-button>
+             <el-button type="primary" @click="submitSurvery">发起调研</el-button>
              </p>
              </el-form-item>
        </el-form>
@@ -53,9 +53,9 @@
             <span>学校名称：</span>
             <el-input class="input" placeholder="请输入学校名称" v-model="searchParams.orgName" @keyup.enter.native="tableSearch"></el-input>
             <el-button type="primary" icon="search" @click="tableSearch">搜索</el-button>
-            <el-button type="primary" @click="sureCheckedData">确认选择</el-button>
+            <el-button type="primary" @click="sureCheckedData">确认添加</el-button>
         </p>
-        <el-table :data="rightTableData" class="table-wrapper" style="margin-bottom:10px;" border @selection-change="handleSelectionChange">
+        <el-table ref="rightTable" :data="rightTableData" class="table-wrapper" style="margin-bottom:10px;" border @selection-change="handleSelectionChange">
             <el-table-column
                 type="selection"
                 width="45">
@@ -88,7 +88,8 @@
        data(){
            return{
              tableDataUrl:'/pmpheep/orgs/list/org',  //机构列表url
-             submitUrl:'/pmpheep/survey/target/send' ,  //发起问卷列表
+             submitUrl:'/pmpheep/materialSurvey/target/send' ,  //发起调研列表
+             sentList:[],
             leftFrom:{
               startTime:'',
               tableData:[
@@ -125,31 +126,32 @@
        },
        created(){
          if(!this.$route.params.surveyId){
-           this.$router.push({name:'调查问卷模板设置'});
+           this.$router.push({name:'调研表发布管理'});
          }
+         this.showSend();
          if(this.$route.params.surverData){
-           console.log(this.$route.params.surverData);
+           //console.log(this.$route.params.surverData);
            this.leftFrom.startTime=this.$commonFun.formatDate(this.$route.params.surverData.beginDate,'yyyy-MM-dd');
            this.leftFrom.endTime=this.$commonFun.formatDate(this.$route.params.surverData.endDate,'yyyy-MM-dd');
          }
          this.getTableData();
        },
        methods:{
-         /* 发起问卷 */
+         /* 发起调研 */
          submitSurvery(){
          this.$refs.leftFrom.validate((valid)=>{
            if(valid){
-                this.$confirm('是否确定发起问卷<'+this.$route.params.surverData.title+'>的调查？', '提示', {
+                this.$confirm('是否确定向列表中学校发起调研<'+this.$route.params.surverData.title+'>？', '提示', {
                   confirmButtonText: '确定',
                   cancelButtonText: '取消',
                 }).then(() => {
                     this.$axios.post(this.submitUrl,
                       this.$commonFun.initPostData(this.resizePostData())
                     ).then((res)=>{
-                      console.log(res);
+                      //console.log(res);
                       if(res.data.code==1){
                         this.$message.success('发起调查成功');
-                        this.$router.push({name:'调查问卷模板设置'});
+                        this.$router.push({name:'调研表发布管理'});
                       }else{
                         this.$confirm(res.data.msg.msgTrim(), "提示",{
                         	confirmButtonText: "确定",
@@ -170,6 +172,31 @@
            }
          })
          },
+         /**
+          * 查看发送对象
+          */
+         showSend(){
+           this.$axios.get('/pmpheep/materialSurvey/send/org',{
+             params:{
+               surveyId: this.$route.params.surveyId,
+               pageSize: 20000,
+               pageNumber: ""
+             }
+           }).then(response => {
+             let res = response.data;
+             if (res.code == 1) {
+               this.sentList = res.data.rows;
+               this.leftFrom.tableData = res.data.rows;
+             }
+           }).catch(error => {
+             this.$confirm('请求错误请稍后再试！', "提示",{
+               confirmButtonText: "确定",
+               cancelButtonText: "取消",
+               showCancelButton: false,
+               type: "error"
+             });
+           })
+         },
          /* 提交前参数处理 */
          resizePostData(){
            var obj={};
@@ -187,16 +214,36 @@
          },
           /* 获取机构信息列表 */
           getTableData(){
+            let _this = this;
            this.$axios.get(this.tableDataUrl,{
              params:this.searchParams
            }).then((res)=>{
-             console.log(res);
+             //console.log(res);
              if(res.data.code==1){
                this.pageTotal=res.data.data.total;
                this.rightTableData=res.data.data.rows;
+               _this.$nextTick(function() {
+                 _this.refreshCheck();
+               })
+
              }
            })
           },
+         /**
+          * 根据左表刷新右表中的选中状态（sentList和左表是同一指针）
+          * */
+         refreshCheck(){
+            let _this = this;
+           _this.$refs.rightTable.clearSelection();
+           this.rightTableData.forEach(function (item, index) {
+             _this.sentList.forEach(function (send, i) {
+               if (item.id == send.id) {
+                 _this.checkedData.push(item);
+                 _this.$refs.rightTable.toggleRowSelection(item, true);
+               }
+             });
+           });
+         },
           /* 选中切换 */
           handleSelectionChange(val){
             this.checkedData=val;
@@ -208,10 +255,12 @@
               for(var i in this.leftFrom.tableData){
                 if(this.checkedData[item].id==this.leftFrom.tableData[i].id){
                   ready=false;
+
                   break;
                 }
               }
               if(ready){
+                this.checkedData[item].removeable=true;
                 this.leftFrom.tableData.push(this.checkedData[item]);
               }
             }
@@ -219,8 +268,9 @@
           },
           /* 移除 */
           removeCheckedData(val){
-            console.log(val);
+            //console.log(val);
             this.leftFrom.tableData.splice(val,1);
+            this.refreshCheck();
           },
           /* table搜索 */
           tableSearch(){

@@ -103,9 +103,19 @@
           {{scope.row.status == 1?'已发布':(scope.row.status == 0?'未发布':(scope.row.status == 2?'已撤回':'未发布'))}}
         </template>
       </el-table-column>
+      <el-table-column
+        label="教材相关"
+        prop="materialId"
+        width="110"
+        :className="'td-center'"
+      >
+        <template scope="scope">
+          {{scope.row.materialId?'是':'否'}}
+        </template>
+      </el-table-column>
      <el-table-column
       label="操作"
-      width="120"
+      width="300"
       :className="'td-center'"
      >
       <!--:width="isAdmin?350:300"
@@ -115,12 +125,13 @@
        <span>|</span>
        <!--<el-button type="text" :disabled="scope.row.status==0" @click="$router.push({name:'补发消息',params:{surveyId:scope.row.id,title:scope.row.title}})" >补发消息</el-button>
        <span>|</span>-->
-       <!--<el-button type="text" @click="$router.push({name:'发起调查',params:{surveyId:scope.row.id,surverData:scope.row}})">发起调查</el-button>
-       <span>|</span>-->
+       <el-button :disabled="scope.row.materialId>0"  type="text" @click="$router.push({name:'发起调研',params:{surveyId:scope.row.id,surverData:scope.row}})" :title="scope.row.materialId?'教材相关的调研表发送对象依赖教材发布':''">选择发送学校</el-button>
+       <span>|</span>
        <el-button v-if="isAdmin" type="text" @click="deleteSurvey(scope.row.status,scope.row.id)">{{scope.row.status!=1?'发布':'撤回'}}</el-button>
        <!--<span v-if="isAdmin">|</span>-->
+       <span>|</span>
        <!--<el-button type="text" @click="$router.push({name:'调研表模板新增',params:{type:'add'}})">新增</el-button>-->
-       <!--<el-button type="text" @click="showSend(scope.row.id)">查看发送对象</el-button>-->
+       <el-button type="text" :disabled="scope.row.materialId>0"  @click="showSend(scope.row.id)" :title="scope.row.materialId?'教材相关的调研表发送对象依赖教材发布':''">查看发送学校</el-button>
      </template>
      </el-table-column>
     </el-table>
@@ -326,7 +337,7 @@
            */
           showSend(id){
             this.showSendVisible = true;
-            this.$axios.get('/pmpheep/survey/send/org',{
+            this.$axios.get('/pmpheep/materialSurvey/send/org',{
               params:{
                 surveyId: id,
                 pageSize: this.sendPageSize,

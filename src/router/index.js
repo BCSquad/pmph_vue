@@ -178,6 +178,8 @@ const materialSurveyCountList1 = () => import('../pages/home/materialSurvey/mate
 const materialSurveyCountList2 = () => import('../pages/home/materialSurvey/materialSurveyCountList');
 const materialSurveyAnswerCount = () => import('../pages/home/materialSurvey/materialSurveyAnswerCount');
 const materialSurveyAnswerDetail = () => import('../pages/home/materialSurvey/resultDetail');
+const materialLaunchSurvey = () => import('../pages/home/materialSurvey/materialLaunchSurvey');
+
 /**系统日志 */
 const SystemLog = () => import('pages/home/systemLog/systemLog');
 
@@ -514,7 +516,8 @@ export default new Router({
 
 
 
-            /*{path: 'launch', name: '发起调查', component: launchSurvey, meta: {authorityId: true}},
+            {path: 'launch', name: '发起调研', component: materialLaunchSurvey, meta: {authorityId: true}},
+            /*
             {path: 'reissue', name: '补发消息', component: reIssue, meta: {authorityId: true}},
 
 
