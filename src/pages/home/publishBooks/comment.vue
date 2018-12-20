@@ -1,5 +1,5 @@
 <template>
-	<div class="clearfix page-commnet">
+  <div class="clearfix page-commnet">
 
 
 
@@ -35,7 +35,7 @@
               <el-button type="warning" :disabled="!selectData.length" @click="setState('cancel')">取消置顶</el-button>
               <!--<el-button type="primary" :disabled="!selectData.length" @click="setState('isPromote')">设为精选</el-button>-->
               <el-button type="danger" :disabled="!selectData.length" @click="deleteComment">删除</el-button>
-              <el-button type="warning" :disabled="!selectData.length" @click="audit(2)">审核不通过</el-button>
+              <el-button type="warning" :disabled="!selectData.length" @click="auditReason(2)">审核不通过</el-button>
               <el-button type="primary" :disabled="!selectData.length" @click="audit(1)">通过</el-button>
             </div>
           </div>
@@ -54,57 +54,57 @@
           </div>
         </TableShort>
       </el-tab-pane>
-     <!-- <el-tab-pane label="长评管理" name="second">
-        <TableLong :data.sync="tableData" @selection-change="handleSelectionChange" @audit="getTableData" @stateChange="getTableData" @show-comment-detail="showCommentDetail">
-          <div class="clearfix" slot="searchBox">
-            <div class="searchBox-wrapper">
-              <div class="searchName">书籍名称/ISBN：<span></span></div>
-              <div class="searchInput">
-                <el-input placeholder="请输入" @keyup.enter.native="search" class="searchInputEle" v-model.trim="searchForm.name"></el-input>
-              </div>
-            </div>
-            <div class="searchBox-wrapper">
-              <div class="searchName">审核状态：<span></span></div>
-              <div class="searchInput">
-                <el-select  v-model="searchForm.isAuth" placeholder="全部" @change="search">
-                  <el-option
-                    v-for="(item,index) in stateOption"
-                    :key="item.label"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-            </div>
-            <div class="searchBox-wrapper searchBtn">
-              <el-button  type="primary" icon="search" @click="search">搜索</el-button>
-            </div>
-            &lt;!&ndash;操作按钮&ndash;&gt;
-            <div class="pull-right">
-              <el-button type="primary" :disabled="!selectData.length" @click="setState('isStick')">置顶</el-button>
-              <el-button type="warning" :disabled="!selectData.length" @click="setState('cancel')">取消置顶</el-button>
-              <el-button type="primary" :disabled="!selectData.length" @click="setState('isPromote')">设为精选</el-button>
-              <el-button type="primary" :disabled="!selectData.length" @click="setState('isPromoteF')">取消精选</el-button>
-              <el-button type="danger" :disabled="!selectData.length" @click="deleteComment">删除</el-button>
-              <el-button type="warning" :disabled="!selectData.length" @click="audit(2)">审核不通过</el-button>
-              <el-button type="primary" :disabled="!selectData.length" @click="audit(1)">通过</el-button>
-            </div>
-          </div>
+      <!-- <el-tab-pane label="长评管理" name="second">
+         <TableLong :data.sync="tableData" @selection-change="handleSelectionChange" @audit="getTableData" @stateChange="getTableData" @show-comment-detail="showCommentDetail">
+           <div class="clearfix" slot="searchBox">
+             <div class="searchBox-wrapper">
+               <div class="searchName">书籍名称/ISBN：<span></span></div>
+               <div class="searchInput">
+                 <el-input placeholder="请输入" @keyup.enter.native="search" class="searchInputEle" v-model.trim="searchForm.name"></el-input>
+               </div>
+             </div>
+             <div class="searchBox-wrapper">
+               <div class="searchName">审核状态：<span></span></div>
+               <div class="searchInput">
+                 <el-select  v-model="searchForm.isAuth" placeholder="全部" @change="search">
+                   <el-option
+                     v-for="(item,index) in stateOption"
+                     :key="item.label"
+                     :label="item.label"
+                     :value="item.value">
+                   </el-option>
+                 </el-select>
+               </div>
+             </div>
+             <div class="searchBox-wrapper searchBtn">
+               <el-button  type="primary" icon="search" @click="search">搜索</el-button>
+             </div>
+             &lt;!&ndash;操作按钮&ndash;&gt;
+             <div class="pull-right">
+               <el-button type="primary" :disabled="!selectData.length" @click="setState('isStick')">置顶</el-button>
+               <el-button type="warning" :disabled="!selectData.length" @click="setState('cancel')">取消置顶</el-button>
+               <el-button type="primary" :disabled="!selectData.length" @click="setState('isPromote')">设为精选</el-button>
+               <el-button type="primary" :disabled="!selectData.length" @click="setState('isPromoteF')">取消精选</el-button>
+               <el-button type="danger" :disabled="!selectData.length" @click="deleteComment">删除</el-button>
+               <el-button type="warning" :disabled="!selectData.length" @click="audit(2)">审核不通过</el-button>
+               <el-button type="primary" :disabled="!selectData.length" @click="audit(1)">通过</el-button>
+             </div>
+           </div>
 
-          <div slot="pagination"  class="pagination-wrapper">
-            <el-pagination
-              v-if="totalNum > searchForm.pageSize&&searchForm.isLong"
-              :page-sizes="[30,50,100, 200, 300, 400]"
-              :page-size="searchForm.pageSize"
-              :current-page.sync="searchForm.pageNumber"
-              @size-change="paginationSizeChange"
-              @current-change="paginationCurrentChange"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="totalNum">
-            </el-pagination>
-          </div>
-        </TableLong>
-      </el-tab-pane>-->
+           <div slot="pagination"  class="pagination-wrapper">
+             <el-pagination
+               v-if="totalNum > searchForm.pageSize&&searchForm.isLong"
+               :page-sizes="[30,50,100, 200, 300, 400]"
+               :page-size="searchForm.pageSize"
+               :current-page.sync="searchForm.pageNumber"
+               @size-change="paginationSizeChange"
+               @current-change="paginationCurrentChange"
+               layout="total, sizes, prev, pager, next, jumper"
+               :total="totalNum">
+             </el-pagination>
+           </div>
+         </TableLong>
+       </el-tab-pane>-->
     </el-tabs>
 
     <el-dialog
@@ -128,17 +128,32 @@
       </div>
       <span slot="footer" class="dialog-footer"> </span>
     </el-dialog>
+    <el-dialog
+      title="审核"
+      :visible.sync="authsDialogVisible"
+      size="tiny"
+      width="150px">
+      <el-form>
+        <el-form-item label="退回理由：">
+          <el-input  type="textarea"  :rows="2"
+                     placeholder="请输入退回理由" v-model.trim="reasons.reason"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="audit2">保 存</el-button>
+                <el-button @click="authsDialogVisible = false">关闭</el-button>
+            </span>
+    </el-dialog>
 
-
-	</div>
+  </div>
 </template>
 
 <script>
   import TableLong from './_subpage/comment-long-table.vue'
   import TableShort from './_subpage/comment-short-table.vue'
-	export default {
-		data() {
-			return {
+  export default {
+    data() {
+      return {
         activeIndex:'first',
         tableData:[],
         selectData:[],
@@ -167,12 +182,17 @@
         totalNum:0,
         commentDialogVisible:false,
         commentDialogVisible_long:false,
+        authsDialogVisible:false,
+        reasons:{
+          reason:'',
+          num:'',
+        },
         comment:{
           content:'',
           title:'',
         },
       }
-		},
+    },
     created(){
       /* 是否从首页跳转过来 */
       if(this.$route.params.bookname){
@@ -186,6 +206,69 @@
       TableShort
     },
     methods:{
+
+      auditReason(num){
+        this.authsDialogVisible = true;
+        this.reasons.num=num;
+      },
+      audit2() {
+        this.$confirm("确定审核" + "不通过" + "所选评论？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            let url = '/pmpheep/bookusercomment/update';
+            let ids=[];
+
+            let writerIds=[];
+            let booknames=[];
+            let contents=[];
+            this.selectData.forEach(iterm=>{
+              ids.push(iterm.id);
+              writerIds.push(iterm.writerId);
+              booknames.push(iterm.bookname);
+              contents.push(iterm.content);
+            });
+            this.$axios.put(url, this.$commonFun.initPostData({
+              ids: ids,
+              sessionId: this.$getUserData().sessionId,
+              isAuth: this.reasons.num,
+              reason:this.reasons.reason,
+              writerId:writerIds,
+              bookname:booknames,
+              content:contents
+            }))
+              .then(response => {
+                var res = response.data;
+                if (res.code == 1) {
+                  this.$message.success('提交成功');
+                  this.$emit('audit');
+                  this.authsDialogVisible=false
+                  this.search()
+                } else {
+                  this.$confirm(res.msg.msgTrim(), "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    showCancelButton: false,
+                    type: "error"
+                  });
+                }
+              })
+              .catch(e => {
+                console.log(e);
+                this.$confirm('操作失败请重试！', "提示", {
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  showCancelButton: false,
+                  type: "error"
+                });
+              })
+          })
+          .catch(e => {
+          })
+      }
+      ,
       /**
        * 获取表格数据
        */
@@ -240,8 +323,8 @@
               select.push(iterm.id);
             });
             this.$axios.delete('/pmpheep/bookusercomment/delete',{params:{
-              ids:select.join(',')
-            }})
+                ids:select.join(',')
+              }})
               .then(response=>{
                 let res = response.data;
                 if(res.code==1){
@@ -249,10 +332,10 @@
                   this.getTableData();
                 }else{
                   this.$confirm(res.msg.msgTrim(), "提示",{
-                  	confirmButtonText: "确定",
-                  	cancelButtonText: "取消",
-                  	showCancelButton: false,
-                  	type: "error"
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    showCancelButton: false,
+                    type: "error"
                   });
                 }
               })
@@ -296,20 +379,20 @@
                   this.getTableData();
                 }else{
                   this.$confirm(res.msg.msgTrim(), "提示",{
-                  	confirmButtonText: "确定",
-                  	cancelButtonText: "取消",
-                  	showCancelButton: false,
-                  	type: "error"
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    showCancelButton: false,
+                    type: "error"
                   });
                 }
               })
               .catch(e=>{
                 console.log(e);
                 this.$confirm('操作失败请重试！', "提示",{
-                	confirmButtonText: "确定",
-                	cancelButtonText: "取消",
-                	showCancelButton: false,
-                	type: "error"
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  showCancelButton: false,
+                  type: "error"
                 });
               })
           })
@@ -341,20 +424,20 @@
               this.getTableData();
             }else{
               this.$confirm('操作失败请重试！', "提示",{
-              	confirmButtonText: "确定",
-              	cancelButtonText: "取消",
-              	showCancelButton: false,
-              	type: "error"
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
               });
             }
           })
           .catch(e=>{
             console.log(e);
             this.$confirm('操作失败请重试！', "提示",{
-            	confirmButtonText: "确定",
-            	cancelButtonText: "取消",
-            	showCancelButton: false,
-            	type: "error"
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
             });
           })
       },
@@ -396,7 +479,7 @@
         this.getTableData();
       }
     },
-	}
+  }
 </script>
 
 

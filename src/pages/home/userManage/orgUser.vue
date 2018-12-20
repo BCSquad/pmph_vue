@@ -1358,9 +1358,11 @@ export default {
     float: right;
     text-align:right;
     width:500px;
+    padding-right: 5px;
   }
 .orgUser .header_p {
   overflow: hidden;
+  padding-right: 5px;
 }
 .orgUser .header_p .input {
   width: 190px;
