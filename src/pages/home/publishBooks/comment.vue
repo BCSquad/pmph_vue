@@ -31,6 +31,20 @@
             </div>
             <!--操作按钮-->
             <div class="pull-right">
+
+              <excelExport
+                :api_export_excel="'/pmpheep/book/commet/exportExcel'"
+                :params="{
+                  name:this.searchedName,
+                  isAuth:this.searchForm.isAuth,
+                  isLong:this.searchForm.isLong
+               }"
+                :disabled = "!tableData.length">
+                导出
+              </excelExport>
+
+
+
               <el-button type="primary" :disabled="!selectData.length" @click="setState('isStick')">置顶</el-button>
               <el-button type="warning" :disabled="!selectData.length" @click="setState('cancel')">取消置顶</el-button>
               <!--<el-button type="primary" :disabled="!selectData.length" @click="setState('isPromote')">设为精选</el-button>-->
@@ -151,12 +165,14 @@
 <script>
   import TableLong from './_subpage/comment-long-table.vue'
   import TableShort from './_subpage/comment-short-table.vue'
+  import excelExport from "components/ExcelExport.vue";
   export default {
     data() {
       return {
         activeIndex:'first',
         tableData:[],
         selectData:[],
+        searchedName:'',
         searchForm:{
           name:'',
           isAuth:'',
@@ -203,7 +219,8 @@
     },
     components:{
       TableLong,
-      TableShort
+      TableShort,
+      excelExport
     },
     methods:{
 
@@ -273,6 +290,7 @@
        * 获取表格数据
        */
       getTableData(){
+
         this.$axios.post('/pmpheep/bookusercomment/list',this.$initPostData({
           name:this.searchForm.name,
           isAuth:this.searchForm.isAuth,
@@ -282,6 +300,7 @@
         }))
           .then(response=>{
             var res = response.data;
+            this.searchedName = this.searchForm.name;
             if(res.code==1){
               let list = ['待审核','已通过','不通过']
               res.data.rows.map(iterm=>{

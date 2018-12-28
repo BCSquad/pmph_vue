@@ -560,7 +560,7 @@ export default {
   methods: {
     exportExcel(){
       /** 导出Excel */
-      let url = '/pmpheep/bookCorrection/exportComments?title='+this.searchTitle+'&username='+this.contentUsername+"&authStatus="+this.selectValue;
+      let url = '/pmpheep/article/exportComments?title='+this.searchTitle+'&username='+this.contentUsername+"&authStatus="+this.selectValue;
       // console.log(url)
       this.$commonFun.downloadFile(url);
     },

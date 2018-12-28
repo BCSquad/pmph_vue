@@ -1,6 +1,6 @@
 <template>
 
-  <div>
+  <span>
     <el-button  :type="type" :disabled="disabled" @click="exportExcel"><slot></slot></el-button>
 
     <el-dialog
@@ -13,7 +13,7 @@
         <el-progress :text-inside="true" :stroke-width="18" :percentage="exportLoading" status="success"></el-progress>
       </div>
     </el-dialog>
-  </div>
+  </span>
 </template>
 
 <script>
