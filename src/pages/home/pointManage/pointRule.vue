@@ -23,8 +23,6 @@
                 <el-table :data="tableData" stripe border style="width: 100%">
                     <el-table-column prop="ruleName" label="积分规则名称">
                     </el-table-column>
-                    <el-table-column prop="ruleCode" label="积分规则标识">
-                    </el-table-column>
                     <el-table-column prop="point" label="积分值" >
                     </el-table-column>
                     <el-table-column prop="description" label="规则描述">
