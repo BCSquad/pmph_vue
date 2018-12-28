@@ -558,7 +558,7 @@
                 })
               }
               this.tableData.forEach(iterm=>{
-                debugger;
+                //debugger;
                     iterm["recall"] = (iterm["finalResult"]==false && iterm["pmphAudit"]!=0);
 
 

@@ -1410,4 +1410,7 @@ export default {
 .ChatInputFileBtn{
   float: right;
 }
+  span.el-tag {
+    min-width: unset;
+  }
 </style>

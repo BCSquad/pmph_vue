@@ -321,10 +321,11 @@
   }
 
   .app-main-border-box{
-    padding: 15px 20px;
+    padding: 15px 15px;
     width: 100%;
     height: 100%;
     position: relative;
+    box-sizing: border-box;
   }
 
   .app_main_border {

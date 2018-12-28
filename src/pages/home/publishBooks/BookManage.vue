@@ -525,7 +525,7 @@
         let ischeckteachbook ;
         let ischeckxgcommend ;
         let ischeckrwcommend ;
-        debugger;
+        //debugger;
        if(this.recommendSearchForm.checkList.find((n)=>n=='教材关联图书') != undefined){
          ischeckteachbook = true;
        }

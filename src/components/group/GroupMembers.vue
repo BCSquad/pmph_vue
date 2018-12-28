@@ -2,7 +2,7 @@
   <div class="groupmember">
     <el-row>
       <el-col :span="24">
-        <div class="disinline pull-left">
+        <div class="disinline pull-left marginB10 ">
           <el-input class="fileinput"
                     placeholder="请输入"
                     icon="search"
@@ -11,8 +11,22 @@
                     :on-icon-click="search"
           ></el-input>
         </div>
-        <div class="pull-left marginT10 marginL10 textcolor">共有{{total}}个成员</div>
+        <div class="pull-left marginT10 marginL10 marginB10  textcolor">共有{{total}}个成员</div>
         <div class="pull-right clearfix">
+
+          <div class="disinline">
+            <excelExport
+              :api_export_excel="'/pmpheep/groupMembers/exportExcel'"
+              :params="{
+                 groupId:this.groupId,
+                 name:this.searchedValue,
+                 groupName : this.currentGroup.groupName
+               }"
+              :disabled = "!tableData.length">
+              导出Excel
+            </excelExport>
+          </div>
+
           <div class="disinline">
             <el-button type="warning" :disabled="idSelected" @click="reviseMagage(false)" v-if="crurrentMemberInfo.isFounder||crurrentMemberInfo.isSystemAdmin">取消管理员</el-button>
           </div>
@@ -39,7 +53,7 @@
           <el-table-column
             prop="displayName"
             label="姓名"
-            width="120">
+            width="80">
             <template scope="scope">
               <input type="text" class="updateName" v-model="scope.row.displayName" v-on:change="getDisplayName(scope.row.displayName,scope.row.id,scope.row.userId,scope.row.groupId)" v-if="crurrentMemberInfo.isFounder||crurrentMemberInfo.isSystemAdmin"/>
               <input type="text" class="updateName" v-model="scope.row.displayName" v-on:change="getDisplayName(scope.row.displayName,scope.row.id,scope.row.userId,scope.row.groupId)" v-else-if="(crurrentMemberInfo.isAdmin&&scope.row.identity=='成员')||$getUserData().userInfo.id==scope.row.userId">
@@ -68,6 +82,7 @@
           <el-table-column
             prop="workName"
             label="工作单位"
+            min-width="120"
             show-overflow-tooltip>
           </el-table-column>
         </el-table>
@@ -89,8 +104,9 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import excelExport from "components/ExcelExport.vue";
 export default {
-  props:['groupId','isrefreshMange','crurrentMemberInfo'],
+  props:['groupId','isrefreshMange','crurrentMemberInfo','currentGroup'],
   data() {
     return {
       memberManageUrl:'/pmpheep/group/list/manager',  //成员管理列表url
@@ -99,6 +115,7 @@ export default {
       deleteMemberUrl:'/pmpheep/group/delete/pmphGroupMembers', //批量删除url
       tableData:[],
       searchValue:'',
+      searchedValue:'',
       selections: [],
       visible: false,
       currentPage: 1,
@@ -130,6 +147,7 @@ export default {
           if(res.data.code==1){
             this.tableData=res.data.data.rows;
             this.total=res.data.data.total;
+            this.searchedValue = this.searchValue;
           }
      })
     },
@@ -283,7 +301,8 @@ export default {
     if(window._hmt){
       _hmt.push(['_trackPageview', '/group/group-members']);
     }
-  }
+  },
+  components:{excelExport}
 }
 </script>
 
@@ -301,7 +320,10 @@ export default {
     color: rgba(2, 2, 2, 0.29);
   }
   .updateName{
-      border: none;
-      min-width: 100px;
+    border: none;
+    /* min-width: 1em; */
+    /* max-width: 4em; */
+    padding: 0.2em 0.5em;
+    width: 100%;
   }
 </style>
