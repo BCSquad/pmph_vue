@@ -11,8 +11,8 @@
                 <div class="searchName">检查结果:<span></span></div>
                 <el-radio-group v-model="result" class="radio-group" @change="change">
 									<el-radio :label="null">全部</el-radio>
-									<el-radio :label="true">存在问题</el-radio>
-									<el-radio :label="false">无问题</el-radio>
+									<el-radio :label="true">图书勘误</el-radio>
+									<el-radio :label="false">内容无误</el-radio>
 								</el-radio-group>
             </div>-->
             <div class="searchBox-wrapper searchBtn" >
@@ -33,7 +33,7 @@
 												<p>页码：{{scope.row.page}} 行数：{{scope.row.line}}</p>
 											</template>
                     </el-table-column>
-                    <el-table-column prop="realname" label="纠错人" align="center">
+                    <el-table-column prop="username" label="纠错人" align="center">
                     </el-table-column>
                     <el-table-column prop="gmtCreate" label="提交时间" align="center">
                     </el-table-column>
@@ -41,7 +41,7 @@
                     </el-table-column>
                     <!--<el-table-column prop="result" label="核查结果" width="95" align="center">
 											<template scope="scope">
-												<p v-if="scope.row.isEditorReplied">{{scope.row.result == true?'存在问题':scope.row.result == false?'无问题':'-'}}</p>
+												<p v-if="scope.row.isEditorReplied">{{scope.row.result == true?'图书勘误':scope.row.result == false?'内容无误':'-'}}</p>
 											</template>
                     </el-table-column>-->
 										<el-table-column label="操作" width="80" align="center">

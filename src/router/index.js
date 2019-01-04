@@ -103,6 +103,7 @@ const PublishList = () => import('../pages/home/contentManage/publishList');
 const noticeManage = () => import('../pages/home/contentManage/noticeManage');
 const infoExpertInfo = () => import('../pages/home/contentManage/infoExpressManage');
 const sensitiveWords = () => import('../pages/home/contentManage/sensitiveWords');
+const searchKeyword = () => import('../pages/home/contentManage/searchKeyword');
 const helpManage = () => import('../pages/home/contentManage/helpManage');
 const commonEdit = () => import('../pages/home/contentManage/commonEdit');
 const operationEdit = () => import('../pages/home/contentManage/operationEdit');
@@ -414,6 +415,7 @@ export default new Router({
             {path: 'info', name: '信息快报管理', meta: {authorityId: 16}, component: infoExpertInfo},
             {path: 'notice', name: '公告管理', meta: {authorityId: 17}, component: noticeManage},
             {path: 'sensitive', name: '敏感词管理', component: sensitiveWords, meta: {authorityId: 40}},
+            {path: 'searchKeyword', name: '搜索关键词管理', component: searchKeyword, meta: {authorityId: 60}},
             {path: 'help', name: '帮助管理', component: helpManage},
             {path: 'common', name: '常见问题', component: commonEdit},
             {path: 'operation', name: '操作手册上传', component: operationEdit},

@@ -16,6 +16,19 @@
             <div class="searchBox-wrapper searchBtn">
                 <el-button  type="primary"  icon="search" @click="search">搜索</el-button>
             </div>
+
+            <div class="pull-right">
+              <excelExport
+                :api_export_excel="'/pmpheep/userPoint/exportExcel'"
+                :params="{
+                  sessionId: this.$getUserData().sessionId,
+                  username: this.searchedUsername,
+                  realname: this.searchedRealname
+               }"
+                :disabled = "!tableData.length">
+                导出Excel
+              </excelExport>
+            </div>
         </el-row>
         <el-row>
             <el-col>
@@ -58,11 +71,14 @@
 </template>
 <script>
 import pointRecord from './pointRecord.vue';
+import excelExport from "components/ExcelExport.vue";
 export default {
   data() {
     return {
       username: "", // 用户代码
       realname: "", // 用户姓名
+      searchedUsername:"",
+      searchedRealname:"",
       pageSize: 20,
       pageNumber: 1, // 当前页
       usertotal: 0,
@@ -72,7 +88,8 @@ export default {
     };
   },
   components:{
-    pointRecord
+    pointRecord,
+    excelExport
   },
   created(){
     this.getUserPoint();
@@ -98,6 +115,8 @@ export default {
         let res = response.data;
         this.usertotal = res.data.total;
         if (res.code == '1') {
+          this.searchedUsername = this.username;
+          this.searchedRealname = this.realname;
           this.tableData = res.data.rows;
         }
       })

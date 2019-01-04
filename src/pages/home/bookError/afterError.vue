@@ -37,7 +37,7 @@
                     </el-table-column>
                     <el-table-column prop="dutyName" label="责任编辑" >
                     </el-table-column>
-                    <el-table-column prop="result" label="核查结果" width="95" align="center">
+                    <el-table-column prop="result" label="是否勘误" width="95" align="center">
 											<template scope="scope">
 												<p v-if="scope.row.isEditorReplied">{{scope.row.resultString}}</p>
 											</template>

@@ -18,7 +18,7 @@
                 <el-button type="text" @click="editSearch(scope.row.id,'check')" >{{scope.row.title}}</el-button>
              </template>
          </el-table-column>
-         <el-table-column  label="创建人"  width="110" prop="realname">
+         <el-table-column  label="创建人"  width="110" prop="username">
          </el-table-column>
          <el-table-column  label="创建时间"  width="120" >
              <template scope="scope">

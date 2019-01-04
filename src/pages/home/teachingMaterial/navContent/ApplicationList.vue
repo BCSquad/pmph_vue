@@ -20,6 +20,14 @@
             <router-link :to="{name:'新建通知',params:{materialId:'new'}}">
                 <el-button class="right_button" type="primary">新建通知</el-button>
             </router-link>
+            <span class="right_button">
+              <excelExport
+                :api_export_excel="'/pmpheep/material/exportExcel'"
+                :params="searchedForm"
+                :disabled = "!tableData.length">
+                导出Excel
+              </excelExport>
+            </span>
         </p>
 
         <el-table :data="tableData" style="width:100%" class="table_list table-wrapper" stripe border>
@@ -167,7 +175,8 @@
     </div>
 </template>
 <script type="text/javascript">
-export default {
+  import excelExport from "components/ExcelExport.vue";
+  export default {
     data() {
         return {
             api_material_list:'/pmpheep/material/list',
@@ -176,6 +185,12 @@ export default {
             searchForm:{
               pageSize:20,
               pageNumber:1,
+              isMy:false,
+              state:'',
+              contactUserName:'',
+              materialName:'',
+            },
+            searchedForm:{
               isMy:false,
               state:'',
               contactUserName:'',
@@ -195,6 +210,7 @@ export default {
           moreContactUserList:[],
         }
     },
+    components:{excelExport},
     methods: {
       /**
        * 获取表格数据
@@ -204,6 +220,7 @@ export default {
           .then(response=>{
             var res = response.data;
             if(res.code==1){
+              this.searchedForm = this.$commonFun.objArrayDeepCopy(this.searchForm);
               this.totalNum = res.data.total;
               res.data.rows.map(iterm=>{
                 iterm.actualDeadline = this.$commonFun.formatDate(iterm.actualDeadline).split(' ')[0];

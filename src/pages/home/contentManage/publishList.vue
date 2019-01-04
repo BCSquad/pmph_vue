@@ -54,22 +54,29 @@
         </el-date-picker>
           <span>审核状态：</span>
           <el-select v-model="selectValue" clearable  style="width:150px" class="input" placeholder="全部">
-           <el-option
-             v-for="item in selectOp"
-             :key="item.value"
-             :label="item.label"
-             :value="item.value"
-             >
-         </el-option>
-         </el-select>
-         <el-button type="primary" icon="search" @click="searchPublic">搜索</el-button>
-         <el-button type="primary" style="float:right;" @click="$router.push({name:'添加内容',query:{columnId:1,type:'new',isShowCover:true}})">新增</el-button>
-         <el-button type="primary"   style="float:right;" @click="syncDialogVisible=true">同步</el-button>
+             <el-option
+               v-for="item in selectOp"
+               :key="item.value"
+               :label="item.label"
+               :value="item.value"
+               >
+             </el-option>
+          </el-select>
+          <el-button type="primary" icon="search" @click="searchPublic">搜索</el-button>
+          <el-button type="primary" style="float:right;" @click="$router.push({name:'添加内容',query:{columnId:1,type:'new',isShowCover:true}})">新增</el-button>
+          <el-button type="primary"   style="float:right;" @click="syncDialogVisible=true">同步</el-button>
+          <excelExport
+            class="pull-right "
+            :api_export_excel="'/pmpheep/articel/exportExcel'"
+            :params="searchedParams"
+            :disabled = "!tableData.length">
+            导出Excel
+          </excelExport>
       </p>
       <el-table :data="tableData" class="table-wrapper" border style="margin:15px 0;">
             <el-table-column
                 label="文章标题"
-                align="center" min-width="100"
+                align="left" min-width="100"
                 >
                 <template scope="scope">
                     <p class="link"  @click="contentDetail(scope.row)">{{scope.row.title}}</p>
@@ -85,7 +92,7 @@
             </el-table-column>
         <el-table-column
           prop="realname"
-          label="作者"
+          label="发布者"
           align="center"
           width="90"
         >
@@ -426,609 +433,612 @@
   </div>
 </template>
 <script type="text/javascript">
-export default {
-  data() {
-    return {
-      syncDialogVisible1: false,
-      publicListUrl: "/pmpheep/cms/contents", //获取列表url
-      editContentUrl: "/pmpheep/cms/content/", //修改查询url
-      deleteContentUrl: "/pmpheep/cms/content/", //删除内容url
-      examineUrl: "/pmpheep/cms/content/check", //审核内容
-      backUrl:'/pmpheep/cms/content/update',
-      commentListUrl:'/pmpheep/cms/comments',         //评论列表url
-      syncGetUrl:'/pmpheep/cms/wechat/article/getArticle',         //同步地址url
-      syncGetDetailUrl:'/pmpheep/cms/wechat/article/synchro',          //获取稿件详情detail
-      selectOp: [
-        {
-          value: 0,
-          label: "未发布"
+  import excelExport from "components/ExcelExport.vue";
+  export default {
+    components:{excelExport},
+    data() {
+      return {
+        syncDialogVisible1: false,
+        publicListUrl: "/pmpheep/cms/contents", //获取列表url
+        editContentUrl: "/pmpheep/cms/content/", //修改查询url
+        deleteContentUrl: "/pmpheep/cms/content/", //删除内容url
+        examineUrl: "/pmpheep/cms/content/check", //审核内容
+        backUrl:'/pmpheep/cms/content/update',
+        commentListUrl:'/pmpheep/cms/comments',         //评论列表url
+        syncGetUrl:'/pmpheep/cms/wechat/article/getArticle',         //同步地址url
+        syncGetDetailUrl:'/pmpheep/cms/wechat/article/synchro',          //获取稿件详情detail
+        selectOp: [
+          {
+            value: 0,
+            label: "未发布"
+          },
+          {
+            value: 1,
+            label: "未通过"
+          },
+          {
+            value: 2,
+            label: "已发布"
+          }
+        ],
+        pickerOptions: {
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          }
         },
-        {
-          value: 1,
-          label: "未通过"
+        commentSelectOp: [
+          {
+            value: 0,
+            label: "待审核"
+          },
+          {
+            value: 1,
+            label: "未通过"
+          },
+          {
+            value: 2,
+            label: "已通过"
+          }
+        ],
+        searchValue:0,
+        searchList:[
+          {
+            value:0,
+            label:'文章标题'
+          },
+          {
+            value:1,
+            label:'作者'
+          },{
+            value:2,
+            label:'所属教材'
+          },{
+            value:3,
+            label:'创建时间'
+          },{
+            value:4,
+            label:'发布时间'
+          }
+        ],
+        applyType:['全部','PC端','移动端'],
+        showContentDetail: false,
+        syncDialogVisible:false,
+        isSyncLoading:false,
+        syncInputUrl:'',
+        contentDetailData: {
+          cmsContent: "",
+          cmsExtras: "",
+          listObj: "",
+          content: ""
         },
-        {
-          value: 2,
-          label: "已发布"
-        }
-      ],
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
-      commentSelectOp: [
-        {
-          value: 0,
-          label: "待审核"
+        tableData: [],
+        recommendData: [],
+        recommendSearchForm:{
+          currentCmsId:0,
+          relationCms:null,
+          cmsTitle:'',
+          cmsAuthorName:'',
+          recommendPageSize:10,
+          recommendPageNumber:1
         },
-        {
-          value: 1,
-          label: "未通过"
-        },
-        {
-          value: 2,
-          label: "已通过"
-        }
-      ],
-      searchValue:0,
-      searchList:[
-        {
-          value:0,
-          label:'文章标题'
-        },
-        {
-          value:1,
-          label:'作者'
-        },{
-          value:2,
-          label:'所属教材'
-        },{
-          value:3,
-          label:'创建时间'
-        },{
-          value:4,
-          label:'发布时间'
-        }
-      ],
-      applyType:['全部','PC端','移动端'],
-      showContentDetail: false,
-      syncDialogVisible:false,
-      isSyncLoading:false,
-      syncInputUrl:'',
-      contentDetailData: {
-        cmsContent: "",
-        cmsExtras: "",
-        listObj: "",
-        content: ""
-      },
-      tableData: [],
-      recommendData: [],
-      recommendSearchForm:{
-        currentCmsId:0,
-        relationCms:null,
-        cmsTitle:'',
-        cmsAuthorName:'',
-        recommendPageSize:10,
-        recommendPageNumber:1
-      },
-      recommendTotalNum:0,
-      recommendDialogVisible:false,
-      recommendCmsTitle:'',
+        recommendTotalNum:0,
+        recommendDialogVisible:false,
+        recommendCmsTitle:'',
 
-      contentUsername:'',
-      selectValue: "",
-      currentPage: 1,
-      searchTitle: "",
-      pageTotal: 30,
-      pageSize: 30,
-      /* 评论*/
-      options: [],
-      selectedOptions: [],
-      showCommentDetail: false,
-      commentDetailData:{
-        cmsContent: "",
-        cmsExtras: "",
-        listObj: "",
-        content: ""
-      },
-      commentTableData: [],
-      comPageSize: 20,
-      comDataTotal: 21,
-      comPageNumber: 1,
-      commentSelectData: [],
-      commentName:'',
-      commentTitle:'',
-      commentSelect:'',
-      startCreateDate: '', // 创建开始时间
-      endCreateDate:'',
-      startAuDate: '',
-      endAuDate:'',
-      bookOptions: [],
-      materialId:''
-    };
-  },
-  computed: {
-    isCommentSelected() {
-      if (this.commentSelectData.length > 0) {
-        return true;
-      } else {
-        return false;
+        contentUsername:'',
+        selectValue: "",
+        currentPage: 1,
+        searchTitle: "",
+        pageTotal: 30,
+        pageSize: 30,
+        /* 评论*/
+        options: [],
+        selectedOptions: [],
+        showCommentDetail: false,
+        commentDetailData:{
+          cmsContent: "",
+          cmsExtras: "",
+          listObj: "",
+          content: ""
+        },
+        commentTableData: [],
+        comPageSize: 20,
+        comDataTotal: 21,
+        comPageNumber: 1,
+        commentSelectData: [],
+        commentName:'',
+        commentTitle:'',
+        commentSelect:'',
+        startCreateDate: '', // 创建开始时间
+        endCreateDate:'',
+        startAuDate: '',
+        endAuDate:'',
+        bookOptions: [],
+        materialId:''
+      };
+    },
+    computed: {
+      isCommentSelected() {
+        if (this.commentSelectData.length > 0) {
+          return true;
+        } else {
+          return false;
+        }
       }
-    }
-  },
-  methods: {
-    exportExcel(){
-      /** 导出Excel */
-      let url = '/pmpheep/article/exportComments?title='+this.searchTitle+'&username='+this.contentUsername+"&authStatus="+this.selectValue;
-      // console.log(url)
-      this.$commonFun.downloadFile(url);
     },
-    /* 获取内容列表 */
-    getPublicList() {
-      this.$axios
-        .get(this.publicListUrl, {
-          params: {
-            title: this.searchTitle,
-            username:this.contentUsername,
-            authStatus: this.selectValue,
-            sessionId: this.$getUserData().sessionId,
-            pageSize: this.pageSize,
-            pageNumber: this.currentPage,
-            startCreateDate: this.$commonFun.formatDate(+new Date(this.startCreateDate)),
-            endCreateDate: this.$commonFun.formatDate(+new Date(this.endCreateDate)),
-            startAuDate: this.$commonFun.formatDate(+new Date(this.startAuDate)),
-            endAuDate: this.$commonFun.formatDate(+new Date(this.endAuDate)),
-            materialId: this.materialId
+    methods: {
+      exportExcel(){
+        /** 导出Excel */
+        let url = '/pmpheep/article/exportComments?title='+this.searchTitle+'&username='+this.contentUsername+"&authStatus="+this.selectValue;
+        // console.log(url)
+        this.$commonFun.downloadFile(url);
+      },
+      /* 获取内容列表 */
+      getPublicList() {
+        this.searchedParams = {
+          title: this.searchTitle,
+          username:this.contentUsername,
+          authStatus: this.selectValue,
+          sessionId: this.$getUserData().sessionId,
+          pageSize: this.pageSize,
+          pageNumber: this.currentPage,
+          startCreateDate: this.$commonFun.formatDate(+new Date(this.startCreateDate)),
+          endCreateDate: this.$commonFun.formatDate(+new Date(this.endCreateDate)),
+          startAuDate: this.$commonFun.formatDate(+new Date(this.startAuDate)),
+          endAuDate: this.$commonFun.formatDate(+new Date(this.endAuDate)),
+          materialId: this.materialId
+        };
+        this.$axios
+          .get(this.publicListUrl, {
+            params: this.searchedParams
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.pageTotal = res.data.data.total;
+              this.tableData = res.data.data.rows;
+            }
+          });
+      },
+      searchPublic(){
+        this.pageSize = 30;
+        this.currentPage = 1;
+        this.getPublicList()
+      },
+      /**获取教材列表 */
+      getBookLists(){
+        this.$axios.get('/pmpheep/material/published').then(response => {
+          let res = response.data;
+          if (res.code == '1') {
+            this.bookOptions=res.data;
           }
         })
-        .then(res => {
-          console.log(res);
-          if (res.data.code == 1) {
-            this.pageTotal = res.data.data.total;
-            this.tableData = res.data.data.rows;
-          }
-        });
-    },
-    searchPublic(){
-      this.pageSize = 30;
-      this.currentPage = 1;
-      this.getPublicList()
-    },
-    /**获取教材列表 */
-    getBookLists(){
-      this.$axios.get('/pmpheep/material/published').then(response => {
-        let res = response.data;
-        if (res.code == '1') {
-          this.bookOptions=res.data;
-        }
-      })
-    },
-    /* 获取评论列表 */
-    getCommentList(){
-      this.$axios.get(this.commentListUrl,{
-          params:{
-            title:this.commentTitle,
-            authStatus:this.commentSelect,
-            categoryId:0,
-            username:this.commentName,
-            pageSize:this.comPageSize,
-            pageNumber:this.comPageNumber,
-            sessionId:this.$getUserData().sessionId,
-          }
-      }).then((response)=>{
-          // console.log(res);
-          let res = response.data
-          if (res.code == 1 ) {
-            this.comDataTotal = res.data.total
-            // this.commentTableData.gmtCreate =
-            res.data.rows.map(item=>{
-                item.gmtCreate=this.$commonFun.formatDate(item.gmtCreate);
-                item.authDate = this.$commonFun.formatDate(item.authDate);
-            });
-            this.commentTableData = res.data.rows
-            console.log(this.commentTableData )
-          }
-      })
-    },
-    searchComment(){
-      this.comPageSize = 20;
-      this.comPageNumber = 1;
-      this.getCommentList();
-    },
-    /**评论审核 */
-    commentModeration(id, status){
-      this.$axios.put('/pmpheep/cms/comment/check',this.$initPostData({
-        id: id,
-        authStatus: status,
-        sessionId: this.$getUserData().sessionId
-      })).then(response => {
-        let res = response.data
-        if (res.code == 1) {
-          this.$message.success('审核完成！')
-          this.getCommentList()
-          if (this.showCommentDetail) {
-            this.showCommentDetail = false
-          }
-        }
-      })
-    },
-    /**批量删除评论 */
-    deleteComment(id){
-      var ids = []
-      this.$confirm(id?'确认删除该条评论？':'确认删除选中的评论吗？',"提示",{
-        confirmButtonText: "确定",
-        cancelButtonText: "取消"
-      }).then(()=>{
-        if(id){
-          ids=id;
-        }else{
-         this.commentSelectData.forEach(item => {
-          ids.push(item.id)
+      },
+      /* 获取评论列表 */
+      getCommentList(){
+        this.$axios.get(this.commentListUrl,{
+            params:{
+              title:this.commentTitle,
+              authStatus:this.commentSelect,
+              categoryId:0,
+              username:this.commentName,
+              pageSize:this.comPageSize,
+              pageNumber:this.comPageNumber,
+              sessionId:this.$getUserData().sessionId,
+            }
+        }).then((response)=>{
+            // console.log(res);
+            let res = response.data
+            if (res.code == 1 ) {
+              this.comDataTotal = res.data.total
+              // this.commentTableData.gmtCreate =
+              res.data.rows.map(item=>{
+                  item.gmtCreate=this.$commonFun.formatDate(item.gmtCreate);
+                  item.authDate = this.$commonFun.formatDate(item.authDate);
+              });
+              this.commentTableData = res.data.rows
+              console.log(this.commentTableData )
+            }
         })
-        }
-        this.$axios.delete('/pmpheep/cms/comment/delete',{
-          params: {
-            ids :id?id:ids.toString()
-          }
-        }).then(response => {
+      },
+      searchComment(){
+        this.comPageSize = 20;
+        this.comPageNumber = 1;
+        this.getCommentList();
+      },
+      /**评论审核 */
+      commentModeration(id, status){
+        this.$axios.put('/pmpheep/cms/comment/check',this.$initPostData({
+          id: id,
+          authStatus: status,
+          sessionId: this.$getUserData().sessionId
+        })).then(response => {
           let res = response.data
           if (res.code == 1) {
-            this.$message.success('删除成功!');
+            this.$message.success('审核完成！')
             this.getCommentList()
+            if (this.showCommentDetail) {
+              this.showCommentDetail = false
+            }
+          }
+        })
+      },
+      /**批量删除评论 */
+      deleteComment(id){
+        var ids = []
+        this.$confirm(id?'确认删除该条评论？':'确认删除选中的评论吗？',"提示",{
+          confirmButtonText: "确定",
+          cancelButtonText: "取消"
+        }).then(()=>{
+          if(id){
+            ids=id;
           }else{
-            this.$confirm(res.msg.msgTrim(), "提示",{
-            	confirmButtonText: "确定",
-            	cancelButtonText: "取消",
-            	showCancelButton: false,
-            	type: "error"
-            });
-          }
-        })
-      })
-
-    },
-    /**展示评论详情 */
-    commentDetail(obj){
-      console.log(obj);
-      this.$axios
-        .get(this.editContentUrl + obj.id + "/detail", {})
-        .then(res => {
-          if (res.data.code == 1) {
-            this.commentDetailData = res.data.data;
-            this.commentDetailData.listObj = obj;
-            this.showCommentDetail = true;
-            // console.log(this.contentDetailData);
-          }
-        });
-    },
-    /* 查看详情 */
-    contentDetail(obj) {
-      this.$axios
-        .get(this.editContentUrl + obj.id + "/detail", {})
-        .then(res => {
-          if (res.data.code == 1) {
-            this.contentDetailData = res.data.data;
-            this.contentDetailData.listObj = obj;
-            console.log(res);
-           // this.commentDetailData.content = res.data.content;
-            this.showContentDetail = true;
-            console.log(this.contentDetailData);
-          }
-        });
-    },
-    /* 发布内容 */
-    publishContent(obj) {
-      this.$axios
-        .put("/pmpheep/cms/content/" + obj.id + "/publish")
-        .then(res => {
-          console.log(res);
-          if (res.data.code == 1) {
-            this.$message.success("文章已发布");
-            this.getPublicList();
-          } else {
-            this.$confirm(res.data.msg, "提示",{
-            	confirmButtonText: "确定",
-            	cancelButtonText: "取消",
-            	showCancelButton: false,
-            	type: "error"
-            });
-          }
-        });
-    },
-    /* 修改内容 */
-    editContent(obj) {
-      this.$axios
-        .get(this.editContentUrl + obj.id + "/search", {})
-        .then(res => {
-          console.log(res);
-          if (res.data.code == 1) {
-            this.$router.push({
-              name: "添加内容",
-              params: res.data.data,
-              query: { type: "edit", columnId: 1 ,isShowCover:true}
-            });
-          }
-        });
-    },
-    /* 审核内容 */
-    examineContent(obj, status) {
-      console.log(obj);
-      if(status!=1){
-          this.$confirm(status==2?"确定发布该文章？":'确定撤销该文章？', "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
+           this.commentSelectData.forEach(item => {
+            ids.push(item.id)
           })
-            .then(() => {
-              this.$axios
-                .put(
-                  this.examineUrl,
-                  this.$commonFun.initPostData({
-                    id: obj.id,
-                    authStatus: status,
-                    sessionId: this.$getUserData().sessionId
-                  })
-                )
-                .then(res => {
-                  console.log(res);
-                  if (res.data.code == 1) {
-                    this.$message.success(status==2?"发布成功":'撤销成功');
-                    this.showContentDetail = false;
-                    this.getPublicList();
-                  } else {
-                    this.$confirm(res.data.msg, "提示",{
-                    	confirmButtonText: "确定",
-                    	cancelButtonText: "取消",
-                    	showCancelButton: false,
-                    	type: "error"
-                    });
-                  }
-                });
-            })
-            .catch(() => {
-             /* this.$message({
-                type: "info",
-                message: "已取消操作"
-              });*/
-            });
-      }else{
-        this.$prompt('请输入退回原因', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then(({ value }) => {
-              this.$axios
-                .put(
-                  this.backUrl,
-                  this.$commonFun.initPostData({
-                    id: obj.id,
-                    materialId:obj.materialId,
-                    categoryId:obj.categoryId,
-                    authorId:obj.authorId,
-                    title:obj.title,
-                    authorType:obj.authorType,
-                    returnReason:value,
-                    authStatus: status,
-                    sessionId: this.$getUserData().sessionId
-                  })
-                )
-                .then(res => {
-                  console.log(res);
-                  if (res.data.code == 1) {
-                    this.$message.success("退回成功");
-                    this.showContentDetail = false;
-                    this.getPublicList();
-                  } else {
-                    this.$confirm(res.data.msg, "提示",{
-                    	confirmButtonText: "确定",
-                    	cancelButtonText: "取消",
-                    	showCancelButton: false,
-                    	type: "error"
-                    });
-                  }
-                });
-        }).catch(() => {
-         /* this.$message({
-            type: 'info',
-            message: '已取消操作'
-          });*/
-        });
-      }
-    },
-    recommendPaginationSizeChange(val){
-      this.recommendSearchForm.recommendPageSize=val;
-      this.recommendSearchForm.recommendPageNumber=1;
-      this.getRecommendTableData();
-    },
-    checkboxChange(row){
-      this.$axios.get('/pmpheep/cms/recommendcheck',{params:{
-          currentCmsId:this.recommendSearchForm.currentCmsId,
-          relationCmsId:row.id,
-          relationCms:row.relationCms,
-
-        }}).then(response=>{
-        var res = response.data;
-        if(res.code==1){ // 返回数据没有异常 回显数据 避免重复点击 数据操作异常
-          row.relationCms = res.data;
-        }
-
-      })
-    },
-    getRecommendTableData(){
-
-      this.$axios.get('/pmpheep/cms/recommendlist',{params:{
-          cmsTitle:this.recommendSearchForm.cmsTitle,
-          currentCmsId:this.recommendSearchForm.currentCmsId,
-          recommendPageSize:this.recommendSearchForm.recommendPageSize,
-          recommendPageNumber:this.recommendSearchForm.recommendPageNumber,
-          relationCms:this.recommendSearchForm.relationCms?this.recommendSearchForm.relationCms:null,
-          cmsAuthorName:this.recommendSearchForm.cmsAuthorName
-
-        }})
-        .then(response=>{
-          var res = response.data;
-          if(res.code==1){
-            this.recommendTotalNum = res.data.total;
-            this.recommendData = res.data.rows;
-            this.recommendData.forEach(row=>{
-              row.relationCms = row.relationCms == 1?true:false;
-            })
           }
-
-        }).catch(e=>{
-        console.log(e);
-      })
-    },
-    recommendSearch(){
-      this.recommendSearchForm.recommendPageNumber=1;
-      this.getRecommendTableData();
-    },
-    recommendreset(){
-      this.recommendSearchForm.cmsTitle = '';
-      this.recommendSearchForm.cmsAuthorName='';
-      this.recommendSearchForm.relationCms=null;
-      this.recommendSearchForm.recommendPageNumber=1;
-      this.getRecommendTableData();
-    },
-    /**推荐*/
-    recommend(row){
-      this.recommendData=[];
-      this.recommendSearchForm.cmsTitle = '';
-      this.recommendSearchForm.cmsAuthorName='';
-      this.recommendSearchForm.relationCms=null;
-      this.recommendSearchForm.recommendPageNumber=1;
-      this.recommendCmsTitle = row.title;
-      this.recommendSearchForm.currentCmsId = row.id;
-      this.recommendDialogVisible = true;
-      this.recommendTotalNum=0;
-      this.getRecommendTableData();
-    },
-    /* 删除内容 */
-    deleteContent(obj) {{
-      url:this.syncInputUrl
-    }
-      this.$confirm("确定删除该文章?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.$axios
-            .delete(this.deleteContentUrl + obj.id + "/delete")
-            .then(res => {
-              if (res.data.code == 1) {
-                this.getPublicList();
-                this.$message.success("删除操作成功");
-              } else {
-                this.$confirm(res.data.msg.msgTrim(), "提示",{
-                	confirmButtonText: "确定",
-                	cancelButtonText: "取消",
-                	showCancelButton: false,
-                	type: "error"
-                });
-              }
-            });
+          this.$axios.delete('/pmpheep/cms/comment/delete',{
+            params: {
+              ids :id?id:ids.toString()
+            }
+          }).then(response => {
+            let res = response.data
+            if (res.code == 1) {
+              this.$message.success('删除成功!');
+              this.getCommentList()
+            }else{
+              this.$confirm(res.msg.msgTrim(), "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+            }
+          })
         })
-        .catch(() => {
-          /*this.$message({
-            type: "info",
-            message: "已取消删除"
-          });*/
-        });
-    },
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.currentPage = 1;
-      this.getPublicList();
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      this.getPublicList();
-    },
-    commentSelectChange(val) {
-      this.commentSelectData = val;
-    },
-    commentHandleSizeChange(val) {
-      this.comPageSize = val;
-      this.getCommentList()
-    },
-    commentHandleCurrentChange(val) {
-      this.comPageNumber = val
-      this.getCommentList()
-    },
-    /* 同步弹框确定按钮 */
-    syncGetArticle(){
-      this.isSyncLoading=true;
-      this.$axios.post('/pmpheep/cms/wechat/article/getArticle',this.$commonFun.initPostData(
-        {
-          url:this.syncInputUrl
-        }
-      )).then((res)=>{
-        console.log(res);
-        if(res.data.code==1){
-         // this.getPublicList();
-          setTimeout(() => {
-            this.syncCheckDetail(res.data.data);
-          }, 3000);
-//          this.syncDialogVisible1 = true;
 
+      },
+      /**展示评论详情 */
+      commentDetail(obj){
+        console.log(obj);
+        this.$axios
+          .get(this.editContentUrl + obj.id + "/detail", {})
+          .then(res => {
+            if (res.data.code == 1) {
+              this.commentDetailData = res.data.data;
+              this.commentDetailData.listObj = obj;
+              this.showCommentDetail = true;
+              // console.log(this.contentDetailData);
+            }
+          });
+      },
+      /* 查看详情 */
+      contentDetail(obj) {
+        this.$axios
+          .get(this.editContentUrl + obj.id + "/detail", {})
+          .then(res => {
+            if (res.data.code == 1) {
+              this.contentDetailData = res.data.data;
+              this.contentDetailData.listObj = obj;
+              console.log(res);
+             // this.commentDetailData.content = res.data.content;
+              this.showContentDetail = true;
+              console.log(this.contentDetailData);
+            }
+          });
+      },
+      /* 发布内容 */
+      publishContent(obj) {
+        this.$axios
+          .put("/pmpheep/cms/content/" + obj.id + "/publish")
+          .then(res => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.$message.success("文章已发布");
+              this.getPublicList();
+            } else {
+              this.$confirm(res.data.msg, "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+            }
+          });
+      },
+      /* 修改内容 */
+      editContent(obj) {
+        this.$axios
+          .get(this.editContentUrl + obj.id + "/search", {})
+          .then(res => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.$router.push({
+                name: "添加内容",
+                params: res.data.data,
+                query: { type: "edit", columnId: 1 ,isShowCover:true}
+              });
+            }
+          });
+      },
+      /* 审核内容 */
+      examineContent(obj, status) {
+        console.log(obj);
+        if(status!=1){
+            this.$confirm(status==2?"确定发布该文章？":'确定撤销该文章？', "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning"
+            })
+              .then(() => {
+                this.$axios
+                  .put(
+                    this.examineUrl,
+                    this.$commonFun.initPostData({
+                      id: obj.id,
+                      authStatus: status,
+                      sessionId: this.$getUserData().sessionId
+                    })
+                  )
+                  .then(res => {
+                    console.log(res);
+                    if (res.data.code == 1) {
+                      this.$message.success(status==2?"发布成功":'撤销成功');
+                      this.showContentDetail = false;
+                      this.getPublicList();
+                    } else {
+                      this.$confirm(res.data.msg, "提示",{
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        showCancelButton: false,
+                        type: "error"
+                      });
+                    }
+                  });
+              })
+              .catch(() => {
+               /* this.$message({
+                  type: "info",
+                  message: "已取消操作"
+                });*/
+              });
         }else{
-          this.isSyncLoading=false;
-          this.$confirm(res.data.msg.msgTrim(), "提示",{
-          	confirmButtonText: "确定",
-          	cancelButtonText: "取消",
-          	showCancelButton: false,
-          	type: "error"
+          this.$prompt('请输入退回原因', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+          }).then(({ value }) => {
+                this.$axios
+                  .put(
+                    this.backUrl,
+                    this.$commonFun.initPostData({
+                      id: obj.id,
+                      materialId:obj.materialId,
+                      categoryId:obj.categoryId,
+                      authorId:obj.authorId,
+                      title:obj.title,
+                      authorType:obj.authorType,
+                      returnReason:value,
+                      authStatus: status,
+                      sessionId: this.$getUserData().sessionId
+                    })
+                  )
+                  .then(res => {
+                    console.log(res);
+                    if (res.data.code == 1) {
+                      this.$message.success("退回成功");
+                      this.showContentDetail = false;
+                      this.getPublicList();
+                    } else {
+                      this.$confirm(res.data.msg, "提示",{
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        showCancelButton: false,
+                        type: "error"
+                      });
+                    }
+                  });
+          }).catch(() => {
+           /* this.$message({
+              type: 'info',
+              message: '已取消操作'
+            });*/
           });
         }
-      })
+      },
+      recommendPaginationSizeChange(val){
+        this.recommendSearchForm.recommendPageSize=val;
+        this.recommendSearchForm.recommendPageNumber=1;
+        this.getRecommendTableData();
+      },
+      checkboxChange(row){
+        this.$axios.get('/pmpheep/cms/recommendcheck',{params:{
+            currentCmsId:this.recommendSearchForm.currentCmsId,
+            relationCmsId:row.id,
+            relationCms:row.relationCms,
+
+          }}).then(response=>{
+          var res = response.data;
+          if(res.code==1){ // 返回数据没有异常 回显数据 避免重复点击 数据操作异常
+            row.relationCms = res.data;
+          }
+
+        })
+      },
+      getRecommendTableData(){
+
+        this.$axios.get('/pmpheep/cms/recommendlist',{params:{
+            cmsTitle:this.recommendSearchForm.cmsTitle,
+            currentCmsId:this.recommendSearchForm.currentCmsId,
+            recommendPageSize:this.recommendSearchForm.recommendPageSize,
+            recommendPageNumber:this.recommendSearchForm.recommendPageNumber,
+            relationCms:this.recommendSearchForm.relationCms?this.recommendSearchForm.relationCms:null,
+            cmsAuthorName:this.recommendSearchForm.cmsAuthorName
+
+          }})
+          .then(response=>{
+            var res = response.data;
+            if(res.code==1){
+              this.recommendTotalNum = res.data.total;
+              this.recommendData = res.data.rows;
+              this.recommendData.forEach(row=>{
+                row.relationCms = row.relationCms == 1?true:false;
+              })
+            }
+
+          }).catch(e=>{
+          console.log(e);
+        })
+      },
+      recommendSearch(){
+        this.recommendSearchForm.recommendPageNumber=1;
+        this.getRecommendTableData();
+      },
+      recommendreset(){
+        this.recommendSearchForm.cmsTitle = '';
+        this.recommendSearchForm.cmsAuthorName='';
+        this.recommendSearchForm.relationCms=null;
+        this.recommendSearchForm.recommendPageNumber=1;
+        this.getRecommendTableData();
+      },
+      /**推荐*/
+      recommend(row){
+        this.recommendData=[];
+        this.recommendSearchForm.cmsTitle = '';
+        this.recommendSearchForm.cmsAuthorName='';
+        this.recommendSearchForm.relationCms=null;
+        this.recommendSearchForm.recommendPageNumber=1;
+        this.recommendCmsTitle = row.title;
+        this.recommendSearchForm.currentCmsId = row.id;
+        this.recommendDialogVisible = true;
+        this.recommendTotalNum=0;
+        this.getRecommendTableData();
+      },
+      /* 删除内容 */
+      deleteContent(obj) {{
+        url:this.syncInputUrl
+      }
+        this.$confirm("确定删除该文章?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            this.$axios
+              .delete(this.deleteContentUrl + obj.id + "/delete")
+              .then(res => {
+                if (res.data.code == 1) {
+                  this.getPublicList();
+                  this.$message.success("删除操作成功");
+                } else {
+                  this.$confirm(res.data.msg.msgTrim(), "提示",{
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    showCancelButton: false,
+                    type: "error"
+                  });
+                }
+              });
+          })
+          .catch(() => {
+            /*this.$message({
+              type: "info",
+              message: "已取消删除"
+            });*/
+          });
+      },
+      handleSizeChange(val) {
+        this.pageSize = val;
+        this.currentPage = 1;
+        this.getPublicList();
+      },
+      handleCurrentChange(val) {
+        this.currentPage = val;
+        this.getPublicList();
+      },
+      commentSelectChange(val) {
+        this.commentSelectData = val;
+      },
+      commentHandleSizeChange(val) {
+        this.comPageSize = val;
+        this.getCommentList()
+      },
+      commentHandleCurrentChange(val) {
+        this.comPageNumber = val
+        this.getCommentList()
+      },
+      /* 同步弹框确定按钮 */
+      syncGetArticle(){
+        this.isSyncLoading=true;
+        this.$axios.post('/pmpheep/cms/wechat/article/getArticle',this.$commonFun.initPostData(
+          {
+            url:this.syncInputUrl
+          }
+        )).then((res)=>{
+          console.log(res);
+          if(res.data.code==1){
+           // this.getPublicList();
+            setTimeout(() => {
+              this.syncCheckDetail(res.data.data);
+            }, 3000);
+  //          this.syncDialogVisible1 = true;
+
+          }else{
+            this.isSyncLoading=false;
+            this.$confirm(res.data.msg.msgTrim(), "提示",{
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
+            });
+          }
+        })
+      },
+      /* 查看稿件详情 */
+      syncCheckDetail(id){
+
+       this.$axios.get('/pmpheep/cms/wechat/article/synchro',{
+         params:{
+             guid:id
+         }
+       }).then((res)=>{
+         console.log(res);
+         if(res.data.code==1){
+             if(!res.data.data.id){
+               setTimeout(() => {
+                 this.syncCheckDetail(id);
+               }, 5000);
+
+             }else{
+               /* 有值的时候 */
+               this.getPublicList();
+               this.isSyncLoading=false;
+               this.$message.success('同步成功!');
+               this.syncDialogVisible=false;
+               this.syncInputUrl='';
+               return;
+             }
+         }else{
+           this.isSyncLoading=false;
+           this.$confirm(res.data.msg.msgTrim(), "提示",{
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            showCancelButton: false,
+            type: "error"
+           });
+         }
+       })
+      }
     },
-    /* 查看稿件详情 */
-    syncCheckDetail(id){
-
-     this.$axios.get('/pmpheep/cms/wechat/article/synchro',{
-       params:{
-           guid:id
-       }
-     }).then((res)=>{
-       console.log(res);
-       if(res.data.code==1){
-           if(!res.data.data.id){
-             setTimeout(() => {
-               this.syncCheckDetail(id);
-             }, 5000);
-
-           }else{
-             /* 有值的时候 */
-             this.getPublicList();
-             this.isSyncLoading=false;
-             this.$message.success('同步成功!');
-             this.syncDialogVisible=false;
-             this.syncInputUrl='';
-             return;
-           }
-       }else{
-         this.isSyncLoading=false;
-         this.$confirm(res.data.msg.msgTrim(), "提示",{
-         	confirmButtonText: "确定",
-         	cancelButtonText: "取消",
-         	showCancelButton: false,
-         	type: "error"
-         });
-       }
-     })
+    created() {
+      /* 是否从首页跳转过来 */
+      if(this.$route.params.searchInput){
+        this.searchTitle=this.$route.params.searchInput;
+      }
+      this.getPublicList();
+      this.getCommentList();
+      this.getBookLists();
     }
-  },
-  created() {
-    /* 是否从首页跳转过来 */
-    if(this.$route.params.searchInput){
-      this.searchTitle=this.$route.params.searchInput;
-    }
-    this.getPublicList();
-    this.getCommentList();
-    this.getBookLists();
-  }
-};
+  };
 </script>
 <style >
   .el-dialog--small {
