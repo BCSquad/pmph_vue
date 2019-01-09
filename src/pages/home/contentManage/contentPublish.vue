@@ -7,6 +7,11 @@
       <el-form-item label="所属来源：" prop="authorname" v-if="$router.currentRoute.query.columnId==1">
         <el-input placeholder="请输入所属来源" class="input" v-model.trim="formData.authorname"></el-input>
       </el-form-item>
+      <el-form-item v-if="formData.authorType==2" label="是否原创：" prop="isOriginal">
+        <el-radio class="radio" v-model="formData.isOriginal" :label="true">是</el-radio>
+        <el-radio class="radio" v-model="formData.isOriginal" :label="false">否</el-radio>
+        <span class="intro">原创文章将按积分规则为提交的作家用户增加积分</span>
+      </el-form-item>
       <el-form-item label="所属栏目：" prop="categoryId">
           <el-cascader
             :options="options"
@@ -167,7 +172,8 @@ export default {
         path:'0',
         materialId:'',
         returnReason: '',
-        authorname:''
+        authorname:'',
+        isOriginal:false
       },
       applyOptions: [{
         apporpc: 0,
@@ -787,4 +793,8 @@ export default {
    .content_publish .cover_dialog .el-dialog .el-dialog__body{
      padding:0;
    }
+  .intro{
+    color: #0e4def;
+    margin-left: 2em;
+  }
 </style>
