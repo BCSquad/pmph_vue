@@ -110,6 +110,8 @@ const operationEdit = () => import('../pages/home/contentManage/operationEdit');
 //广告管理
 const adList = () => import('../pages/home/contentManage/adManage/ad-list');
 const adEdit = () => import('../pages/home/contentManage/adManage/ad-edit');
+const siteLink = () => import('../pages/home/contentManage/siteLink');
+
 
 /** 图书纠错 */
 import ErrorRouter from '../pages/home/bookError/errorRouter';
@@ -421,6 +423,7 @@ export default new Router({
             {path: 'operation', name: '操作手册上传', component: operationEdit},
             /*  { path: 'set', name: '栏目设置', meta: { authorityId: 12 }, component: ColumnSet }, */
             {path: 'ad', name: '广告管理', meta: {authorityId: 18}, component: adList},
+            {path: 'siteLink', name: '友情链接管理', meta: {authorityId: 61}, component: siteLink},
             {path: 'ad/:id', name: '广告编辑', meta: {authorityId: 18}, component: adEdit}
 
           ]

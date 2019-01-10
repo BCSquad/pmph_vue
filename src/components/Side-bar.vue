@@ -67,6 +67,7 @@
         <el-menu-item index="/content/notice" v-if="isShowSide(5)||isShowSide(17)">公告管理</el-menu-item>
         <!-- <el-menu-item index="/content/set" v-if="isShowSide(12)">栏目设置</el-menu-item> -->
         <el-menu-item index="/content/ad" v-if="isShowSide(5)||isShowSide(18)">广告管理</el-menu-item>
+        <el-menu-item index="/content/siteLink" v-if="isShowSide(5)||isShowSide(61)">友情链接管理</el-menu-item>
         <el-menu-item index="/content/sensitive" v-if="isShowSide(5)||isShowSide(40)">敏感词管理</el-menu-item>
         <el-menu-item index="/content/searchKeyword" v-if="isShowSide(5)||isShowSide(60)">搜索关键词管理</el-menu-item>
         <el-menu-item index="/content/help" v-if="isShowSide(5)||isShowSide(42)">帮助管理</el-menu-item>

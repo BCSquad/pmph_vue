@@ -251,10 +251,10 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center" min-width="150">
+        <el-table-column label="操作"  align="center" min-width="150">
           <template scope="scope">
-            <div class="handle_btn">
-              <p style="text-align: center">
+            <div class="handle_btn" :title="(isDirector||isAdmin||amIAnAuditor)?'':'您没有审核权限'">
+              <p style="text-align: center" >
                 <el-button type="text"  :disabled="!(scope.row.passbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(1,scope.row.id)" >{{"通&emsp;过"}} </el-button>
                 <el-button type="text" :disabled="!(scope.row.notPassbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
                 <el-button type="text" :disabled="!(scope.row.recall&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(0,scope.row.id)" >{{"撤&emsp;回"}} </el-button>
@@ -339,6 +339,7 @@
         // passbtn:true,
         // notPassbtn:true,
         //finalResult:'',
+        userInfo:'',
         isDirector:false,
         loginId:'',
         isAdmin:false,
@@ -751,6 +752,7 @@
     },
     created() {
      // this.isDirector = this.$getUserData().userInfo.isDirector;
+      this.userInfo = this.$getUserData().userInfo;
       this.loginId = this.$getUserData().userInfo.id;
       this.isAdmin = this.$getUserData().userInfo.isAdmin;
       //this.searchParams.productId = this.$route.query.product_id;
