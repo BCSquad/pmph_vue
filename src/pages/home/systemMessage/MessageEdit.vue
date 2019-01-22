@@ -9,7 +9,7 @@
     </div>
     <!--输入标题-->
     <el-form :model="messageForm" ref="messageForm" :rules="messageRules" label-width="110px">
-      <el-form-item label="标题：" prop="title">
+      <el-form-item label="消息标题：" prop="title">
            <el-input v-model="messageForm.title" placeholder="请输入标题" class="message-title-input"></el-input>
       </el-form-item>
       <el-form-item label="发送对象：" prop="sendType" v-if="currentMessageType!='edit'">
@@ -27,11 +27,11 @@
         </div>
       </el-form-item>
       <!--分割线-->
-      <el-form-item>
+      <!--<el-form-item>
           <el-row>
         <div class="cutLine-dashed" style="width:100%;margin-left:0;"></div>
     </el-row>
-      </el-form-item>
+      </el-form-item>-->
     <el-form-item label="附件：" prop="fileList">
         <div class="col-content file-upload-wrapper" style="padding-left:0;" >
           <my-upload

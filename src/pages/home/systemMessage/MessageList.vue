@@ -53,12 +53,14 @@
         <el-table-column
           prop="sendName"
           align="center"
-          label="发送者">
+          label="发送者"
+          width="200">
         </el-table-column>
         <el-table-column
           prop="receiverFilterType"
           align="center"
-          label="发送对象">
+          label="发送对象"
+          width="200">
           <template scope="scope">
             {{scope.row.receiverFilterType?
             (scope.row.receiverFilterType==1?'学校管理员':(
@@ -88,7 +90,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作"
-        width="300"  align="center">
+        width="250"  align="center">
           <template scope="scope">
             <el-button
               size="small"
