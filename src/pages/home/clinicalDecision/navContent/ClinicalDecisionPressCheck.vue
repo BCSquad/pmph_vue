@@ -170,6 +170,15 @@
       <el-table border
                 :data="tableData"
                 style="width: 100%">
+
+        <el-table-column
+          type="index"
+          :index="indexMethod"
+          width="60"
+          label="序号"
+        >
+        </el-table-column>
+
         <el-table-column
           label="姓名"
           width="70"
@@ -747,6 +756,9 @@
         this.exportLoadingTimerHandle&&this.exportLoadingTimerHandle.bort();
         clearInterval(this.handleExportWordtimer)
         done();
+      },
+      indexMethod(index) {
+        return index + (this.searchParams.pageNumber-1)*this.searchParams.pageSize +1;
       },
 
     },

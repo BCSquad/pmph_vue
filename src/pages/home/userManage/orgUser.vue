@@ -361,7 +361,7 @@
 						<span></span>
 					</div>
 					<div class="searchInput">
-						<el-select v-model="progress" placeholder="全部" clearable>
+						<el-select v-model="progress" placeholder="全部" @change = "search" clearable>
 							<el-option v-for="item in state" :key="item.value" :label="item.label" :value="item.value">
 							</el-option>
 						</el-select>
@@ -1162,7 +1162,7 @@ export default {
       if(proxy&&proxy!='DEFAULT'){
         this.imgsrc = "/pmpheep/image/"+proxy;
       }else{
-        this.imgsrc='static/default_image.png';
+        this.imgsrc='static/blank_img.png';
       }
     },
     /**

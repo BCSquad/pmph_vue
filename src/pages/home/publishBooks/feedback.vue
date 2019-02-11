@@ -49,6 +49,17 @@
               <p v-if="scope.row.isEditorReplied">{{scope.row.result == true?'图书勘误':scope.row.result == false?'内容无误':'-'}}</p>
             </template>
           </el-table-column>-->
+          <el-table-column label="前台展示" width="95" align="center">
+            <template scope="scope" >
+              <el-tooltip :content="scope.row.content" placement="top" effect="light" :popper-class="'frontShowWrapper'">
+                <el-button type="text"  class="btn-text" :class="scope.row.showFront?'deep':''"
+                           @click="switchFrontShow(scope.row)"
+                >
+                  {{scope.row.showFrontStr}}
+                </el-button>
+              </el-tooltip>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="80" align="center">
             <template scope="scope">
               <router-link type="text" class="link" size="small" :to="{name:'读者反馈详情',query:{id: scope.row.id,type:scope.row.result?'detail':'check'}}">{{scope.row.result!=''?'查看':'审核'}}</router-link>
@@ -75,6 +86,7 @@
     data() {
       return {
       //  title: "", // 书名
+        switchFrontShowApi:"/pmpheep/bookCorrection/switchFrontShowFeedBack",
         result: null, // 检查结果
         currentPage: 1, // 当前页
         pageSize: 20,
@@ -146,7 +158,21 @@
       change(val) {
         this.result = val;
         this.getBooks();
-      }
+      },
+      /**
+       * 切换前台显示
+       * @param id
+       * @param showFront
+       */
+      switchFrontShow(obj){
+        this.$axios.get(this.switchFrontShowApi,{params:{
+            id:obj.id,showFront:obj.showFront
+          }})
+          .then(response => {
+            obj.showFront = response.data.data.showFront;
+            obj.showFrontStr = obj.showFront?"是":"否";
+          })
+      },
     }
   };
 </script>
@@ -165,4 +191,11 @@
     margin-top: 9px;
     margin-left: 5px;
   }
+  .btn-text{
+    color:  rgb(18, 140, 246);
+  }
+  .btn-text.deep{
+    color: blue;
+  }
+
 </style>

@@ -75,6 +75,8 @@ import systemRouter from '../pages/home/systemSet/systemRouter'
 
 const Roles = () => import('../pages/home/systemSet/roles')
 const Departments = () => import('pages/home/systemSet/departments')
+const DataDictionary = () => import('pages/home/systemSet/dataDictionary')
+
 const Orgs = () => import('pages/home/systemSet/departments')
 const Area = () => import('pages/home/systemSet/area')
 /*学校/ 教师审核 */
@@ -376,6 +378,7 @@ export default new Router({
             {path: 'roles', name: '角色管理', component: Roles, meta: {authorityId: 35}},
             /*  {path:'authority',name:'权限管理',component:Authority}, */
             {path: 'departments', name: '社内部门设置', component: Departments, meta: {authorityId: 36}},
+            {path: 'dataDictionary', name: '基础数据字典设置', component: DataDictionary, meta: {authorityId: 62}},
             /* { path: 'orgs', name: '院校机构设置', component: Orgs, meta: { authorityId: 20 } },
             { path: 'area', name: '区域管理', component: Area, meta: { authorityId: 19 } } */
           ]

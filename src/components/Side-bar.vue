@@ -145,6 +145,7 @@
         <!-- <el-menu-item index="/set/area" v-if="isShowSide(19)">地区</el-menu-item>
         <el-menu-item index="/set/orgs" v-if="isShowSide(20)">院校机构</el-menu-item> -->
         <el-menu-item index="/set/departments" v-if="isShowSide(12)||isShowSide(36)">社内部门</el-menu-item>
+        <el-menu-item index="/set/dataDictionary" v-if="isShowSide(12)||isShowSide(62)">基础数据</el-menu-item>
       </el-submenu>
 
        <el-submenu index="/survey" v-if="isShowSide(13)||isShowSide(37)||isShowSide(38)||isShowSide(39)">
