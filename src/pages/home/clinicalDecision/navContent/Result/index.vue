@@ -761,7 +761,7 @@
       },
 
       professionSizeChange(val){
-        //this.subject.pageSize=val;
+        this.profession.pageSize=val;
         this.profession.pageNumber=1;
         this.getProfessionTableData();
       },

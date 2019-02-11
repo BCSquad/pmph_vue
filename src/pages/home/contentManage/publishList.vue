@@ -76,7 +76,7 @@
       <el-table :data="tableData" class="table-wrapper" border style="margin:15px 0;">
             <el-table-column
                 label="文章标题"
-                align="left" min-width="100"
+                align="center" min-width="100"
                 >
                 <template scope="scope">
                     <p class="link"  @click="contentDetail(scope.row)">{{scope.row.title}}</p>
@@ -131,9 +131,11 @@
                 width="100"
                 >
                 <template scope="scope">
-                    <p v-if="scope.row.authStatus==0">未发布</p>
-                    <p v-if="scope.row.authStatus==1">未通过</p>
-                    <p v-if="scope.row.authStatus==2">已发布</p>
+                  <p v-if="scope.row.authStatus==0&scope.row.authorType==2">未审核</p>
+                  <p v-if="scope.row.authStatus==0&scope.row.authorType!=2">暂存</p>
+                  <p v-if="scope.row.authStatus==1&scope.row.authorType==2">未通过</p>
+                  <p v-if="scope.row.authStatus==2&&scope.row.isPublished==false">未发布</p>
+                  <p v-if="scope.row.authStatus==2&&scope.row.isPublished==true">已发布</p>
                 </template>
             </el-table-column>
             <el-table-column
@@ -166,15 +168,28 @@
                 min-width="160"
                 >
                 <template scope="scope">
-                    <!-- <el-button type="text" :disabled="scope.row.isPublished"  @click="publishContent(scope.row)">发布</el-button> -->
-                    <el-button type="text" @click="contentDetail(scope.row)">查看</el-button>
-                    <el-button type="text" :disabled="scope.row.authStatus==1"  @click="editContent(scope.row)">编辑</el-button>
-                    <el-button type="text" :disabled="scope.row.authStatus==1"  v-if="scope.row.authStatus!=1"  @click="examineContent(scope.row,1)">退回</el-button>
-                    <el-button type="text" :disabled="scope.row.authStatus==1" v-if="scope.row.authStatus!=2"  @click="examineContent(scope.row,2)">发布</el-button>
-                    <el-button type="text" :disabled="scope.row.authStatus==1" v-if="scope.row.authStatus!=0"  @click="examineContent(scope.row,0)">撤销</el-button>
-                    <!-- <el-button type="text" @click="hideContent(scope.row)">隐藏</el-button> -->
-                    <el-button type="text" @click="deleteContent(scope.row)">删除</el-button>
-                  <el-button type="text" :disabled="scope.row.authStatus==1" @click="recommend(scope.row)">推荐</el-button>
+                  <!-- <el-button type="text" :disabled="scope.row.isPublished"  @click="publishContent(scope.row)">发布</el-button> -->
+                  <el-button type="text" @click="contentDetail(scope.row)">查看</el-button>
+                  <el-button type="text"  v-if="scope.row.isPublished!=true" @click="editContent(scope.row,scope.row.authStatus)">编辑</el-button>
+                  <el-button type="text" :disabled="scope.row.authStatus==1"
+                             v-if="scope.row.authStatus==0&&scope.row.authorType==2"
+                             @click="examineContent(scope.row,2)">通过
+                  </el-button>
+                  <el-button type="text" :disabled="scope.row.authStatus==1"
+                             v-if="scope.row.authStatus==0&&scope.row.authorType==2"
+                             @click="examineContent(scope.row,1)">退回
+                  </el-button>
+                  <el-button type="text" :disabled="scope.row.authStatus==1"
+                             v-if="scope.row.authStatus==2&&scope.row.isPublished==false"
+                             @click="examineContent(scope.row,3)">发布
+                  </el-button>
+                  <el-button type="text" :disabled="scope.row.authStatus==1" v-if="scope.row.isPublished==true"
+                             @click="examineContent(scope.row,4)">撤回
+                  </el-button>
+                  <!-- <el-button type="text" @click="hideContent(scope.row)">隐藏</el-button> -->
+                  <el-button type="text" @click="deleteContent(scope.row)">删除</el-button>
+                  <el-button type="text" :disabled="scope.row.isPublished==false" @click="recommend(scope.row)">推荐
+                  </el-button>
                 </template>
             </el-table-column>
 
@@ -220,9 +235,9 @@
         </div>
         <div style="width:100%;overflow:hidden" class="marginT20">
             <div class="center_box">
-            <el-button type="primary"   :disabled="contentDetailData.listObj.authStatus==1"  @click="editContent(contentDetailData.listObj)">修改</el-button>
+       <!--     <el-button type="primary"   :disabled="contentDetailData.listObj.authStatus==1"  @click="editContent(contentDetailData.listObj)">修改</el-button>
             <el-button type="danger" :disabled="contentDetailData.listObj.authStatus!=0"  @click="examineContent(contentDetailData.listObj,1)" >退回</el-button>
-            <el-button type="primary" :disabled="contentDetailData.listObj.authStatus!=0"  @click="examineContent(contentDetailData.listObj,2)" >通过</el-button>
+            <el-button type="primary" :disabled="contentDetailData.listObj.authStatus!=0"  @click="examineContent(contentDetailData.listObj,2)" >通过</el-button>-->
             </div>
         </div>
     </el-dialog>
@@ -438,92 +453,100 @@
     components:{excelExport},
     data() {
       return {
-        syncDialogVisible1: false,
-        publicListUrl: "/pmpheep/cms/contents", //获取列表url
-        editContentUrl: "/pmpheep/cms/content/", //修改查询url
-        deleteContentUrl: "/pmpheep/cms/content/", //删除内容url
-        examineUrl: "/pmpheep/cms/content/check", //审核内容
-        backUrl:'/pmpheep/cms/content/update',
-        commentListUrl:'/pmpheep/cms/comments',         //评论列表url
-        syncGetUrl:'/pmpheep/cms/wechat/article/getArticle',         //同步地址url
-        syncGetDetailUrl:'/pmpheep/cms/wechat/article/synchro',          //获取稿件详情detail
-        selectOp: [
-          {
-            value: 0,
-            label: "未发布"
-          },
-          {
-            value: 1,
-            label: "未通过"
-          },
-          {
-            value: 2,
-            label: "已发布"
-          }
-        ],
-        pickerOptions: {
-          disabledDate(time) {
-            return time.getTime() > Date.now();
-          }
+      syncDialogVisible1: false,
+      publicListUrl: "/pmpheep/cms/contents", //获取列表url
+      editContentUrl: "/pmpheep/cms/content/", //修改查询url
+      deleteContentUrl: "/pmpheep/cms/content/", //删除内容url
+      examineUrl: "/pmpheep/cms/content/check", //审核内容
+      backUrl:'/pmpheep/cms/content/update',
+      commentListUrl:'/pmpheep/cms/comments',         //评论列表url
+      syncGetUrl:'/pmpheep/cms/wechat/article/getArticle',         //同步地址url
+      syncGetDetailUrl:'/pmpheep/cms/wechat/article/synchro',          //获取稿件详情detail
+      selectOp: [
+        {
+          value: 5,
+          label: "暂存"
         },
-        commentSelectOp: [
-          {
-            value: 0,
-            label: "待审核"
-          },
-          {
-            value: 1,
-            label: "未通过"
-          },
-          {
-            value: 2,
-            label: "已通过"
-          }
-        ],
-        searchValue:0,
-        searchList:[
-          {
-            value:0,
-            label:'文章标题'
-          },
-          {
-            value:1,
-            label:'作者'
-          },{
-            value:2,
-            label:'所属教材'
-          },{
-            value:3,
-            label:'创建时间'
-          },{
-            value:4,
-            label:'发布时间'
-          }
-        ],
-        applyType:['全部','PC端','移动端'],
-        showContentDetail: false,
-        syncDialogVisible:false,
-        isSyncLoading:false,
-        syncInputUrl:'',
-        contentDetailData: {
-          cmsContent: "",
-          cmsExtras: "",
-          listObj: "",
-          content: ""
+        {
+          value: 0,
+          label: "未审核"
         },
-        tableData: [],
-        recommendData: [],
-        recommendSearchForm:{
-          currentCmsId:0,
-          relationCms:null,
-          cmsTitle:'',
-          cmsAuthorName:'',
-          recommendPageSize:10,
-          recommendPageNumber:1
+        {
+          value: 1,
+          label: "未通过"
         },
-        recommendTotalNum:0,
-        recommendDialogVisible:false,
-        recommendCmsTitle:'',
+        {
+          value: 4,
+          label: "未发布"
+        },
+        {
+          value: 3,
+          label: "已发布"
+        }
+      ],
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
+      commentSelectOp: [
+        {
+          value: 0,
+          label: "待审核"
+        },
+        {
+          value: 1,
+          label: "未通过"
+        },
+        {
+          value: 2,
+          label: "已通过"
+        }
+      ],
+      searchValue:0,
+      searchList:[
+        {
+          value:0,
+          label:'文章标题'
+        },
+        {
+          value:1,
+          label:'作者'
+        },{
+          value:2,
+          label:'所属教材'
+        },{
+          value:3,
+          label:'创建时间'
+        },{
+          value:4,
+          label:'发布时间'
+        }
+      ],
+      applyType:['全部','PC端','移动端'],
+      showContentDetail: false,
+      syncDialogVisible:false,
+      isSyncLoading:false,
+      syncInputUrl:'',
+      contentDetailData: {
+        cmsContent: "",
+        cmsExtras: "",
+        listObj: "",
+        content: ""
+      },
+      tableData: [],
+      recommendData: [],
+      recommendSearchForm:{
+        currentCmsId:0,
+        relationCms:null,
+        cmsTitle:'',
+        cmsAuthorName:'',
+        recommendPageSize:10,
+        recommendPageNumber:1
+      },
+      recommendTotalNum:0,
+      recommendDialogVisible:false,
+      recommendCmsTitle:'',
 
         contentUsername:'',
         selectValue: "",
@@ -697,164 +720,179 @@
           })
         })
 
-      },
-      /**展示评论详情 */
-      commentDetail(obj){
-        console.log(obj);
-        this.$axios
-          .get(this.editContentUrl + obj.id + "/detail", {})
-          .then(res => {
-            if (res.data.code == 1) {
-              this.commentDetailData = res.data.data;
-              this.commentDetailData.listObj = obj;
-              this.showCommentDetail = true;
-              // console.log(this.contentDetailData);
-            }
-          });
-      },
-      /* 查看详情 */
-      contentDetail(obj) {
-        this.$axios
-          .get(this.editContentUrl + obj.id + "/detail", {})
-          .then(res => {
-            if (res.data.code == 1) {
-              this.contentDetailData = res.data.data;
-              this.contentDetailData.listObj = obj;
-              console.log(res);
-             // this.commentDetailData.content = res.data.content;
-              this.showContentDetail = true;
-              console.log(this.contentDetailData);
-            }
-          });
-      },
-      /* 发布内容 */
-      publishContent(obj) {
-        this.$axios
-          .put("/pmpheep/cms/content/" + obj.id + "/publish")
-          .then(res => {
+    },
+    /**展示评论详情 */
+    commentDetail(obj){
+      console.log(obj);
+      this.$axios
+        .get(this.editContentUrl + obj.id + "/detail", {})
+        .then(res => {
+          if (res.data.code == 1) {
+            this.commentDetailData = res.data.data;
+            this.commentDetailData.listObj = obj;
+            this.showCommentDetail = true;
+            // console.log(this.contentDetailData);
+          }
+        });
+    },
+    /* 查看详情 */
+    contentDetail(obj) {
+      this.$axios
+        .get(this.editContentUrl + obj.id + "/detail", {})
+        .then(res => {
+          if (res.data.code == 1) {
+            this.contentDetailData = res.data.data;
+            this.contentDetailData.listObj = obj;
             console.log(res);
-            if (res.data.code == 1) {
-              this.$message.success("文章已发布");
-              this.getPublicList();
-            } else {
-              this.$confirm(res.data.msg, "提示",{
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                showCancelButton: false,
-                type: "error"
-              });
-            }
-          });
-      },
-      /* 修改内容 */
-      editContent(obj) {
-        this.$axios
-          .get(this.editContentUrl + obj.id + "/search", {})
-          .then(res => {
-            console.log(res);
-            if (res.data.code == 1) {
-              this.$router.push({
-                name: "添加内容",
-                params: res.data.data,
-                query: { type: "edit", columnId: 1 ,isShowCover:true}
-              });
-            }
-          });
-      },
-      /* 审核内容 */
-      examineContent(obj, status) {
-        console.log(obj);
-        if(status!=1){
-            this.$confirm(status==2?"确定发布该文章？":'确定撤销该文章？', "提示", {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              type: "warning"
-            })
-              .then(() => {
-                this.$axios
-                  .put(
-                    this.examineUrl,
-                    this.$commonFun.initPostData({
-                      id: obj.id,
-                      authStatus: status,
-                      sessionId: this.$getUserData().sessionId
-                    })
-                  )
-                  .then(res => {
-                    console.log(res);
-                    if (res.data.code == 1) {
-                      this.$message.success(status==2?"发布成功":'撤销成功');
-                      this.showContentDetail = false;
-                      this.getPublicList();
-                    } else {
-                      this.$confirm(res.data.msg, "提示",{
-                        confirmButtonText: "确定",
-                        cancelButtonText: "取消",
-                        showCancelButton: false,
-                        type: "error"
-                      });
-                    }
-                  });
+           // this.commentDetailData.content = res.data.content;
+            this.showContentDetail = true;
+            console.log(this.contentDetailData);
+          }
+        });
+    },
+    /* 发布内容 */
+    publishContent(obj) {
+      this.$axios
+        .put("/pmpheep/cms/content/" + obj.id + "/publish")
+        .then(res => {
+          console.log(res);
+          if (res.data.code == 1) {
+            this.$message.success("文章已发布");
+            this.getPublicList();
+          } else {
+            this.$confirm(res.data.msg, "提示",{
+            	confirmButtonText: "确定",
+            	cancelButtonText: "取消",
+            	showCancelButton: false,
+            	type: "error"
+            });
+          }
+        });
+    },
+    /* 修改内容 */
+    editContent(obj,authStatus) {
+      this.$axios
+        .get(this.editContentUrl + obj.id + "/search", {})
+        .then(res => {
+          console.log(res);
+          if (res.data.code == 1) {
+            this.$router.push({
+              name: "添加内容",
+              params: res.data.data,
+              query: { type: "edit", columnId: 1 ,isShowCover:true}
+            });
+          }
+        });
+    },
+    /* 审核内容 */
+    examineContent(obj, status) {
+      console.log(obj);
+      if(status==2){
+        this.$prompt('请输入退回原因', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(({ value }) => {
+          this.$axios
+            .put(
+              this.backUrl,
+              this.$commonFun.initPostData({
+                id: obj.id,
+                materialId:obj.materialId,
+                categoryId:obj.categoryId,
+                authorId:obj.authorId,
+                title:obj.title,
+                authorType:obj.authorType,
+                returnReason:value,
+                authStatus: status,
+                sessionId: this.$getUserData().sessionId
               })
-              .catch(() => {
-               /* this.$message({
-                  type: "info",
-                  message: "已取消操作"
-                });*/
-              });
-        }else{
-          this.$prompt('请输入退回原因', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-          }).then(({ value }) => {
-                this.$axios
-                  .put(
-                    this.backUrl,
-                    this.$commonFun.initPostData({
-                      id: obj.id,
-                      materialId:obj.materialId,
-                      categoryId:obj.categoryId,
-                      authorId:obj.authorId,
-                      title:obj.title,
-                      authorType:obj.authorType,
-                      returnReason:value,
-                      authStatus: status,
-                      sessionId: this.$getUserData().sessionId
-                    })
-                  )
-                  .then(res => {
-                    console.log(res);
-                    if (res.data.code == 1) {
-                      this.$message.success("退回成功");
-                      this.showContentDetail = false;
-                      this.getPublicList();
-                    } else {
-                      this.$confirm(res.data.msg, "提示",{
-                        confirmButtonText: "确定",
-                        cancelButtonText: "取消",
-                        showCancelButton: false,
-                        type: "error"
-                      });
-                    }
-                  });
-          }).catch(() => {
-           /* this.$message({
-              type: 'info',
-              message: '已取消操作'
-            });*/
-          });
+            )
+            .then(res => {
+              console.log(res);
+              if (res.data.code == 1) {
+                this.$message.success("退回成功");
+                this.showContentDetail = false;
+                this.getPublicList();
+              } else {
+                this.$confirm(res.data.msg, "提示",{
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  showCancelButton: false,
+                  type: "error"
+                });
+              }
+            });
+        }).catch(() => {
+          /* this.$message({
+             type: 'info',
+             message: '已取消操作'
+           });*/
+        });
+      }else{
+        let msg='';
+        let rmsg='';
+        switch (status) {
+          case 1: msg="确定审核文章",rmsg='审核成功' ;
+            break;
+          case 3: msg="确定发布该文章",rmsg='发布成功';
+          break;
+          case 4: msg='确定撤回该文章',rmsg='撤回成功';
+          break;
         }
-      },
-      recommendPaginationSizeChange(val){
-        this.recommendSearchForm.recommendPageSize=val;
-        this.recommendSearchForm.recommendPageNumber=1;
-        this.getRecommendTableData();
-      },
-      checkboxChange(row){
-        this.$axios.get('/pmpheep/cms/recommendcheck',{params:{
-            currentCmsId:this.recommendSearchForm.currentCmsId,
-            relationCmsId:row.id,
-            relationCms:row.relationCms,
+
+        this.$confirm(msg, "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            this.$axios
+              .put(
+                this.examineUrl,
+                this.$commonFun.initPostData({
+                  id: obj.id,
+                  authStatus: status,
+                  sessionId: this.$getUserData().sessionId
+                })
+              )
+              .then(res => {
+                console.log(res);
+                if (res.data.code == 1) {
+                  this.$message.success(rmsg);
+                  this.showContentDetail = false;
+                  this.getPublicList();
+                } else {
+                  this.$confirm(res.data.msg, "提示",{
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    showCancelButton: false,
+                    type: "error"
+                  });
+                }
+              });
+          })
+          .catch(() => {
+            /* this.$message({
+               type: "info",
+               message: "已取消操作"
+             });*/
+          });
+
+
+
+
+      }
+    },
+    recommendPaginationSizeChange(val){
+      this.recommendSearchForm.recommendPageSize=val;
+      this.recommendSearchForm.recommendPageNumber=1;
+      this.getRecommendTableData();
+    },
+    checkboxChange(row){
+      this.$axios.get('/pmpheep/cms/recommendcheck',{params:{
+          currentCmsId:this.recommendSearchForm.currentCmsId,
+          relationCmsId:row.id,
+          relationCms:row.relationCms,
 
           }}).then(response=>{
           var res = response.data;

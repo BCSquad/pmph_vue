@@ -136,6 +136,7 @@ const BookManage = () => import('pages/home/publishBooks/BookManage');
 const materialType = () => import('pages/home/publishBooks/materialType');
 const CommentManage = () => import('pages/home/publishBooks/comment');
 const MicVideo = () => import('../pages/home/publishBooks/micVideo');
+const BookSource = () => import('../pages/home/publishBooks/bookSource');
 const FeedBack = () => import('../pages/home/publishBooks/feedback');
 const FeedBackDetail = () => import('../pages/home/publishBooks/feedbackDetail');
 
@@ -446,6 +447,7 @@ export default new Router({
             {path: 'materialType', name: '图书分类', component: materialType, meta: {authorityId: 44}},
             {path: 'comment', name: '评论审核', component: CommentManage, meta: {authorityId: 20}},
             {path: 'video', name: '微视频管理', component: MicVideo, meta: {authorityId: 41}},
+            {path: 'booksource', name: '资源管理', component: BookSource, meta: {authorityId: 62}},
             {path: 'feedback', name: '读者反馈', component: FeedBack, meta: {authorityId: 43}},
             {path: 'feedbackdetail', name: '读者反馈详情', component: FeedBackDetail}
 

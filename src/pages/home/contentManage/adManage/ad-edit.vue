@@ -19,9 +19,6 @@
 
           </el-select>
         </el-form-item>-->
-        <el-form-item label="点击跳转链接:">
-          <el-input v-model="formData.url" placeholder="输入地址:http://www.xxx.com"></el-input>
-        </el-form-item>
         <el-form-item label="是否启用:">
           <el-radio-group v-model="formData.isDisabled">
             <el-radio :label="false">启用</el-radio>
@@ -31,6 +28,9 @@
 
         <el-form-item label="备注:">
           <el-input type="textarea" v-model="formData.note" :autosize="{ minRows: 3}"></el-input>
+        </el-form-item>
+        <el-form-item label="点击跳转链接:" v-if="formData.type===0||formData.type===2">
+          <el-input v-model="formData.url" placeholder="输入地址:http://www.xxx.com"></el-input>
         </el-form-item>
       </el-form>
     </div>
@@ -59,6 +59,7 @@
               ref="carousel"
             >
               <el-carousel-item v-for="(iterm,index) in currentPlayAdList" :key="index">
+                点击跳转地址: <el-input style="margin-bottom: 20px;width: 48%" v-model="iterm.imageJumpUrl" placeholder="输入地址:http://www.xxx.com"></el-input>
                 <img :src="iterm.image" alt="">
               </el-carousel-item>
             </el-carousel>
@@ -422,11 +423,13 @@
         }
         let adIds = [];
         let disableIds = [];
+        let imgurl=[];
         if(this.formData.type==0){
           adIds.push(this.currentPlayAd.id)
         }else{
           this.currentPlayAdList.forEach((iterm,index)=>{
             adIds.push(iterm.id)
+            imgurl.push(iterm.imageJumpUrl);
           })
         }
         this.imageLibs.forEach(iterm=>{
@@ -440,6 +443,8 @@
             }
           }
         });
+        console.log(adIds.join(","));
+        console.log(imgurl.join(","));
         this.$axios.put(this.api_ad_save,this.$commonFun.initPostData({
           id:this.formData.id,
           adname:this.formData.adname,
@@ -458,6 +463,7 @@
           apporpc:this.formData.apporpc,
           isDisplay:false,
           imageId:adIds.join(','),
+          imageJumpUrl:imgurl.join(','),
           disable:disableIds.join(',')
         }))
           .then(response=>{

@@ -11,7 +11,7 @@
             <el-select v-model="searchForm.state" class="select_input" @change="handleSearchCLick" style="float:none;" placeholder="全部">
                 <el-option label="全部" value=""></el-option>
               <el-option label="未发布" value="未发布"></el-option>
-                <el-option label="已发布" value="已发布"></el-option>
+                <el-option label="申报中" value="申报中"></el-option>
                 <el-option label="报名结束" value="报名结束"></el-option>
               <el-option label="遴选结束" value="遴选结束"></el-option>
             </el-select>

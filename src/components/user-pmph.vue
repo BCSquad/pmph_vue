@@ -89,9 +89,19 @@ methods:
               label="邮箱">
             </el-table-column>
             <el-table-column
-              label="角色名称">
+              label="角色名称"
+              width="350">
               <template scope="scope">
                 <el-tag class="marginTag" v-for="(item,index) in scope.row.pmphRoles" :key="index" type="primary">{{item?item.roleName:''}}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="是否部门主管"
+              width="120">
+              <template scope="scope" >
+                <el-tag v-if="scope.row.isDirector==true" type="success" style="text-align: center">是</el-tag>
+                <el-tag v-if="scope.row.isDirector==false" type="info" style="text-align: center">否</el-tag>
+
               </template>
             </el-table-column>
             <el-table-column
@@ -327,6 +337,7 @@ methods:
           .then(response => {
             let res = response.data;
             if (res.code == "1") {
+              console.log(res.data.rows);
               this.tableData = res.data.rows;
               this.dataTotal = res.data.total;
             }

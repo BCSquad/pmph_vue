@@ -206,7 +206,7 @@
         </el-table-column>-->
 
 
-        <el-table-column label="申报单位/工作单位" min-width="154">
+        <el-table-column label="申报单位/工作单位" min-width="140">
           <template scope="scope">
             <p><i class="fa fa-briefcase"></i>{{scope.row.unitName}}</p>
             <p><i class="fa fa-university"></i>{{scope.row.org_name}}</p>
@@ -230,7 +230,7 @@
             <p>{{$commonFun.formatDate(scope.row.commit_date)}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="学校审核 / 出版社审核" width="130">
+        <el-table-column label="学校审核 / 出版社审核" width="160">
           <template scope="scope">
             <p><i class="fa fa-briefcase"></i>{{scope.row.schoolStautsText}}</p>
             <p><i class="fa fa-university"></i>{{scope.row.pmphStautsText}}</p>
@@ -247,7 +247,7 @@
           </template>
         </el-table-column>-->
 
-        <el-table-column label="结果公布" width="100">
+        <el-table-column label="结果公布" width="80">
           <template scope="scope">
             <p>{{scope.row.finalResult?'已公布':'未公布'}}</p>
           </template>
@@ -581,14 +581,14 @@
                 iterm["pubtn"]=  iterm["finalResult"] == false && !(iterm["online_progress"] == 4||iterm["online_progress"] == 5||iterm["online_progress"] == 2);
 
 
-                iterm["schoolStautsText"] = (iterm["org_id"] != 0 && iterm["online_progress"]==1)?"待审核"
-                :((iterm["org_id"] != 0 && iterm["online_progress"]==3)?"通过":
+                iterm["schoolStautsText"] = (iterm["org_id"] != 0 && iterm["online_progress"]==1)?"学校待审核"
+                :((iterm["org_id"] != 0 && iterm["online_progress"]==3)?"学校审核通过":
                     (iterm["org_id"] !=0 && iterm["pmphAudit"] ==0  && (iterm["online_progress"]  == 4||iterm["online_progress"] == 5)?
                       "出版社退回":(iterm["org_id"]==0?"":"")));
 
 
-                iterm["pmphStautsText"] = (iterm["pmphAudit"]==1?"通过":
-                                          (iterm["pmphAudit"]==2)?"不通过":
+                iterm["pmphStautsText"] = (iterm["pmphAudit"]==1?"出版社通过":
+                                          (iterm["pmphAudit"]==2)?"出版社不通过":
                                             ((iterm["online_progress"]==2||iterm["online_progress"]==4||iterm["online_progress"]==5 )?"出版社退回"
                                               :((iterm["pmphAudit"]==0  && iterm["org_id"]!=0  && (iterm["online_progress"] == 1||iterm["online_progress"] == 3 )) || (iterm["org_id"]==0 && iterm["pmphAudit"]==0))?"待审核":""
                                             ));
