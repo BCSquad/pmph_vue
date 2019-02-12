@@ -23,7 +23,7 @@
         <template scope="scope">
           <div class="cell" :class="scope.row.unDeleted?'':'deleted'" v-if="!scope.row.edit">{{scope.row.name}}</div>
           <el-tooltip v-else :content="'影响字典数据的业务展示,请谨慎修改'" openDelay="500" placement="top" effect="dark" >
-            <el-input type="text" v-model="scope.row.name"></el-input>
+            <el-input type="text" :maxlength="30" v-model="scope.row.name"></el-input>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -35,7 +35,7 @@
         <template scope="scope">
           <div class="cell" :class="scope.row.unDeleted?'':'deleted'" v-if="!scope.row.edit">{{scope.row.code}}</div>
           <el-tooltip v-else :content="'影响字典数据的业务关联,请谨慎修改'" openDelay="500" placement="top" effect="dark" >
-            <el-input type="text"  v-model="scope.row.code"></el-input>
+            <el-input type="text" :maxlength="20"  v-model="scope.row.code"></el-input>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -46,7 +46,7 @@
         width="100">
         <template scope="scope">
           <div class="cell" :class="scope.row.unDeleted?'':'deleted'" v-if="!scope.row.edit">{{scope.row.sort}}</div>
-          <el-input type="text" v-else v-model="scope.row.sort"></el-input>
+          <el-input type="text" :maxlength="11" v-else v-model="scope.row.sort"></el-input>
         </template>
       </el-table-column>
       <el-table-column
@@ -56,7 +56,7 @@
       >
         <template scope="scope">
           <div class="cell" :class="scope.row.unDeleted?'':'deleted'" v-if="!scope.row.edit">{{scope.row.note}}</div>
-          <el-input type="textarea" :autosize="true" v-else v-model="scope.row.note"></el-input>
+          <el-input type="textarea" :maxlength="30" :autosize="true" v-else v-model="scope.row.note"></el-input>
         </template>
       </el-table-column>
       <el-table-column

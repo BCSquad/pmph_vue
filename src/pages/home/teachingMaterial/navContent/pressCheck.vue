@@ -299,7 +299,7 @@
             <p>{{scope.row.orgId==0&&scope.row.onlineProgress==1?"待出版社审核":(scope.row.orgId==0&&scope.row.onlineProgress==3?"出版社已审核":stateList[scope.row.onlineProgress])}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="提交时间" min-width="100">
+        <el-table-column label="提交时间" min-width="110">
           <template scope="scope">
             <p>{{$commonFun.formatDate(scope.row.commitDate)}}</p>
           </template>

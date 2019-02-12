@@ -24,7 +24,7 @@
         width="150">
         <template scope="scope">
           <div class="cell" v-if="!scope.row.edit">{{scope.row.typeName}}</div>
-          <el-input type="text" v-else v-model="scope.row.typeName"></el-input>
+          <el-input type="text" :maxlength="30" v-else v-model="scope.row.typeName"></el-input>
         </template>
       </el-table-column>
       <el-table-column
@@ -35,7 +35,7 @@
         <template scope="scope">
           <div class="cell" v-if="!scope.row.edit">{{scope.row.typeCode}}</div>
           <el-tooltip v-else :content="'影响字典查询业务逻辑,请谨慎修改'" openDelay="500" placement="top" effect="dark" >
-            <el-input type="text"  v-model="scope.row.typeCode"></el-input>
+            <el-input type="text" :maxlength="20"  v-model="scope.row.typeCode"></el-input>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -46,7 +46,7 @@
       >
         <template scope="scope">
           <div class="cell" v-if="!scope.row.edit">{{scope.row.note}}</div>
-          <el-input type="textarea" :autosize="true" v-else v-model="scope.row.note"></el-input>
+          <el-input type="textarea" :maxlength="30" :autosize="true"  v-else v-model="scope.row.note"></el-input>
         </template>
       </el-table-column>
       <el-table-column
@@ -182,7 +182,7 @@
 
         //综合当前行是否编辑模式newtable[index].edit后 只有保存点击时isSave最终为true
         if(finalIsSave){
-          console.log(_this.tableData[index]);
+          //console.log(_this.tableData[index]);
           this.save(_this.tableData[index]);
         }
       },
