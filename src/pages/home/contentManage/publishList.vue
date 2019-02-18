@@ -173,11 +173,11 @@
                   <el-button type="text"  v-if="scope.row.isPublished!=true" @click="editContent(scope.row,scope.row.authStatus)">编辑</el-button>
                   <el-button type="text" :disabled="scope.row.authStatus==1"
                              v-if="scope.row.authStatus==0&&scope.row.authorType==2"
-                             @click="examineContent(scope.row,2)">通过
+                             @click="examineContent(scope.row,1)">通过
                   </el-button>
                   <el-button type="text" :disabled="scope.row.authStatus==1"
                              v-if="scope.row.authStatus==0&&scope.row.authorType==2"
-                             @click="examineContent(scope.row,1)">退回
+                             @click="examineContent(scope.row,2)">退回
                   </el-button>
                   <el-button type="text" :disabled="scope.row.authStatus==1"
                              v-if="scope.row.authStatus==2&&scope.row.isPublished==false"
