@@ -125,10 +125,10 @@
 
     <!-- 选择书籍弹框  -->
     <el-dialog ref="InfoExpresstable"
-      title="选择教材"
-      :visible.sync="materialDialogVisible"
-      class='material_dialog'
-      size="small"
+               title="选择教材"
+               :visible.sync="materialDialogVisible"
+               class='material_dialog'
+               size="small"
     >
       <p class="header_p" style="margin-bottom: 10px"><span>教材名称：</span>
         <el-input class="input" v-model="materialParams.materialName" placeholder="请输入教材名称"></el-input>
@@ -150,23 +150,23 @@
       </el-table>
       <div class="pagination-wrapper">
         <el-pagination  style="margin-top:10px;margin-bottom: 5px"
-          v-if="materialTotal>materialParams.pageSize"
-          @size-change="materialSizeChange"
-          @current-change="materialCurrentChange"
-          :current-page.sync="materialParams.pageNumber"
-          :page-sizes="[10,20,30,50]"
-          :page-size="materialParams.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="materialTotal">
+                        v-if="materialTotal>materialParams.pageSize"
+                        @size-change="materialSizeChange"
+                        @current-change="materialCurrentChange"
+                        :current-page.sync="materialParams.pageNumber"
+                        :page-sizes="[10,20,30,50]"
+                        :page-size="materialParams.pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="materialTotal">
         </el-pagination>
       </div>
     </el-dialog>
 
     <el-dialog ref="materialtable"
-      title="选择信息快报"
-      :visible.sync="infoExpressDialogVisible"
-      class='material_dialog'
-      size="small"
+               title="选择信息快报"
+               :visible.sync="infoExpressDialogVisible"
+               class='material_dialog'
+               size="small"
     >
       <p class="header_p"><span>快报标题：</span>
         <el-input class="input" v-model="infoExpressParams.title" placeholder="请输入信息快报标题"></el-input>
@@ -273,8 +273,8 @@
           "http://192.168.200.109:8090/pmpheep/messages/message/file", */
         editorConfig: {
           initialFrameWidth: null,
-          initialFrameHeight: 500
-
+          initialFrameHeight: 500,
+          wordCount:true, //是否开启字数统计
         },
         pickerOptions: {
           disabledDate(time) {
@@ -618,7 +618,10 @@
       },
       coverUploadRemove(file, flielist) {
         if (file.url) {
-          this.formData.imgAttachment = file.url.split('/').pop();
+          this.formData.imgAttachment = "";
+          this.imgList=[];
+          this.formData.imgFile ="";
+          this.formData.cover="";
         }
       },
       coverBeforeUpload(file) {
@@ -758,7 +761,7 @@
     display: inline-block;
   }
 
-  .previewTitle {
+  .activity_edit .previewTitle {
     color: #14232e;
     font-size: 22px;
     font-weight: 500;
@@ -770,25 +773,25 @@
     transform: translateX(-50%);
   }
 
-  .edui-editor {
+  .activity_edit .edui-editor {
     float: right;
     margin-left: 80px;
     margin-top: -30px;
 
   }
 
-  .activity_edit .cover_dialog .el-dialog .el-dialog__header {
+  .activity_edit .activity_edit .cover_dialog .el-dialog .el-dialog__header {
     padding: 0;
   }
 
-  .but {
+  .activity_edit .but {
     min-width: 100px;
     margin: 10px;
     margin-top: 0;
     margin-right: 20px;
   }
 
-  .top-nav {
+  .activity_edit .top-nav {
     /* float: left; */
     width: 100%;
     position: relative;
