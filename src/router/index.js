@@ -75,6 +75,8 @@ import systemRouter from '../pages/home/systemSet/systemRouter'
 
 const Roles = () => import('../pages/home/systemSet/roles')
 const Departments = () => import('pages/home/systemSet/departments')
+const DataDictionary = () => import('pages/home/systemSet/dataDictionary')
+
 const Orgs = () => import('pages/home/systemSet/departments')
 const Area = () => import('pages/home/systemSet/area')
 /*学校/ 教师审核 */
@@ -103,12 +105,15 @@ const PublishList = () => import('../pages/home/contentManage/publishList');
 const noticeManage = () => import('../pages/home/contentManage/noticeManage');
 const infoExpertInfo = () => import('../pages/home/contentManage/infoExpressManage');
 const sensitiveWords = () => import('../pages/home/contentManage/sensitiveWords');
+const searchKeyword = () => import('../pages/home/contentManage/searchKeyword');
 const helpManage = () => import('../pages/home/contentManage/helpManage');
 const commonEdit = () => import('../pages/home/contentManage/commonEdit');
 const operationEdit = () => import('../pages/home/contentManage/operationEdit');
 //广告管理
 const adList = () => import('../pages/home/contentManage/adManage/ad-list');
 const adEdit = () => import('../pages/home/contentManage/adManage/ad-edit');
+const siteLink = () => import('../pages/home/contentManage/siteLink');
+
 
 /** 图书纠错 */
 import ErrorRouter from '../pages/home/bookError/errorRouter';
@@ -131,6 +136,7 @@ const BookManage = () => import('pages/home/publishBooks/BookManage');
 const materialType = () => import('pages/home/publishBooks/materialType');
 const CommentManage = () => import('pages/home/publishBooks/comment');
 const MicVideo = () => import('../pages/home/publishBooks/micVideo');
+const BookSource = () => import('../pages/home/publishBooks/bookSource');
 const FeedBack = () => import('../pages/home/publishBooks/feedback');
 const FeedBackDetail = () => import('../pages/home/publishBooks/feedbackDetail');
 
@@ -373,6 +379,7 @@ export default new Router({
             {path: 'roles', name: '角色管理', component: Roles, meta: {authorityId: 35}},
             /*  {path:'authority',name:'权限管理',component:Authority}, */
             {path: 'departments', name: '社内部门设置', component: Departments, meta: {authorityId: 36}},
+            {path: 'dataDictionary', name: '基础数据字典设置', component: DataDictionary, meta: {authorityId: 62}},
             /* { path: 'orgs', name: '院校机构设置', component: Orgs, meta: { authorityId: 20 } },
             { path: 'area', name: '区域管理', component: Area, meta: { authorityId: 19 } } */
           ]
@@ -414,11 +421,13 @@ export default new Router({
             {path: 'info', name: '信息快报管理', meta: {authorityId: 16}, component: infoExpertInfo},
             {path: 'notice', name: '公告管理', meta: {authorityId: 17}, component: noticeManage},
             {path: 'sensitive', name: '敏感词管理', component: sensitiveWords, meta: {authorityId: 40}},
+            {path: 'searchKeyword', name: '搜索关键词管理', component: searchKeyword, meta: {authorityId: 60}},
             {path: 'help', name: '帮助管理', component: helpManage},
             {path: 'common', name: '常见问题', component: commonEdit},
             {path: 'operation', name: '操作手册上传', component: operationEdit},
             /*  { path: 'set', name: '栏目设置', meta: { authorityId: 12 }, component: ColumnSet }, */
             {path: 'ad', name: '广告管理', meta: {authorityId: 18}, component: adList},
+            {path: 'siteLink', name: '友情链接管理', meta: {authorityId: 61}, component: siteLink},
             {path: 'ad/:id', name: '广告编辑', meta: {authorityId: 18}, component: adEdit}
 
           ]
@@ -438,6 +447,7 @@ export default new Router({
             {path: 'materialType', name: '图书分类', component: materialType, meta: {authorityId: 44}},
             {path: 'comment', name: '评论审核', component: CommentManage, meta: {authorityId: 20}},
             {path: 'video', name: '微视频管理', component: MicVideo, meta: {authorityId: 41}},
+            {path: 'booksource', name: '资源管理', component: BookSource, meta: {authorityId: 62}},
             {path: 'feedback', name: '读者反馈', component: FeedBack, meta: {authorityId: 43}},
             {path: 'feedbackdetail', name: '读者反馈详情', component: FeedBackDetail}
 

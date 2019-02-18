@@ -170,6 +170,15 @@
       <el-table border
                 :data="tableData"
                 style="width: 100%">
+
+        <el-table-column
+          type="index"
+          :index="indexMethod"
+          width="60"
+          label="序号"
+        >
+        </el-table-column>
+
         <el-table-column
           label="姓名"
           width="70"
@@ -197,7 +206,7 @@
         </el-table-column>-->
 
 
-        <el-table-column label="申报单位/工作单位" min-width="154">
+        <el-table-column label="申报单位/工作单位" min-width="140">
           <template scope="scope">
             <p><i class="fa fa-briefcase"></i>{{scope.row.unitName}}</p>
             <p><i class="fa fa-university"></i>{{scope.row.org_name}}</p>
@@ -221,7 +230,7 @@
             <p>{{$commonFun.formatDate(scope.row.commit_date)}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="学校审核 / 出版社审核" width="130">
+        <el-table-column label="学校审核 / 出版社审核" width="160">
           <template scope="scope">
             <p><i class="fa fa-briefcase"></i>{{scope.row.schoolStautsText}}</p>
             <p><i class="fa fa-university"></i>{{scope.row.pmphStautsText}}</p>
@@ -238,7 +247,7 @@
           </template>
         </el-table-column>-->
 
-        <el-table-column label="结果公布" width="100">
+        <el-table-column label="结果公布" width="80">
           <template scope="scope">
             <p>{{scope.row.finalResult?'已公布':'未公布'}}</p>
           </template>
@@ -251,10 +260,10 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center" min-width="150">
+        <el-table-column label="操作"  align="center" min-width="150">
           <template scope="scope">
-            <div class="handle_btn">
-              <p style="text-align: center">
+            <div class="handle_btn" :title="(isDirector||isAdmin||amIAnAuditor)?'':'您没有审核权限'">
+              <p style="text-align: center" >
                 <el-button type="text"  :disabled="!(scope.row.passbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(1,scope.row.id)" >{{"通&emsp;过"}} </el-button>
                 <el-button type="text" :disabled="!(scope.row.notPassbtn&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(2,scope.row.id)" >{{"不通过"}} </el-button>
                 <el-button type="text" :disabled="!(scope.row.recall&&(isDirector||isAdmin||amIAnAuditor))" @click="pressCheckOpt(0,scope.row.id)" >{{"撤&emsp;回"}} </el-button>
@@ -339,6 +348,7 @@
         // passbtn:true,
         // notPassbtn:true,
         //finalResult:'',
+        userInfo:'',
         isDirector:false,
         loginId:'',
         isAdmin:false,
@@ -558,7 +568,7 @@
                 })
               }
               this.tableData.forEach(iterm=>{
-                debugger;
+                //debugger;
                     iterm["recall"] = (iterm["finalResult"]==false && iterm["pmphAudit"]!=0);
 
 
@@ -571,14 +581,14 @@
                 iterm["pubtn"]=  iterm["finalResult"] == false && !(iterm["online_progress"] == 4||iterm["online_progress"] == 5||iterm["online_progress"] == 2);
 
 
-                iterm["schoolStautsText"] = (iterm["org_id"] != 0 && iterm["online_progress"]==1)?"待审核"
-                :((iterm["org_id"] != 0 && iterm["online_progress"]==3)?"通过":
+                iterm["schoolStautsText"] = (iterm["org_id"] != 0 && iterm["online_progress"]==1)?"学校待审核"
+                :((iterm["org_id"] != 0 && iterm["online_progress"]==3)?"学校审核通过":
                     (iterm["org_id"] !=0 && iterm["pmphAudit"] ==0  && (iterm["online_progress"]  == 4||iterm["online_progress"] == 5)?
                       "出版社退回":(iterm["org_id"]==0?"":"")));
 
 
-                iterm["pmphStautsText"] = (iterm["pmphAudit"]==1?"通过":
-                                          (iterm["pmphAudit"]==2)?"不通过":
+                iterm["pmphStautsText"] = (iterm["pmphAudit"]==1?"出版社通过":
+                                          (iterm["pmphAudit"]==2)?"出版社不通过":
                                             ((iterm["online_progress"]==2||iterm["online_progress"]==4||iterm["online_progress"]==5 )?"出版社退回"
                                               :((iterm["pmphAudit"]==0  && iterm["org_id"]!=0  && (iterm["online_progress"] == 1||iterm["online_progress"] == 3 )) || (iterm["org_id"]==0 && iterm["pmphAudit"]==0))?"待审核":""
                                             ));
@@ -747,10 +757,14 @@
         clearInterval(this.handleExportWordtimer)
         done();
       },
+      indexMethod(index) {
+        return index + (this.searchParams.pageNumber-1)*this.searchParams.pageSize +1;
+      },
 
     },
     created() {
      // this.isDirector = this.$getUserData().userInfo.isDirector;
+      this.userInfo = this.$getUserData().userInfo;
       this.loginId = this.$getUserData().userInfo.id;
       this.isAdmin = this.$getUserData().userInfo.isAdmin;
       //this.searchParams.productId = this.$route.query.product_id;

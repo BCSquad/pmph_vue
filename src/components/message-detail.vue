@@ -1,7 +1,7 @@
 <template>
 	<div class="message-detail">
     <!--标题-->
-    <div class="message-detail-content">
+    <div class="message-detail-content" style="height: 36px">
       <div class="message-detail-content-title justify-align lineheight-36">
         标题：<span></span>
       </div>

@@ -25,7 +25,7 @@
               <a type="text" :href="'/pmpheep/file/download/'+ruleForm.attachment" style="color:#337ab7">{{ruleForm.attachmentName}}</a>
             </el-form-item>
 						<el-form-item label="纠错人:">
-							<p>{{ruleForm.realname}}</p>
+							<p>{{ruleForm.username}}</p>
 						</el-form-item>
 						<el-form-item label="提交时间:">
 							<p>{{ruleForm.gmtCreate}}</p>
@@ -44,8 +44,8 @@
 						</el-form-item>
 						<el-form-item label="检查结果:" prop="result">
 							<el-radio-group v-model="ruleForm.result" class="radio-group" :disabled="type=='detail'">
-									<el-radio :label="true">存在问题</el-radio>
-									<el-radio :label="false">无问题</el-radio>
+									<el-radio :label="true">图书勘误</el-radio>
+									<el-radio :label="false">内容无误</el-radio>
 								</el-radio-group>
 						</el-form-item>
 						<el-form-item label="回复用户:" prop="editorReply">
@@ -77,6 +77,7 @@ export default {
         page: "",
         line: "",
         realname: "", // 纠错人
+        username:"",
         gmtCreate: "", // 提交时间
         result: "",
         authorReply:"",

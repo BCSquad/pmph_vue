@@ -15,7 +15,12 @@
           <div class="MemberHead" v-for="(item,index) in memberListData" :key="item.id">
             <div class="MemberHead-inner">
               <el-tooltip class="item MemberHeadImg" effect="dark" placement="left" >
-                <div slot="content" >{{item.nickname}}<br/>{{item.handphone}}<br/>{{item.email}}</div>
+                <div slot="content" >
+                  <el-button type="info" round class="copy-btn" @click.once="copyInfo($event)"
+                             data-clipboard-action="copy"
+                             :data-clipboard-text="item.nickname+' '+item.handphone+' '+item.email">点击复制</el-button>
+                  {{item.nickname}}<br/>{{item.handphone}}<br/>{{item.email}}
+                </div>
                 <img :src="item.avatar?$config.DEFAULT_BASE_URL+item.avatar:defaultImage" alt="小组头像">
               </el-tooltip>
               <div class="MemberHeadName">
@@ -187,7 +192,8 @@
 
 <script>
 import beautyScroll from 'components/beautyScroll.vue';
-import bus from 'common/eventBus/bus.js'
+import bus from 'common/eventBus/bus.js';
+import Clipboard from 'clipboard';
 
 import userPmph from 'components/user-pmph'
 export default {
@@ -213,6 +219,7 @@ export default {
         pageSize: 10,
         pageNumber: 1
       },
+      clipboard:"",
       isLoadingUp:false,
       writerPageTotal:0,
       textBookPageTotal:0,
@@ -270,6 +277,25 @@ export default {
           _this.$emit('getGroupMemberList',res.data.data);
         }
       })
+    },
+
+    /**
+     * 点击复制成员信息到剪切板
+     * 因el-tooltip要鼠标进入才插入到dom，而clipboard的加载时机最好是目标插入组件之后
+     * 且tooltip是npm安装的组件，本地无代码可重写，也无完成回调，无法实现上需求
+     * 本方法实现为：第一次点击事件调用本方法，初始化clipboard到复制按钮，然后立即出发一次按钮点击事件（以上仅第一次点击时调用）
+     * */
+    copyInfo(event){
+      let target = event.currentTarget;
+      var clip = new Clipboard(event.currentTarget);
+      let _this =this;
+      clip.on('success', function() {
+        _this.$message.success("复制成功,  "+clip.defaultText(target));
+      });
+      clip.on('error', function() {
+        _this.$message.error('复制失败，请手动选择复制！');
+      });
+      event.currentTarget.dispatchEvent(new Event('click'));
     },
     /* 获取作家用户列表 */
     getWriterUserList() {
@@ -430,7 +456,7 @@ export default {
     /**
      * 当左侧导航栏收起或展开式要重新刷新beautyScroll
      */
-    bus.$on('side-bar:flod_unflod',this.handleSideBarFlod)
+    bus.$on('side-bar:flod_unflod',this.handleSideBarFlod);
   },
 }
 </script>
@@ -438,7 +464,7 @@ export default {
 <style scoped>
 .memberlist-wrpper {
   height: 100%;
-  padding-top: 77px;
+  padding-top: 71px;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -592,4 +618,11 @@ export default {
   line-height: 36px;
   margin-right: 10px;
 }
+  .copy-btn{
+    font-size: inherit;
+    height: 1.2em;
+    line-height: 0.2em;
+    float: right;
+    margin-left: 1em;
+  }
 </style>

@@ -136,6 +136,7 @@
             <el-button type="text" :disabled="scope.row.isDisabled?true:false" @click="login(scope.row.username)">登录</el-button>
             <el-button type="text" @click="resetPassword(scope.row)">重置密码</el-button>
             <el-button type="text" @click="zhiTop(scope.$index,scope.row)">{{scope.row.isTop?'撤销':'置顶'}}</el-button>
+            <el-button type="text" @click="expertInfo(scope.$index)">专家资料库</el-button>
             <!-- <el-button type="text">查看详情</el-button> -->
           </template>
         </el-table-column>
@@ -260,6 +261,15 @@
           </div>
         </div>
       </el-dialog>
+    <el-dialog
+      title="专家申报资料"
+      :visible.sync="expertInfoVisible"
+      @close="clearExpertInfoTable"
+    >
+      <expertInfo v-if="writerUserId" :writerUserId="writerUserId"></expertInfo>
+    </el-dialog>
+
+
   </el-tab-pane>
   <el-tab-pane label="审核教师" name="second">
     	<div class="teacher_check">
@@ -403,7 +413,9 @@
 </template>
 <script>
 import ScreenSize from "common/mixins/ScreenSize.js";
+import expertInfo from "pages/home/userManage/nav/expertInfo.vue";
 export default {
+  components:{expertInfo},
   mixins: [ScreenSize],
   data() {
     var departmentIdChecked=(rule, value, callback)=>{
@@ -414,6 +426,7 @@ export default {
          }
     }
     return {
+      writerUserId:'',
       isNew: true,
       activeName:'first',
       resetPasswordUrl:'/pmpheep/users/writer/resetPassword',  //重置密码url
@@ -528,6 +541,7 @@ export default {
       pageNumber: 1,
       dataTotal: 0,
       detailVisible: false, //查看详情
+      expertInfoVisible:false,//查看专家资料库
       detailData: {
         realname:'',
         username:"",
@@ -587,6 +601,16 @@ export default {
       this.form.isDisabled = !!this.form.isDisabled;
       this.dialogVisible = true;
     },
+
+    /**
+     * 查看专家资料库
+     * */
+    expertInfo(index){
+      this.writerUserId = this.tableData[index].id;
+      this.expertInfoVisible = true;
+    },
+
+
     /**
      * 提交表单中搜索所属院校
      * @param query
@@ -1021,6 +1045,13 @@ export default {
         note:""
       }
     },
+    /**
+     * 专家资料库弹窗关闭，清空表格
+     */
+    clearExpertInfoTable(){
+      this.writerUserId = '';
+    },
+
     /**
      * 预览关闭，清除图片路径
      */

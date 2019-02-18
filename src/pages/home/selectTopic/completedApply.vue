@@ -20,6 +20,12 @@
         placeholder="选择日期">
       </el-date-picker>
       <el-button type="primary" icon="search" @click="search">搜索</el-button>
+      <excelExport
+        :api_export_excel="'/pmpheep/topic/completedApply/exportExcel'"
+        :params="searchedParams"
+        :disabled = "!tableData.length">
+        导出Excel
+      </excelExport>
     </p>
     <el-table
     :data="tableData"
@@ -41,6 +47,12 @@
       width="90"
      >
      </el-table-column>
+      <el-table-column
+        label="作者账号"
+        prop="submitUser"
+        width="100"
+      >
+      </el-table-column>
      <el-table-column
       label="提交日期"
       prop="submitTime"
@@ -82,10 +94,19 @@
      </el-table-column>  -->
      <el-table-column
       label="操作"
-      width="85"
+      width="130"
      >
      <template scope="scope">
        <router-link :to="{name:'选题受理',query:{name:'选题申报查看',id:scope.row.id,type:'detail'}}">查看</router-link>
+       <span>|</span>
+       <wordExport
+         :type = "'text'"
+         :api_export_word_start = "'/pmpheep/word/topic/declaration'"
+         :api_export_word_progress = "'/pmpheep/word/progress'"
+         :params = "{topicId :scope.row.id}"
+       >
+         导出
+       </wordExport>
      </template>
      </el-table-column>
     </el-table>
@@ -105,7 +126,12 @@
   </div>
 </template>
 <script type="text/javascript">
+  import excelExport from "components/ExcelExport.vue";
+  import wordExport from "components/WordExport.vue";
   export default{
+    components:{
+      excelExport,wordExport
+    },
     props:['searchInput'],
     data(){
       return{
@@ -114,6 +140,13 @@
           pageSize:10,
           pageNumber:1,
           authProgress:'2,3',
+          submitTime:'',
+          bookname:''
+        },
+        searchedParams:{
+          pageSize:10,
+          pageNumber:1,
+          authProgress:1,
           submitTime:'',
           bookname:''
         },
@@ -138,6 +171,7 @@
        * 获取数据
        */
       getData(){
+        this.searchedParams = this.$commonFun.objArrayDeepCopy(this.searchParams);
         this.$axios.get(this.api_get_list,{params:this.searchParams})
           .then((response) => {
             let res = response.data;

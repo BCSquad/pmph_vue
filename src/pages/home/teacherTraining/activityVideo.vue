@@ -22,6 +22,7 @@
 
       <el-button type="primary" style="float:right;margin-right: 15px" @click="search">选择视频</el-button>
       <el-button type="primary" style="float:right;margin-right: 15px" @click="openAddVideoDialog">上传视频</el-button>
+      <el-button type="primary" style="float:right;margin-right: 15px" @click="openAddMultiVideoDialog">批量上传视频</el-button>
     </p>
 
     <el-table :data="videoListData" border highlight-current-row style="width:100%;margin:10px 0;">
@@ -115,18 +116,17 @@
             {{$commonFun.formatDate(scope.row.gmtCreate,"yyyy-MM-dd")}}
           </template>
         </el-table-column>
-        </el-table-column>
       </el-table>
       <div class="pagination-wrapper">
         <el-pagination style="margin-top: 10px"
-          v-if="videopageTotal>videoSearch.pageSize"
-          @size-change="videoSizeChange"
-          @current-change="videoCurrentChange"
-          :current-page.sync="videoSearch.pageNumber"
-          :page-sizes="[10,20,30,50]"
-          :page-size="videoSearch.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="videopageTotal">
+                       v-if="videopageTotal>videoSearch.pageSize"
+                       @size-change="videoSizeChange"
+                       @current-change="videoCurrentChange"
+                       :current-page.sync="videoSearch.pageNumber"
+                       :page-sizes="[10,20,30,50]"
+                       :page-size="videoSearch.pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="videopageTotal">
         </el-pagination>
       </div>
     </el-dialog>
@@ -169,6 +169,44 @@
             </span>
     </el-dialog>
 
+    <el-dialog title="批量上传" :visible.sync="multidialogVisible" size="tiny" width="100%">
+      <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules" label-width="100px">
+        <el-form-item label="视频标题：" >
+          <el-input  placeholder="批量上传时自动读取视频名称为标题" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="视频封面：" prop="imgList">
+          <el-upload
+            action="#"
+            style="float:left;width:260px;"
+            name="files"
+            :on-remove="imgUploadRemove"
+            :auto-upload="false"
+            :on-change="imgUploadChange"
+            :file-list="dialogForm.imgList">
+            <el-button size="small" type="primary">上传封面</el-button>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="视频上传：" prop="videoList">
+          <el-upload
+            style="float:left;width:260px;"
+            action="/v/upload"
+            name="file"
+            :auto-upload="true"
+            multiple
+            :on-remove="videoUploadRemove"
+            :before-upload="videoBeforeUpload"
+            :on-success="multivideoUploadSuccess"
+            :file-list="dialogForm.videoList">
+            <el-button size="small" type="primary">批量上传</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="multiaddVideoSubmit" :loading="isUploadVideo" :disabled="isdisabled">{{isUploadVideo?'转码中':'保 存'}}</el-button>
+                <el-button @click="multidialogVisible = false">关 闭</el-button>
+            </span>
+    </el-dialog>
+
 
   </div>
 </template>
@@ -188,6 +226,7 @@
         getActivityUrl: '/pmpheep/activity/getActivity/',
         activitySourceChainUrl: "/pmpheep/activityVideo/addActivitySourceChain",
         addNewVideoUrl: '/pmpheep/activityVideo/addActivityVideo',   //添加提交视频url
+        addMultiNewVideoUrl: '/pmpheep/activityVideo/addMultiActivityVideo',
         transCodingUrl: "/v/query",   //查询视频转码地址
         updateSortUrl: '/pmpheep/activityVideo/updateSort',  //视频列表url
         getVideoChainUrl: "/pmpheep/activityVideo/getVideoChain",
@@ -195,6 +234,7 @@
         deleteChainVideoUrl: "/pmpheep/activityVideo/delChainVideoByid",
         updateChainUrl: '/pmpheep/activityVideo/updateChainSort',  //视频列表url
         videoListData: [],
+        multidialogVisible:false,
         bookDialogVisible: false,
         isShowVideoPlayer: false,
         dialogVisible: false,
@@ -517,6 +557,9 @@
       openAddVideoDialog() {
         this.dialogVisible = true;
       },
+      openAddMultiVideoDialog() {
+        this.multidialogVisible = true;
+      },
       /* 审核微视频 */
       examVideo(val) {
         console.log(val);
@@ -671,6 +714,16 @@
           return false;
         }
       },
+      multivideoUploadSuccess(res, file, fileList) {
+        this.isUploadVideo = true;
+        this.multivideoTransCoding(res.data);
+        this.dialogForm.videoList=[];
+        fileList.forEach(i=>{
+          this.dialogForm.videoList.push(i)
+        })
+        this.$refs.dialogForm.validateField('videoList');
+        console.log(this.dialogForm)
+      },
       /* 视频上传成功 */
       videoUploadSuccess(res, file, fileList) {
         this.isUploadVideo = true;
@@ -717,6 +770,93 @@
               showCancelButton: false,
               type: "error"
             });
+          }
+        })
+      },
+      multivideoTransCoding(str) {
+        this.$axios.get(this.transCodingUrl, {
+          params: {key: str}
+        }).then((res) => {
+          console.log(res);
+          if (res.data.code == 1) {
+            var obj = res.data.data;
+            if (obj.done) {
+              if (!obj.error) {
+                /* 转码成功 */
+                this.isUploadVideo = false;
+                this.dialogForm.transCoding.push(res.data.data);
+              } else {
+                /* 转码失败 */
+                this.$confirm('视频转码失败，请检查视频格式后再重新上传', "提示", {
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  showCancelButton: false,
+                  type: "error"
+                });
+                this.dialogForm.videoList = [];
+                this.isUploadVideo = false;
+              }
+            } else {
+              /* 正在转码 */
+              setTimeout(() => {
+                this.multivideoTransCoding(str);
+              }, 1000);
+            }
+          } else {
+            this.$confirm(res.data.msg, "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
+            });
+          }
+        })
+      },
+      multiaddVideoSubmit() {
+        console.log( this.dialogForm);
+        this.$refs.dialogForm.validate((valid) => {
+          if (valid) {
+            this.isdisabled = true;
+            var submitObj = {
+              activityId: this.editData.id,
+              transCoding:JSON.stringify(this.dialogForm.transCoding),
+              cover: this.dialogForm.imgList[0].raw,   //封面图片Id
+            };
+            let config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            let formData = new FormData();
+            for (var i in submitObj) {
+              formData.append(i, submitObj[i]);
+            }
+
+            this.$axios.post(this.addMultiNewVideoUrl, formData,config)
+              .then((res) => {
+                console.log(res);
+                this.isdisabled = false;
+                if (res.data.code == 1) {
+
+                  this.getList();
+                  this.$message.success('添加成功');
+                  this.multidialogVisible = false;
+                  this.$refs.dialogForm.resetFields();
+
+                }
+                else {
+                  this.$confirm(res.data.msg.msgTrim(), "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    showCancelButton: false,
+                    type: "error"
+                  });
+                }
+              }).catch((error) => {
+              this.isdisabled = false;
+            })
+          } else {
+            return;
           }
         })
       },
@@ -907,4 +1047,4 @@
     position: relative;
   }
 </style>
- 
+

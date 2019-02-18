@@ -19,6 +19,7 @@
       <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="getList()">搜索</el-button>
       <el-button type="primary" style="float:right;margin-right: 15px;;margin-bottom:10px" @click="search">选择资源</el-button>
       <el-button type="primary" style="float:right;margin-right: 15px;margin-bottom:10px" @click="fileUpload">上传资源</el-button>
+      <el-button type="primary" style="float:right;margin-right: 15px;margin-bottom:10px" @click="multifileUpload">批量上传资源</el-button>
     </p>
 
     <el-table :data="sourceListData" border highlight-current-row style="width:100%;margin:10px 0;">
@@ -47,7 +48,7 @@
           <el-button type="text" style="color:#337ab7;" @click="updateChian(scope.row,'down')">下移</el-button>
 
         </template>
-        </el-table-column>
+      </el-table-column>
 
     </el-table>
     <div class="pagination-wrapper">
@@ -89,6 +90,31 @@
             </span>
     </el-dialog>
 
+    <el-dialog class='upload_dialog' title="批量资源上传" :visible.sync="multifiledialogVisible" size="tiny" width="100%">
+      <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules" label-width="100px">
+
+        <el-upload
+          class="upload-demo"
+          :action="fileUploadUrl"
+          :on-success="multiupLoadFileSuccess"
+          :on-remove="multiuploadFileRemove"
+          :before-upload="multibeforeAvatarUpload"
+          multiple
+          :file-list="fileList">
+          <el-button size="small" type="primary">批量上传</el-button>
+          <div slot="tip" class="el-upload__tip" style="line-height:1;">单个文件文件大小不超过200M</div>
+        </el-upload>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="mutlifileUp">保 存</el-button>
+                <el-button @click="dialogVisible = false">关闭</el-button>
+            </span>
+    </el-dialog>
+
+
+
+
     <el-dialog title="资源选择" :visible.sync="selectSourceVisible" size="small" width="100%">
       <p class="header_p" style="margin-top: 0px">
         <span>资源名称：</span>
@@ -101,10 +127,10 @@
       </p>
 
       <el-table  ref="table"
-        :data="selectSourceList"
-                border highlight-current-row
-                @selection-change="handleSelectionChange">
-                style="width:100%;margin:10px 0;">
+                 :data="selectSourceList"
+                 border highlight-current-row
+                 @selection-change="handleSelectionChange">
+        style="width:100%;margin:10px 0;">
         <el-table-column
           type="selection"
           width="55">
@@ -127,14 +153,14 @@
       </el-table>
       <div class="pagination-wrapper">
         <el-pagination style="margin-top: 10px"
-          v-if="sourcepageTotal>selectParams.pageSize"
-          @size-change="selectSizeChange"
-          @current-change="selectCurrentChange"
-          :current-page.sync="selectParams.pageNumber"
-          :page-sizes="[10,20,30,50]"
-          :page-size="selectParams.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="sourcepageTotal">
+                       v-if="sourcepageTotal>selectParams.pageSize"
+                       @size-change="selectSizeChange"
+                       @current-change="selectCurrentChange"
+                       :current-page.sync="selectParams.pageNumber"
+                       :page-sizes="[10,20,30,50]"
+                       :page-size="selectParams.pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="sourcepageTotal">
         </el-pagination>
       </div>
     </el-dialog>
@@ -151,6 +177,7 @@
         multipleSelection: [],   // 当前页选中的数据
         idKey: 'activitySourceId', // 标识列表数据中每一行的唯一键的名称(需要按自己的数据改一下)
         newSourceUrl: "/pmpheep/activitySource/newSource",
+        newSourceList: "/pmpheep/activitySource/newSourceList",
         getSourceListUrl: "/pmpheep/activitySource/getSourceList",
         activitySourceChainUrl:"/pmpheep/activitySource/addActivitySourceChain",
         getActivityUrl:'/pmpheep/activity/getActivity/',
@@ -161,6 +188,7 @@
         deleteChainSourceUrl:'/pmpheep/activitySource/delChainSourceByid',
         updateChianUrl: "/pmpheep/activitySource/updateChainSort",
         dialogVisible: false,
+        multifiledialogVisible:false,
         selectSourceVisible: false,
         sourceListData: [],
         selectSourceList: [],
@@ -173,8 +201,8 @@
           pageNumber: 1,
         },
         sourceParams:{
-            activityId:'',
-            sources:''
+          activityId:'',
+          sources:''
         },
         formData: {
           file: [],
@@ -187,6 +215,10 @@
           attachment: [],
           sourceName: '',
           fileList: [],
+        },
+        multidialogForm: {
+          fileList: [],
+          sourceNames:[],
         },
         selectParams:{
           sourceName:'',
@@ -234,24 +266,24 @@
     methods: {
 
       delChain(obj){
-          this.$axios
-            .get(this.deleteChainSourceUrl, {
-              params:{
-                activityId:this.editData.id,
-                activitySourceId:obj.id
-              }
-            })
-            .then(res => {
-              console.log(res);
-              if (res.data.code == 1) {
-                this.$message.success("删除成功");
-                this.getList();
-              }else{
-                this.$message.error("删除失败");
-                this.getList();
+        this.$axios
+          .get(this.deleteChainSourceUrl, {
+            params:{
+              activityId:this.editData.id,
+              activitySourceId:obj.id
+            }
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.$message.success("删除成功");
+              this.getList();
+            }else{
+              this.$message.error("删除失败");
+              this.getList();
 
-              }
-            })
+            }
+          })
       },
 
       updateChian(row,type){
@@ -307,15 +339,15 @@
           });
           this.sourceParams.sources= this.sourceParams.sources.substr(0, this.sourceParams.sources.length - 1);
           /*this.sourceParams.sources=this.selectSourceRow;*/
-            this.$axios.get(this.activitySourceChainUrl, {
-              params: this.sourceParams
-            }).then((res) => {
-              if (res.data.code == 1) {
-                this.selectSourceVisible=false;
-                this.$message.success("资源关联成功");
-                this.getList();
-              }
-            })
+          this.$axios.get(this.activitySourceChainUrl, {
+            params: this.sourceParams
+          }).then((res) => {
+            if (res.data.code == 1) {
+              this.selectSourceVisible=false;
+              this.$message.success("资源关联成功");
+              this.getList();
+            }
+          })
         }else{
           this.$message.error("未选择任何资源");
         }
@@ -433,7 +465,100 @@
       fileUpload() {
         this.dialogVisible = true;
       },
+      multifileUpload() {
+        this.fileList=[];
+        this.multidialogForm.fileList=[];
+        this.multifiledialogVisible=true
+      },
 
+      /* 文件移除回调 */
+      multiuploadFileRemove(file, flielist) {
+        this.fileList = flielist;
+        this.multidialogForm.fileList=[];
+        this.multidialogForm.sourceNames=[];
+        flielist.forEach((i) => {
+          this.multidialogForm.fileList.push(i.response.data);
+        });
+
+      },
+      /* 文件上传成功回调 */
+      multiupLoadFileSuccess(res, file, filelist) {
+        if (res.code == 1) {
+          if (file.response) {
+            this.multidialogForm.fileList.push(file.response.data);
+          }
+        }
+      },
+      /* 文件上传大小判断 */
+      multibeforeAvatarUpload(file) {
+        console.log(file);
+        console.log(typeof file);
+        const isLt100M = file.size / 1024 / 1024 <= 200;
+        if (!isLt100M) {
+          this.$confirm('上传文件大小不能超过 200MB!', "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            showCancelButton: false,
+            type: "error"
+          });
+        }
+        if (file.size == 0) {
+          this.$confirm('请勿上传大小为0kb的空文件', "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            showCancelButton: false,
+            type: "error"
+          });
+          return false;
+        }
+        /* .com .bat .exe */
+        if ((file.name.indexOf('.bat') != -1 || file.name.indexOf('.exe') != -1 || file.name.indexOf('.com')) != -1) {
+          console.log()
+          this.$confirm('请勿上传可执行文件', "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            showCancelButton: false,
+            type: "error"
+          });
+          return false;
+        }
+        if (file.name.length > 80) {
+          this.$confirm('附件名称长度过长', "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            showCancelButton: false,
+            type: "error"
+          });
+          return false;
+        }
+        return isLt100M;
+      },
+      /* 批量上传*/
+      mutlifileUp() {
+        if(this.multidialogForm.fileList.length==0){
+          this.$message.error("文件不能为空");
+          return;
+        }
+        this.multidialogForm.activityId=this.editData.id;
+        this.$axios
+          .post(this.newSourceList, this.$commonFun.initPostData(this.multidialogForm))
+          .then(res => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.$message.success("上传资源成功");
+              this.multifiledialogVisible = false;
+              this.getList();
+
+            } else {
+              this.$confirm(res.data.msg, "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+            }
+          });
+      },
       /* 文件移除回调 */
       uploadFileRemove(file, flielist) {
         this.fileList = flielist;
@@ -460,9 +585,9 @@
         if (res.code == 1) {
           this.dialogForm.sourceName=file.name;
           this.fileList.push(file) ;
-            if (file.response) {
-              this.dialogForm.file.push(file.response.data);
-            }
+          if (file.response) {
+            this.dialogForm.file.push(file.response.data);
+          }
         }
       },
       /* 文件上传大小判断 */
@@ -601,7 +726,7 @@
             }
           });
 
-    },
+      },
       backEditActivity() {
         if(this.editData.id!=null){
           this.$axios
@@ -688,7 +813,7 @@
     width: 100%;
 
   }
-   .upload_dialog {
+  .upload_dialog {
     min-width: 660px;
   }
 </style>
