@@ -173,11 +173,11 @@
                   <el-button type="text"  v-if="scope.row.isPublished!=true" @click="editContent(scope.row,scope.row.authStatus)">编辑</el-button>
                   <el-button type="text" :disabled="scope.row.authStatus==1"
                              v-if="scope.row.authStatus==0&&scope.row.authorType==2"
-                             @click="examineContent(scope.row,1)">通过
+                             @click="examineContent(scope.row,2)">通过
                   </el-button>
                   <el-button type="text" :disabled="scope.row.authStatus==1"
                              v-if="scope.row.authStatus==0&&scope.row.authorType==2"
-                             @click="examineContent(scope.row,2)">退回
+                             @click="examineContent(scope.row,1)">退回
                   </el-button>
                   <el-button type="text" :disabled="scope.row.authStatus==1"
                              v-if="scope.row.authStatus==2&&scope.row.isPublished==false"
@@ -787,7 +787,7 @@
     /* 审核内容 */
     examineContent(obj, status) {
       console.log(obj);
-      if(status==2){
+      if(status==1){
         this.$prompt('请输入退回原因', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -832,7 +832,7 @@
         let msg='';
         let rmsg='';
         switch (status) {
-          case 1: msg="确定审核文章",rmsg='审核成功' ;
+          case 2: msg="确定审核文章",rmsg='审核成功' ;
             break;
           case 3: msg="确定发布该文章",rmsg='发布成功';
           break;
