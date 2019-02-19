@@ -380,7 +380,7 @@
     <el-dialog
       :visible.sync="sellWellDialogVisible"
       fullscreen = "true"
-      width="100%"
+      width="120%"
     >
 
       <span slot="title" class="el-dialog__title">热销列表</span>
@@ -401,9 +401,9 @@
         <el-button  @click="sellWellSearch"  type="primary" icon="search" >搜索</el-button>
       </div>
       <el-table :data="sellWellData" border  >
-        <el-table-column property="bookname" label="书籍名称" width="150" align="center"></el-table-column>
+        <el-table-column property="bookname" label="书籍名称" width="130" align="center"></el-table-column>
         <el-table-column property="isbn" label="ISBN" width="150" align="center"></el-table-column>
-        <el-table-column property="sales" label="销量" width="100" align="center"></el-table-column>
+        <el-table-column property="sales" label="销量" width="70" align="center"></el-table-column>
         <el-table-column label="操作">
           <template scope="scope">
             <el-button type="text" style="color:#337ab7;" @click="addSellWell(scope.row)" >添加</el-button>
@@ -412,7 +412,7 @@
       </el-table>
       <!--分页-->
       <div class="pagination-wrapper" style="padding-top:10px;padding-bottom:10px;margin-top: 15px">
-        <el-pagination
+        <el-pagination style="display: contents;"
           v-if="sellWellTotalNum "
           :page-sizes="[10,20,30,40]"
           :page-size="sellWellSearchForm.sellWellPageSize"
@@ -427,7 +427,7 @@
 
 
       </div>
-      <div class="divf" style="width: 50%;margin-left: 50px;margin-top: 55px;margin-bottom: 25px" >
+      <div class="divf" style="width: 53%;margin-left: 15px;margin-top: 55px;margin-bottom: 25px" >
         <div class="searchBox-wrapper" style="display:inline-block;">
           <div class="searchName">教材畅销榜：<span></span></div>
           <div class="searchInput" >
@@ -439,10 +439,10 @@
           <el-button    type="primary" icon="save" @click="saveSellWell()" >保存</el-button>
         </div>
         <el-table :data="sellWelljcList" border  >
-          <el-table-column property="bookname" label="书籍名称" width="150" align="center"></el-table-column>
+          <el-table-column property="bookname" label="书籍名称" width="130" align="center"></el-table-column>
           <el-table-column property="isbn" label="ISBN" width="150" align="center"></el-table-column>
-          <el-table-column property="sales" label="销量" width="100" align="center"></el-table-column>
-          <el-table-column label="操作">
+          <el-table-column property="sales" label="销量" width="70" align="center"></el-table-column>
+          <el-table-column label="操作" style="display: block">
             <template scope="scope">
               <el-button type="text" style="color:#337ab7;" @click="rmbyId(scope.$index,scope.row,1)"  >删除</el-button>
               <a  style="color:#337ab7;font-size: 18px" v-if="scope.$index!=0">|</a>
@@ -459,11 +459,11 @@
           </div>
         </div>
         <el-table :data="sellWellksysList" border  >
-          <el-table-column property="bookname" label="书籍名称" width="150" align="center"></el-table-column>
+          <el-table-column property="bookname" label="书籍名称" width="130" align="center"></el-table-column>
           <el-table-column property="isbn" label="ISBN" width="150" align="center"></el-table-column>
-          <el-table-column property="sales" label="销量" width="100" align="center"></el-table-column>
+          <el-table-column property="sales" label="销量" width="70" align="center"></el-table-column>
           <el-table-column label="操作">
-            <template scope="scope">
+            <template scope="scope" style="display: block">
               <el-button type="text" style="color:#337ab7;" @click="rmbyId(scope.$index,scope.row,2)"  >删除</el-button>
               <a  style="color:#337ab7;font-size: 18px" v-if="scope.$index!=0">|</a>
               <el-button type="text" style="color:#337ab7;"  v-if="scope.$index!=0" @click="sortUp(scope.$index,2)">上移</el-button>
