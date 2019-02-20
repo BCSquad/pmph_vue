@@ -659,7 +659,7 @@ export default {
 }
 /*标签等宽 文字自适应填满*/
 span.el-tag {
-  min-width: 6em;
+  min-width: 3em;
   text-align-last: justify;
   padding: 0 0.5em;
 }
