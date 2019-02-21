@@ -1,5 +1,5 @@
 <template>
-    <div class="application_list">
+    <div class="application_list" style="width: 100%">
         <p class="header_search_p">
             <el-select v-model="selectValue" class="select_input" placeholder="请选择">
                 <el-option v-for="item in selectOptions" :key="item.value" :label="item.label" :value="item.value">
@@ -84,7 +84,7 @@
               </p>
             </template>
           </el-table-column>
-          <el-table-column label="修改人" >
+          <el-table-column label="修改人">
             <template scope="scope">
               <p>
                 {{scope.row.publisher}}
@@ -109,7 +109,7 @@
                 </template>
             </el-table-column>-->
 
-          <el-table-column label="是否当前公告" width="130" align="center">
+          <el-table-column label="是否当前公告" maxwidth="120px" align="center">
             <template scope="scope">
               <div v-if="scope.row.is_active&&scope.row.is_published"><font color="red">是</font></div>
               <div v-else-if="scope.row.is_active&&!scope.row.is_published">是</div>
@@ -117,7 +117,7 @@
             </template>
 
           </el-table-column>
-            <el-table-column label="操作" min-width="140">
+            <el-table-column label="操作"  width="240">
                 <template scope="scope">
                     <p class="operation_p">
                         <el-button type="text" class="op_button" @click="operation('edit',scope.row)" :disabled="!(isAdmin || userInfo.id == scope.row.founder_id)">修改</el-button>
