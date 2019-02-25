@@ -20,7 +20,7 @@
             <router-link :to="{name:'新建通知',params:{materialId:'new'}}">
                 <el-button class="right_button" type="primary">新建通知</el-button>
             </router-link>
-            <span class="right_button">
+            <span class="right_button" style="margin-right: 15px;">
               <excelExport
                 :api_export_excel="'/pmpheep/material/exportExcel'"
                 :params="searchedForm"
