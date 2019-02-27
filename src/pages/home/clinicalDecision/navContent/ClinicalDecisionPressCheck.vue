@@ -602,8 +602,8 @@
                       "出版社退回" : (iterm["org_id"] == 0 ? "" : "")));
 
 
-                iterm["pmphStautsText"] = (iterm["pmphAudit"]==1?"出版社通过":
-                                          (iterm["pmphAudit"]==2)?"出版社不通过":
+                iterm["pmphStautsText"] = (iterm["pmphAudit"]==1?"出版社审核通过":
+                                          (iterm["pmphAudit"]==2)?"出版社审核不通过":
                                             ((iterm["online_progress"]==2||iterm["online_progress"]==4||iterm["online_progress"]==5 )?"出版社退回"
                                               :((iterm["pmphAudit"]==0  && iterm["org_id"]!=0  && (iterm["online_progress"] == 1||iterm["online_progress"] == 3 )) || (iterm["org_id"]==0 && iterm["pmphAudit"]==0))?"待审核":""
                                             ));
