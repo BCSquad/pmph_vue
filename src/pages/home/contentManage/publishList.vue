@@ -179,8 +179,13 @@
                              v-if="scope.row.authStatus==0&&scope.row.authorType==2"
                              @click="examineContent(scope.row,1)">退回
                   </el-button>
+
                   <el-button type="text" :disabled="scope.row.authStatus==1"
                              v-if="scope.row.authStatus==2&&scope.row.isPublished==false"
+                             @click="examineContent(scope.row,3)">发布
+                  </el-button>
+                  <el-button type="text" :disabled="scope.row.authStatus==1"
+                             v-if="scope.row.authStatus==0&scope.row.authorType!=2"
                              @click="examineContent(scope.row,3)">发布
                   </el-button>
                   <el-button type="text" :disabled="scope.row.authStatus==1" v-if="scope.row.isPublished==true"
