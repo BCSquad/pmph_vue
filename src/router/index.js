@@ -134,6 +134,7 @@ import BookRouter from 'pages/home/publishBooks/BookRouter'
 
 const BookManage = () => import('pages/home/publishBooks/BookManage');
 const materialType = () => import('pages/home/publishBooks/materialType');
+const bookChooseInCourse = () => import('pages/home/publishBooks/bookChooseInCourse');
 const CommentManage = () => import('pages/home/publishBooks/comment');
 const MicVideo = () => import('../pages/home/publishBooks/micVideo');
 const BookSource = () => import('../pages/home/publishBooks/bookSource');
@@ -445,6 +446,7 @@ export default new Router({
               }
             },
             {path: 'materialType', name: '图书分类', component: materialType, meta: {authorityId: 44}},
+            {path: 'bookChooseInCourse', name: '图书选用统计', component: bookChooseInCourse, meta: {authorityId: 63}},
             {path: 'comment', name: '评论审核', component: CommentManage, meta: {authorityId: 20}},
             {path: 'video', name: '微视频管理', component: MicVideo, meta: {authorityId: 41}},
             {path: 'booksource', name: '资源管理', component: BookSource, meta: {authorityId: 62}},

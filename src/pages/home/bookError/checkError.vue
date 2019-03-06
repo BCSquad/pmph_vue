@@ -18,7 +18,17 @@
             <div class="searchBox-wrapper searchBtn" >
 
                 <el-button  type="primary"  icon="search" @click="search">搜索</el-button>
-              <el-button  type="primary"   @click="exportExcel">导出</el-button>
+            </div>
+            <div class="searchBox-wrapper export">
+              <el-button  type="primary"   @click="exportExcel">导出Excel</el-button>
+              <wordExport
+                :type = "'primary'"
+                :api_export_word_start = "'/pmpheep/word/bookCorrection/list'"
+                :api_export_word_progress = "'/pmpheep/word/progress'"
+                :params = "{bookname :title,isEditorReplied:result}"
+              >
+                导出word
+              </wordExport>
             </div>
         </el-row>
         <el-row>
@@ -69,7 +79,11 @@
   </div>
 </template>
 <script>
+  import wordExport from "components/WordExport.vue";
 export default {
+  components:{
+    wordExport
+  },
   data() {
     return {
       title: "", // 书名
@@ -164,4 +178,8 @@ export default {
   margin-top: 9px;
   margin-left: 5px;
 }
+  .export{
+    width:unset;
+    float: right;
+  }
 </style>

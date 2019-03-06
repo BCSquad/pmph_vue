@@ -57,7 +57,7 @@
     :title="isEdit?'修改':'新增'"
     :visible.sync="dialogVisible"
       size="tiny">
-      <el-form :model="dialogForm" ref="dialogForm" :rules="rules" label-width="110px" class="dialog_from">
+      <el-form :model="dialogForm" ref="dialogForm" :rules="rules" label-width="140px" class="dialog_from">
         <el-form-item label="搜索关键词内容：" prop="word">
            <el-input placeholder="请输入搜索关键词内容"  v-model="dialogForm.word"></el-input>
         </el-form-item>
@@ -287,4 +287,5 @@
 .searchKey_words  .dialog_from .input{
   width:80%;
 }
+
 </style>
