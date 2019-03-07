@@ -82,6 +82,7 @@
         <el-menu-item index="/book/comment" v-if="isShowSide(6)||isShowSide(20)">评论审核</el-menu-item>
         <el-menu-item index="/book/video" v-if="isShowSide(6)||isShowSide(41)">微视频管理</el-menu-item>
         <el-menu-item index="/book/booksource" v-if="isShowSide(6)||isShowSide(62)">资源管理</el-menu-item>
+        <el-menu-item index="/book/booksync" v-if="isShowSide(6)||isShowSide(63)">图书同步管理</el-menu-item>
         <el-menu-item index="/book/feedback" v-if="isShowSide(6)||isShowSide(43)">读者反馈</el-menu-item>
         <el-menu-item index="/bookerror/check" v-if="isShowSide(6)||isShowSide(23)">图书纠错审核</el-menu-item>
         <el-menu-item index="/bookerror/after" v-if="isShowSide(6)||isShowSide(24)">图书纠错跟踪</el-menu-item>

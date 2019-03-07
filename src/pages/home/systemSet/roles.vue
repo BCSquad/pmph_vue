@@ -301,6 +301,10 @@ export default {
               id: 62
             },
             {
+              label: "图书同步管理",
+              id: 63
+            },
+            {
               label: "读者反馈",
               id: 43
             },
