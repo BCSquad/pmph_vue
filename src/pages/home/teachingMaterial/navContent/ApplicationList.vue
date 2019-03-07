@@ -120,6 +120,9 @@
                                 <el-dropdown-item>
                                   <el-button type="text"  style="width: 100%" @click="operation('setTopic',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">设置选题号</el-button>
                                 </el-dropdown-item>
+                                <el-dropdown-item>
+                                  <el-button type="text"  style="width: 100%" @click="operation('editProgress',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">编写进度</el-button>
+                                </el-dropdown-item>
                                 <!--<el-dropdown-item>-->
                                   <!--<el-button type="text" @click="operation('exportExcel',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">导出学校(Excel)</el-button>-->
                                 <!--</el-dropdown-item>-->
