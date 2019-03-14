@@ -32,9 +32,18 @@
           >
           </el-date-picker>
           <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search">搜索</el-button>
+
+          <el-button  style="float: right" type="danger" @click="batchDel">批量删除</el-button>
+          <el-button  style="float: right" type="primary" @click="batchConfirm">批量导入</el-button>
+
+
         </p>
         <!-- 列表 -->
-        <el-table :data="tableData" border style="width:100%;margin-bottom:10px;">
+        <el-table :data="tableData" border style="width:100%;margin-bottom:10px;"  @selection-change="handleSelectionChange">
+          <el-table-column
+            type="selection"
+            width="55">
+          </el-table-column>
           <el-table-column label="图书名称" prop="bookname">
           </el-table-column>
           <el-table-column label="isbn" prop="isbn">
@@ -58,6 +67,7 @@
 
           <el-table-column label="操作">
             <template scope="scope">
+              <el-button type="text" style="color:#337ab7;" @click="showDetail(scope.row)">查看详情</el-button>
               <el-button type="text" style="color:#337ab7;" @click="getMaterialTypeTree(scope.row)">确认导入</el-button>
               <el-button type="text" style="color:#337ab7;" @click="delectBookSyncConfirm(scope.row.id)">删除</el-button>
 
@@ -158,7 +168,45 @@
 
       </el-tab-pane>
     </el-tabs>
-      <!-- 选择书籍弹框  -->
+
+
+    <el-dialog
+      title="图书详情"
+      :visible.sync="syncDetailDialog"
+      class='book_dialog'
+      size="tiny"
+    >
+      <el-table :data="detailData" border style="width:100%;margin-bottom:10px;">
+
+        <el-table-column label="属性名称" prop="name">
+        </el-table-column>
+        <el-table-column label="修改前" prop="oldBook">
+        </el-table-column>
+        <el-table-column label="修改后" prop="newBook">
+
+          <template scope="scope">
+            <span v-if="scope.row.equals==true">{{scope.row.newBook}}</span>
+            <span v-else style="color: red">{{scope.row.newBook}}</span>
+          </template>
+        </el-table-column>
+
+
+
+      </el-table>
+      <div style="width:100%" class="marginT20">
+        <div class="center_box">
+          <el-button type="primary"   @click="getMaterialTypeTree()">确认导入</el-button>
+          <el-button type="delect" @click="delectBookSyncConfirm">删除</el-button>
+          <el-button type="close" @click="closedialg">关闭</el-button>
+        </div>
+      </div>
+
+
+    </el-dialog>
+
+
+
+    <!-- 选择书籍弹框  -->
       <el-dialog
         title="选择书籍"
         :visible.sync="materialTypeTreeDialog"
@@ -214,15 +262,22 @@
     },
     data() {
       return {
+        detailData:[],
         activeName: 'first',
         treeDataUrl: "/pmpheep/materialType/tree", //获取教材分类树url
         bookSyncListUrl: '/pmpheep/apitest/getList',  //视频列表url
         confirmUrl: '/pmpheep/apitest/confirmBook', //  审核视频url
+        detailUrl: '/pmpheep/apitest/showDetail',
+        batchdelUrl:'/pmpheep/apitest/batchdel',
+        batchConfirmUrl:'/pmpheep/apitest/batchConfirm',
         delectUrl: '/pmpheep/apitest/delectBookSyncConfirm', //  审核视频url
         revokeUrl: '/pmpheep/apitest/revokeBookSyncComfirm', //  审核视频url
         tableData: [],
         bookListData: [],
         materialTypeTreeDialog: false,
+        syncDetailDialog:false,
+        multipleSelection:"",
+        detail:{},
         nodeId: 0,
         pageTotal: 100,
         searchParams: {
@@ -278,11 +333,114 @@
     },
     methods: {
 
+      batchConfirm(){
+
+        let _this = this;
+        var params=this.multipleSelection;
+        if(params.length==0){
+          _this.$message.error("未勾选任何数据");
+          return;
+        }
+        var ids=[];
+        params.forEach(item => {
+          ids.push(item.id);
+        })
+        this.$axios.get(this.batchConfirmUrl,{params:this.$initPostData({
+            ids:ids.join(',')
+          })})
+          .then(response => {
+            let res = response.data;
+            console.log(res);
+            if (res.code == 1) {
+              _this.$message.success("批量导入成功");
+              this.getList(1);
+
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+
+      },
+      batchDel(){
+        let _this = this;
+        var params=this.multipleSelection;
+        if(params.length==0){
+          _this.$message.error("未勾选任何数据");
+          return;
+        }
+        var ids=[];
+        params.forEach(item => {
+          ids.push(item.id);
+        })
+
+        this.$axios.get(this.batchdelUrl,{params:this.$initPostData({
+          ids:ids.join(',')
+        })})
+          .then(response => {
+            let res = response.data;
+            console.log(res);
+            if (res.code == 1) {
+              _this.$message.success("批量删除成功");
+              this.getList(1);
+
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+
+      },
+      closedialg(){
+        this.syncDetailDialog=false;
+      },
+      showDetail(row){
+        this.detail.id=row.id;
+        this.detail.type=row.synchronizationType;
+        this.syncDetailDialog=true;
+        var params={id:row.id,type:row.synchronizationType}
+
+        this.$axios.get(this.detailUrl, {params: params})
+          .then(response => {
+            let res = response.data;
+            console.log(res);
+            if (res.code == 1) {
+            this.detailData = res.data
+
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+
+
+
+
+      },
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+        console.log(this.multipleSelection);
+      },
       getMaterialTypeTree(row) {
-        this.materialTypeTreeDialog = true
+
+
         this._getTree("-1");
-        this.confirmForm.bookId = row.id;
-        this.confirmForm.synchronizationType = row.synchronizationType;
+        if(row==null){
+          this.confirmForm.bookId = this.detail.id;
+          this.confirmForm.synchronizationType = this.detail.type;
+        }else{
+          this.confirmForm.bookId = row.id;
+          this.confirmForm.synchronizationType = row.synchronizationType;
+          console.log(2)
+        }
+        if(this.confirmForm.synchronizationType=='add'){
+          this.materialTypeTreeDialog = true
+        }else{
+          this.confirmSubmit();
+        }
+
+
+
       },
       confirmSubmit() {
         this.$axios.get(this.confirmUrl, {params: this.confirmForm})
@@ -290,7 +448,9 @@
             let res = response.data;
             if (res.code == 1) {
               this.materialTypeTreeDialog = false
-
+              this.getList(1)
+              this.closedialg();
+              this.$message.success("导入成功");
             }
           })
           .catch(error => {
@@ -357,87 +517,7 @@
 
         })
       },
-      /**
-       * 添加子分类
-       */
-      _add() {
-        let _this = this;
-        this.$refs.dialogForm.validate(valid => {
-          if (valid) {
-            this.$axios({
-              method: "POST",
-              url: this.api_pmph_add,
-              data: this.$initPostData(this.dialogForm)
-            }).then(res => {
-              if (res.data.code == 1) {
-                _this.default_expanded_keys.push(_this.dialogForm.parentId);
 
-                _this._getTree("-1");
-                _this.dialogVisible = false;
-                _this.$message.success("添加成功");
-              } else {
-                this.$confirm(res.data.msg.msgTrim(), "提示", {
-                  confirmButtonText: "确定",
-                  cancelButtonText: "取消",
-                  showCancelButton: false,
-                  type: "error"
-                });
-              }
-            })
-              .catch((e) => {
-                console.log(e);
-              })
-          } else {
-            return false;
-          }
-        });
-      },
-      /**
-       * 删除子节点
-       */
-      _del() {
-        let _this = this;
-        this.$confirm("确定删除选中分类吗?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-            this.$axios
-              .delete(this.api_pmph_delete, {
-                params: {
-                  id: this.dialogForm.parentId
-                }
-              })
-              .then(res => {
-                console.log(res);
-                if (res.data.code == 1) {
-                  _this.hasSelected = false;
-                  this.$message.success("删除成功");
-                  _this.default_expanded_keys = [this.currentClickedParentId];
-
-                  _this._getTree("-1");
-                  //_this.$router.go(0);
-                  this.$emit('delete-node');
-                } else {
-                  this.$confirm(res.data.msg.msgTrim(), "提示", {
-                    confirmButtonText: "确定",
-                    cancelButtonText: "取消",
-                    showCancelButton: false,
-                    type: "error"
-                  });
-                }
-              })
-              .catch(e => {
-                console.log(e)
-              })
-          })
-          .catch(() => {
-          });
-      },
-      /**
-       *  打开添加子节点对话框
-       */
       _openAddDialog() {
         this.dialogVisible = true;
         this.$nextTick(() => {
@@ -462,6 +542,9 @@
         }
       },
       delectBookSyncConfirm(id){
+        if(id==null){
+          id=this.detail.id;
+        }
 
         this.$axios.get(this.delectUrl, {
           params: {id:id}
@@ -469,7 +552,9 @@
           .then((res) => {
             console.log(res);
             if (res.data.code == 1) {
-              this.getList();
+              this.getList(1);
+              this.closedialg();
+              this.$message.success("删除成功");
             }
           })
       },
@@ -486,7 +571,7 @@
           .then((res) => {
             console.log(res);
             if (res.data.code == 1) {
-              this.getList();
+              this.getList(2);
             }
           })
       },
@@ -657,5 +742,10 @@
     width: 100%;
     vertical-align: bottom;
     min-height: 300px;
+  }
+  .center_box {
+    float: left;
+    margin-left: 50%;
+    transform: translateX(-50%);
   }
 </style>

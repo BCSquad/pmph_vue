@@ -27,6 +27,8 @@
                     >
                 </el-date-picker>
           <el-button icon="search" type="primary" style="margin-bottom:10px;"  @click="search">搜索</el-button>
+          <el-button icon="primary" type="primary" style="margin-bottom:10px;"  @click="exportExcel">导出excel</el-button>
+
           <el-button type="primary"  style="float:right;" @click="selectBook">添加微视频</el-button>
       </p>
       <!-- 列表 -->
@@ -38,7 +40,7 @@
                  <el-button type="text" style="color: #337ab7;" @click="playVideo(scope.row)">{{scope.row.title}}</el-button>
               </template>
           </el-table-column>
-          <el-table-column label="上传人" width="110" prop="userName">
+          <el-table-column label="上传人" width="130" prop="userName">
           </el-table-column>
           <el-table-column label="上传时间" width="120" >
               <template scope="scope">
@@ -175,6 +177,7 @@
               examVideoUrl:'/pmpheep/bookVideo/audit', //  审核视频url
               dialogBookUrl:'/pmpheep/books/list',      //书籍列表
               addNewVideoUrl:'/pmpheep/bookVideo/addBookVideo',   //添加提交视频url
+
               transCodingUrl:"/v/query",   //查询视频转码地址
               tableData:[],
               bookListData:[],
@@ -227,6 +230,13 @@
            this.getList();
         },
         methods:{
+
+          /**导出excel */
+          exportExcel(){
+            console.log(this.title);
+            let url = "/pmpheep/bookMicVideo/exportExcel?bookname=" + this.searchParams.bookName ;
+            this.$commonFun.downloadFile(url);
+          },
             /* 获取视频列表 */
             getList(){
              this.$axios.get(this.videoListUrl,{
