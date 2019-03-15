@@ -31,7 +31,7 @@
             style="margin-right:5px;"
           >
           </el-date-picker>
-          <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search">搜索</el-button>
+          <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search(1)">搜索</el-button>
 
           <el-button  style="float: right" type="danger" @click="batchDel">批量删除</el-button>
           <el-button  style="float: right" type="primary" @click="batchConfirm">批量导入</el-button>
@@ -46,7 +46,7 @@
           </el-table-column>
           <el-table-column label="图书名称" prop="bookname">
           </el-table-column>
-          <el-table-column label="isbn" prop="isbn">
+          <el-table-column label="ISBN" prop="isbn">
           </el-table-column>
           <el-table-column label="同步日期">
             <template scope="scope">
@@ -91,7 +91,7 @@
       <el-tab-pane label="已确认" name="second">
         <p class="header_p">
           <span>图书名称：</span>
-          <el-input class="input" v-model="searchParams.bookName" @keyup.enter.native="search"
+          <el-input class="input" v-model="searchParams.bookName" @keyup.enter.native="search(2)"
                     placeholder="请输入图书名称"></el-input>
           <span>类型：</span>
           <el-select v-model="searchParams.synchronizationType" clearable style="width:150px;margin-right:10px;"
@@ -171,7 +171,7 @@
 
 
     <el-dialog
-      title="图书详情"
+      title="图书同步详情"
       :visible.sync="syncDetailDialog"
       class='book_dialog'
       size="tiny"
@@ -208,7 +208,7 @@
 
     <!-- 选择书籍弹框  -->
       <el-dialog
-        title="选择书籍"
+        title="选择分类"
         :visible.sync="materialTypeTreeDialog"
         class='book_dialog'
         size="tiny"
@@ -435,22 +435,29 @@
         }
         if(this.confirmForm.synchronizationType=='add'){
           this.materialTypeTreeDialog = true
+
         }else{
           this.confirmSubmit();
         }
-
 
 
       },
       confirmSubmit() {
         this.$axios.get(this.confirmUrl, {params: this.confirmForm})
           .then(response => {
+            console.log(response.data)
+
             let res = response.data;
-            if (res.code == 1) {
+            console.log(response.data.code)
+            if(res.code==1){
+
               this.materialTypeTreeDialog = false
               this.getList(1)
               this.closedialg();
               this.$message.success("导入成功");
+            }else{
+
+              this.$message.error(response.data.msg);
             }
           })
           .catch(error => {
@@ -598,9 +605,9 @@
           })
       },
       /* 搜索按钮 */
-      search() {
+      search(tab) {
         this.searchParams.pageNumber = 1;
-        this.getList();
+        this.getList(tab);
       },
       /* 开始时间格式重置 */
       startDateChange(val) {
@@ -631,77 +638,9 @@
             this.bookDialogVisible = true;
           }
         })
-      },
-      /* 书籍列表 搜索 */
-      bookSearch() {
-        this.bookParams.pageNumber = 1;
-        this.selectBook();
-      },
-      bookSizeChange(val) {
-        this.bookParams.pageSize = val;
-        this.bookParams.pageNumber = 1;
-        this.selectBook();
-      },
-      bookCurrentChange(val) {
-        this.bookParams.pageNumber = val;
-        this.selectBook();
-      },
-      /* 选择一本书籍 */
-      openAddVideoDialog(obj) {
-        console.log(obj);
-        this.dialogForm.bookId = obj.id;
-        this.dialogVisible = true;
-      },
-      /* 审核微视频 */
-      examVideo(val) {
-        console.log(val);
-        this.examDialogVisible = true;
-        this.currentExamId = val.id;
-      },
-      /* 审核 */
-      examSubmit(bool) {
-        this.$axios.put(this.examSourceUrl, this.$commonFun.initPostData({
-          id: this.currentExamId,
-          isAuth: bool
-        })).then((res) => {
-          console.log(res);
-          if (res.data.code == 1) {
-            this.$message.success('操作成功');
-            this.getList();
-            this.examDialogVisible = false;
-          } else {
-            this.$confirm(res.data.msg.msgTrim(), "提示", {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              showCancelButton: false,
-              type: "error"
-            });
-          }
-        })
-      },
-      /* 删除微视频 */
-      deleteVideo(obj) {
-
-        this.$confirm('确定删除资源：(' + obj.sourceName + ')?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$axios.put(this.deleteSourceUrl, this.$commonFun.initPostData({
-            id: obj.id
-          })).then((res) => {
-            if (res.data.code == 1) {
-              this.$message.success('删除成功');
-              this.getList();
-            }
-          })
-        }).catch(() => {
-          /*this.$message({
-              type: 'info',
-              message: '已取消删除'
-          });*/
-        });
       }
+
+
     },
   }
 </script>
