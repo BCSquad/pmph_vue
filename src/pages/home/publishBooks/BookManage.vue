@@ -133,7 +133,9 @@
         </div>
       </div>
       <div class="operation-wrapper">
-        <el-button type="primary" style="margin-right: 50px" @click="toSellWell()">图书畅销榜管理</el-button>
+        <el-button type="primary" @click="toBookManage(1)">图书畅销榜管理</el-button>
+        <el-button type="primary"  @click="toBookManage(2)">新书推荐管理</el-button>
+        <el-button type="primary" style="margin-right: 50px" @click="toBookManage(3)">重点推荐管理</el-button>
         <el-tooltip class="item" effect="dark" content="请按照模板格式上传!" placement="top">
           <my-upload
             class="ChatInputFileBtn"
@@ -148,7 +150,7 @@
         </el-tooltip>
         <a href="/static/配套图书导入模版.xls"><el-button type="primary">配套图书导入模板下载</el-button></a>
         <!--<el-button type="primary" @click="syncBook(1)" :disabled="bookSyncVisible">{{bookSyncVisible?'正在同步中...':'图书全量同步'}}<i v-if="bookSyncVisible" class="fa fa-spinner fa-pulse loading"></i></el-button>-->
-        <el-button type="primary" @click="syncBook(2)" :disabled="bookSyncVisible">{{bookSyncVisible?'正在同步中...':'图书增量同步'}}<i v-if="bookSyncVisible" class="fa fa-spinner fa-pulse loading"></i></el-button>
+        <el-button type="primary" style="display: none" @click="syncBook(2)" :disabled="bookSyncVisible">{{bookSyncVisible?'正在同步中...':'图书增量同步'}}<i v-if="bookSyncVisible" class="fa fa-spinner fa-pulse loading"></i></el-button>
         <el-button type="primary" :disabled="!selectData.length" @click="bulkEditInfo">批量修改</el-button>
     </div>
     </div>
@@ -383,7 +385,7 @@
       width="100%"
     >
 
-      <span slot="title" class="el-dialog__title">热销列表</span>
+      <span slot="title" class="el-dialog__title">{{dialogName}}</span>
 
       <div class="divf" style="width: 45%" >
         <el-tabs  v-model="activeName" type="card" @tab-click="handleClick">
@@ -393,14 +395,14 @@
       <div class="searchBox-wrapper" style="display:inline-block;">
         <div class="searchName">书籍名称/ISBN：<span></span></div>
         <div class="searchInput" >
-          <el-input placeholder="请输入" class="searchInputEle"  @keyup.enter.native="sellWellSearch" v-model.trim="sellWellSearchForm.name"></el-input>
+          <el-input placeholder="请输入" class="searchInputEle"  @keyup.enter.native="sellWellSearch" v-model.trim="manageSearchForm.name"></el-input>
         </div>
       </div>
       <div style="text-align:right;margin-bottom:15px;display:inline-block;float:right;">
         <!-- <el-button @click="recommendDialogVisible = false">取 消</el-button>-->
         <el-button  @click="sellWellSearch"  type="primary" icon="search" >搜索</el-button>
       </div>
-      <el-table :data="sellWellData" border  >
+      <el-table :data="bookManageData" border  >
         <el-table-column property="bookname" label="书籍名称" width="150" align="center"></el-table-column>
         <el-table-column property="isbn" label="ISBN" width="150" align="center"></el-table-column>
         <el-table-column property="sales" label="销量" width="100" align="center"></el-table-column>
@@ -413,14 +415,14 @@
       <!--分页-->
       <div class="pagination-wrapper" style="padding-top:10px;padding-bottom:10px;margin-top: 15px">
         <el-pagination
-          v-if="sellWellTotalNum "
+          v-if="bookManageTotalNum "
           :page-sizes="[10,20,30,40]"
-          :page-size="sellWellSearchForm.sellWellPageSize"
-          :current-page.sync="sellWellSearchForm.sellWellPageNumber"
+          :page-size="manageSearchForm.bookManagePageSize"
+          :current-page.sync="manageSearchForm.bookManagePageNumber"
           @size-change="sellWellPaginationSizeChange"
           @current-change="getSellWellTableDate"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="sellWellTotalNum">
+          :total="bookManageTotalNum">
         </el-pagination>
       </div>
 
@@ -491,6 +493,7 @@
 		data() {
 			return {
         activeName:'first',
+        dialogName:"",
         api_upload: '/pmpheep/books/bookExcel',
 			  form:{
 			    bookId:'',
@@ -503,14 +506,15 @@
           materialId:'',
         },
         recommendData: [],
-        sellWellData: [],
+        bookManageData: [],
         sellWelljcList:[],
         sellWellksysList:[],
-        sellWellSearchForm:{
+        manageSearchForm:{
           name:'',
-          sellWellPageSize:10,
-          sellWellPageNumber:1,
+          bookManagePageSize:10,
+          bookManagePageNumber:1,
         },
+
         nameType:1,
         recommendSearchForm:{
           currentBookId:0,
@@ -532,7 +536,7 @@
         },
         totalNum:0,
         recommendTotalNum:0,
-        sellWellTotalNum:0,
+        bookManageTotalNum:0,
         sellWellDialogVisible:false,
         recommendDialogVisible:false,
         recommendBookName:'',
@@ -593,10 +597,11 @@
       }
 		},
     methods:{
-      getSellWellList(type){
+      getSellWellList(type,flag){
         let _this=this;
-        this.$axios.get('/pmpheep/books/getsellWellList',{params:{
-            type:type
+        this.$axios.get('/pmpheep/books/getManageList',{params:{
+            type:type,
+            flag:flag
           }})
           .then(response=>{
             var res = response.data;
@@ -616,6 +621,7 @@
         })
       },
 
+
       saveSellWell(){
         this.sellWelljcList.forEach((iterm,index)=>{
           iterm.sortSellWell = index;
@@ -632,7 +638,7 @@
         console.log(list);
 
 
-        this.$axios.post('/pmpheep/books/addSellwell',list).then(response => {
+        this.$axios.post('/pmpheep/books/updataBookByManage',list).then(response => {
           let res = response.data;
           if (res.code == '1') {
 
@@ -729,11 +735,28 @@
         this.nameType=parseInt(tab.index)+1;
         this.getSellWellTableDate();
       },
-      toSellWell(){
+      toBookManage(type){
+        switch (type) {
+          case 1:
+            this.dialogName="热销列表";
+            this.getSellWellList(1,1);
+            this.getSellWellList(2,1);
+
+                break;
+          case 2:
+            this.dialogName="新书推荐列表";
+            break;
+          case 3:
+            this.dialogName="重点推荐";
+            break;
+
+        }
         this.sellWellDialogVisible=true;
-        this.getSellWellList(1);
-        this.getSellWellList(2);
-        this.getSellWellTableDate()
+        this.getSellWellTableDate();
+
+
+
+
       },
 		  typeZh(val){
 		    switch(typeof(val)){
@@ -777,30 +800,30 @@
         })
       },
       sellWellPaginationSizeChange(val){
-        this.sellWellSearchForm.sellWellPageSize=val;
-        this.sellWellSearchForm.sellWellPageNumber=1;
+        this.manageSearchForm.bookManagePageSize=val;
+        this.manageSearchForm.bookManagePageNumber=1;
         this.getSellWellTableDate();
       },
       getSellWellTableDate(){
         let _this=this;
-        this.$axios.get('/pmpheep/books/sellWellList',{params:{
-            name:this.sellWellSearchForm.name,
-            pageSize:this. sellWellSearchForm.sellWellPageSize,
-            pageNumber:this. sellWellSearchForm.sellWellPageNumber,
+        this.$axios.get('/pmpheep/books/getBookListByManage',{params:{
+            name:this.manageSearchForm.name,
+            pageSize:this. manageSearchForm.bookManagePageSize,
+            pageNumber:this. manageSearchForm.bookManagePageNumber,
             type:this.nameType
           }})
           .then(response=>{
             var res = response.data;
             if(res.code==1){
-              _this.sellWellTotalNum = res.data.total;
-              _this.sellWellData = res.data.rows;
+              _this.bookManageTotalNum = res.data.total;
+              _this.bookManageData = res.data.rows;
             }
           }).catch(e=>{
           console.log(e);
         })
       },
       sellWellSearch(){
-        this.sellWellSearchForm.sellWellPageNumber=1;
+        this.manageSearchForm.bookManagePageNumber=1;
         this.getSellWellTableDate();
       },
       getRecommendTableData(){

@@ -3,6 +3,9 @@
       <p class="header_p">
           <span>图书名称：</span>
           <el-input class="input" v-model="searchParams.bookName" @keyup.enter.native="search" placeholder="请输入图书名称"></el-input>
+        <span>资源名称：</span>
+        <el-input class="input" v-model="searchParams.sourceName" @keyup.enter.native="search" placeholder="请输入图书名称"></el-input>
+
           <span>状态：</span>
             <el-select v-model="searchParams.state" clearable style="width:150px;margin-right:10px;" placeholder="请选择">
               <el-option label="待审核" value="1"></el-option>
@@ -180,6 +183,7 @@
               isdisabled:false,
               pageTotal:100,
               searchParams:{
+                  sourceName:'',
                   state:'',
                   bookName:'',
                   upLoadTimeStart:'',

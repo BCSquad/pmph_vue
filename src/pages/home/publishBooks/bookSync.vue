@@ -32,6 +32,8 @@
           >
           </el-date-picker>
           <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search(1)">搜索</el-button>
+          <el-button type="primary"  @click="syncBook()" :disabled="bookSyncVisible">{{bookSyncVisible?'正在同步中...':'图书全量同步'}}<i v-if="bookSyncVisible" class="fa fa-spinner fa-pulse loading"></i></el-button>
+
 
           <el-button  style="float: right" type="danger" @click="batchDel">批量删除</el-button>
           <el-button  style="float: right" type="primary" @click="batchConfirm">批量导入</el-button>
@@ -234,7 +236,11 @@
           </div>
         </div>
       </el-dialog>
-
+    <!--同步弹窗-->
+    <div class="shade" v-if="bookSyncVisible">
+      <h1 class="text-center sync-title"><i class="fa fa-spinner fa-pulse loading"></i>正在同步……</h1>
+      <el-progress class="progress" :text-inside="true" :stroke-width="18" :percentage="progresspoint" status="success"></el-progress>
+    </div>
 
 
   </div>
@@ -265,15 +271,17 @@
         detailData:[],
         activeName: 'first',
         treeDataUrl: "/pmpheep/materialType/tree", //获取教材分类树url
-        bookSyncListUrl: '/pmpheep/apitest/getList',  //视频列表url
-        confirmUrl: '/pmpheep/apitest/confirmBook', //  审核视频url
-        detailUrl: '/pmpheep/apitest/showDetail',
-        batchdelUrl:'/pmpheep/apitest/batchdel',
-        batchConfirmUrl:'/pmpheep/apitest/batchConfirm',
-        delectUrl: '/pmpheep/apitest/delectBookSyncConfirm', //  审核视频url
-        revokeUrl: '/pmpheep/apitest/revokeBookSyncComfirm', //  审核视频url
+        bookSyncListUrl: '/pmpheep/aiptest/getList',  //视频列表url
+        confirmUrl: '/pmpheep/aiptest/confirmBook', //  审核视频url
+        detailUrl: '/pmpheep/aiptest/showDetail',
+        batchdelUrl:'/pmpheep/aiptest/batchdel',
+        batchConfirmUrl:'/pmpheep/aiptest/batchConfirm',
+        delectUrl: '/pmpheep/aiptest/delectBookSyncConfirm', //  审核视频url
+        revokeUrl: '/pmpheep/aiptest/revokeBookSyncComfirm', //  审核视频url
         tableData: [],
         bookListData: [],
+        progresspoint: 0,
+        bookSyncVisible:false,
         materialTypeTreeDialog: false,
         syncDetailDialog:false,
         multipleSelection:"",
@@ -332,6 +340,50 @@
       this.getList(1);
     },
     methods: {
+
+      continueSync() {
+        if (this.progresspoint == 100) {
+          return;
+        }
+        this.$axios.get('/pmpheep/aiptest/getSpeed')
+          .then(response => {
+            let res = response.data;
+            if (res.code == 1) {
+                this.progresspoint = res.data;
+                if(this.progresspoint!=100){
+                  setTimeout(function(){
+                    this.continueSync()
+                  },2000);
+                }
+            }
+          });
+      },
+
+
+      syncBook() {
+        this.bookSyncVisible = true;
+        this.continueSync(this.progresspoint);
+        this.$axios.get('/pmpheep/aiptest/syncFullBooks').then(response => {
+          let res = response.data;
+          if (res.code == 1) {
+
+
+          }
+          if(res.code==2){
+            this.bookSyncVisible = false;
+            this.$message.error(res.msg);
+          }
+
+        }).catch(error => {
+          /*   this.$confirm('同步错误，请稍后再试!', "提示",{
+                 confirmButtonText: "确定",
+                 cancelButtonText: "取消",
+                 showCancelButton: false,
+                 type: "error"
+             });*/
+        })
+      },
+
 
       batchConfirm(){
 
@@ -686,5 +738,15 @@
     float: left;
     margin-left: 50%;
     transform: translateX(-50%);
+  }
+
+  .shade{
+    position: absolute;
+    z-index:10000;
+    background: rgba(0,0,0,.5);
+    width: 100%;
+    height:100%;
+    top:0;
+    left:0;
   }
 </style>
