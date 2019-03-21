@@ -44,7 +44,7 @@
             <el-tab-pane label="全部" name="first">
               <ul class="panel-min-list" v-if="materialList.rows.length!=0&&materialAuthor>0" style="position: relative;height: 248px;">
                 <li v-for="(iterm,index) in materialList.rows" :key="index" v-if="index<limit_size" class="ellipsis">
-                  <el-tag :type="iterm.state==='已发布'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
+                  <el-tag :type="iterm.state==='申报中'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
                   <router-link :to="{name:'通知列表',params:{materialName:iterm.materialName}}">{{iterm.materialName}}</router-link>
                 </li>
                 <li class="panel-more-btn" v-if="!materialList.last && !materialList.loading" style="position: absolute;bottom: 0;left:40%;">
@@ -56,10 +56,10 @@
               </ul>
               <p v-else  class="no_conact_data">暂无需要您处理的教材</p>
             </el-tab-pane>
-            <el-tab-pane label="已发布" name="second">
+            <el-tab-pane label="申报中" name="second">
               <ul class="panel-min-list" v-if="materialList.rows.length!=0&&materialAuthor>0" style="position: relative;height: 248px;">
                 <li v-for="(iterm,index) in materialList.rows" :key="index" v-if="index<limit_size">
-                  <el-tag :type="iterm.state==='已发布'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
+                  <el-tag :type="iterm.state==='申报中'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
                   <router-link :to="{name:'通知列表',params:{materialName:iterm.materialName}}">{{iterm.materialName}}</router-link>
                 </li>
                 <li class="panel-more-btn" v-if="!materialList.last" style="position: absolute;bottom: 0; left:40%;">
@@ -74,7 +74,7 @@
             <el-tab-pane label="报名结束" name="third" style="position: relative;height: 248px;">
               <ul class="panel-min-list" v-if="materialList.rows.length!=0&&materialAuthor>0">
                 <li v-for="(iterm,index) in materialList.rows" :key="index" v-if="index<limit_size" >
-                  <el-tag :type="iterm.state==='已发布'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
+                  <el-tag :type="iterm.state==='申报中'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
                   <router-link :to="{name:'通知列表',params:{materialName:iterm.materialName}}">{{iterm.materialName}}</router-link>
                 </li>
                 <li class="panel-more-btn" v-if="!materialList.last" style="position: absolute;bottom: 0;left:40%;">
@@ -89,7 +89,7 @@
             <el-tab-pane label="遴选结束" name="fourth" style="position: relative;height: 248px;">
               <ul class="panel-min-list" v-if="materialList.rows.length!=0&&materialAuthor>0">
                 <li v-for="(iterm,index) in materialList.rows" :key="index" v-if="index<limit_size" >
-                  <el-tag :type="iterm.state==='已发布'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
+                  <el-tag :type="iterm.state==='申报中'?'success':(iterm.state==='已结束'?'gray':'primary')">{{ iterm.state }}</el-tag>
                   <router-link :to="{name:'通知列表',params:{materialName:iterm.materialName}}">{{iterm.materialName}}</router-link>
                 </li>
                 <li class="panel-more-btn" v-if="!materialList.last" style="position: absolute;bottom: 0;left:40%;">
@@ -659,7 +659,7 @@ export default {
 }
 /*标签等宽 文字自适应填满*/
 span.el-tag {
-  min-width: 6em;
+  min-width: 3em;
   text-align-last: justify;
   padding: 0 0.5em;
 }

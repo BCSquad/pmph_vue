@@ -587,7 +587,7 @@ export default {
     },
     /* 增加 */
     addCheckedConact(){
-        debugger;
+        //debugger;
         for(var i in this.checkedConactPersonData){
           /* 去重 */
           if(this.removeRepeat(this.ruleForm.auditorList,this.checkedConactPersonData[i])){
@@ -801,7 +801,7 @@ export default {
             this.ruleForm[i][j]= this.product[i][j];
           }
         }else{*!/
-        debugger;
+        //debugger;
         if(i=="descriptionContent"||i=="noteContent"){
           continue;
         }else{

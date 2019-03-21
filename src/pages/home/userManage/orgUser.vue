@@ -18,7 +18,7 @@
           <el-radio :label="2">学校</el-radio>
       </el-radio-group>
       <el-button  type="primary" icon="search" style="margin-left:10px;margin-bottom:10px;" @click="searchOrg">搜索</el-button>
-      <el-button type="primary" @click="clearSearch">清空搜索</el-button>
+      <el-button type="primary" @click="clearSearch('searchOrg')">清空搜索</el-button>
       <el-button type="primary" class="pull-right" @click="addBtn(true)">新建机构用户</el-button>
       <el-button type="primary" class="pull-right" @click="exportExcel">导出名单</el-button>
       <my-upload
@@ -361,7 +361,7 @@
 						<span></span>
 					</div>
 					<div class="searchInput">
-						<el-select v-model="progress" placeholder="全部" clearable>
+						<el-select v-model="progress" placeholder="全部" @change = "search" clearable>
 							<el-option v-for="item in state" :key="item.value" :label="item.label" :value="item.value">
 							</el-option>
 						</el-select>
@@ -372,7 +372,7 @@
 
         <div class="searchBox-wrapper searchBtn" >
           <el-button type="primary" icon="search" @click="search">搜索</el-button>
-          <el-button type="primary" @click="clearSearch">清空搜索</el-button>
+          <el-button type="primary" @click="clearSearch('search')">清空搜索</el-button>
         <el-button type="primary"  @click="exportAdminExcel">导出名单</el-button>
 				<el-button class="pull-right marginL10" type="success" @click="check(1)" :disabled="isSelected">通过</el-button>
 				<el-button class="pull-right" type="danger" @click="check(2)" :disabled="isSelected">退回</el-button>
@@ -1162,7 +1162,7 @@ export default {
       if(proxy&&proxy!='DEFAULT'){
         this.imgsrc = "/pmpheep/image/"+proxy;
       }else{
-        this.imgsrc='static/default_image.png';
+        this.imgsrc='static/blank_img.png';
       }
     },
     /**
@@ -1233,7 +1233,7 @@ export default {
     /**
      * 清空搜索条件
      */
-    clearSearch(){
+    clearSearch(fun){
       this.params = {
         pageSize: 10,
           pageNumber: 1,
@@ -1246,6 +1246,11 @@ export default {
       this.realname = '';
       this.orgName = '';
       this.progress = '';
+      if(fun == 'searchOrg'){
+        this.searchOrg();
+      }else if(fun == 'search'){
+        this.search();
+      }
     },
     /**
      * 当上传按钮添加excel
@@ -1410,4 +1415,7 @@ export default {
 .ChatInputFileBtn{
   float: right;
 }
+  span.el-tag {
+    min-width: unset;
+  }
 </style>

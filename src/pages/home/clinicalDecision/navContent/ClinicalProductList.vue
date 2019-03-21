@@ -1,5 +1,5 @@
 <template>
-    <div class="application_list">
+    <div class="application_list" style="width: 100%">
         <p class="header_search_p">
             <el-select v-model="selectValue" class="select_input" placeholder="请选择">
                 <el-option v-for="item in selectOptions" :key="item.value" :label="item.label" :value="item.value">
@@ -33,8 +33,9 @@
           </el-table-column>
             <el-table-column label="临床申报名称" width="130">
                 <template scope="scope">
-                    <el-button type="text" style="color:#337ab7;white-space: normal;text-align:left;" @click="operation('toProcess',scope.row)" v-if="hasAccessAuthority(true,scope.row)">{{scope.row.product_name}}</el-button>
-                    <p v-else>{{scope.row.product_name}}</p>
+                  <el-button type="text" style="color:#337ab7;white-space: normal;text-align:left;" @click="operation('toProcess',scope.row)" >{{scope.row.product_name}}</el-button>
+                    <!--<el-button type="text" style="color:#337ab7;white-space: normal;text-align:left;" @click="operation('toProcess',scope.row)" v-if="hasAccessAuthority(true,scope.row)">{{scope.row.product_name}}</el-button>
+                    <p v-else>{{scope.row.product_name}}</p>-->
                 </template>
             </el-table-column>
             <!--<el-table-column label="显示结束日期" width="128" >
@@ -83,7 +84,7 @@
               </p>
             </template>
           </el-table-column>
-          <el-table-column label="修改人" >
+          <el-table-column label="修改人">
             <template scope="scope">
               <p>
                 {{scope.row.publisher}}
@@ -108,7 +109,7 @@
                 </template>
             </el-table-column>-->
 
-          <el-table-column label="是否当前公告" width="130" align="center">
+          <el-table-column label="是否当前公告" maxwidth="120px" align="center">
             <template scope="scope">
               <div v-if="scope.row.is_active&&scope.row.is_published"><font color="red">是</font></div>
               <div v-else-if="scope.row.is_active&&!scope.row.is_published">是</div>
@@ -116,12 +117,12 @@
             </template>
 
           </el-table-column>
-            <el-table-column label="操作" min-width="140">
+            <el-table-column label="操作"  width="240">
                 <template scope="scope">
                     <p class="operation_p">
-                        <el-button type="text" class="op_button" @click="operation('edit',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">修改</el-button>
+                        <el-button type="text" class="op_button" @click="operation('edit',scope.row)" :disabled="!(isAdmin || userInfo.id == scope.row.founder_id)">修改</el-button>
                         <span class="op_span">|</span>
-                        <el-button type="text" class="op_button" @click="operation('publish',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">通知发布</el-button>
+                        <el-button type="text" class="op_button" @click="operation('publish',scope.row)" :disabled="!(isAdmin || userInfo.id == scope.row.founder_id)">通知发布</el-button>
                        <!-- <span class="op_span">|</span>
                         <el-button type="text" class="op_button" @click="operation('msg',scope.row)">通知详情</el-button>-->
                         <el-dropdown trigger="click">
@@ -131,7 +132,7 @@
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item>
-                                  <el-button type="text" style="width: 100%" @click="operation('msgState',scope.row)" :disabled="!hasAccessAuthority(true,scope.row,true)">消息状态</el-button>
+                                  <el-button type="text" style="width: 100%" @click="operation('msgState',scope.row)" :disabled="!(isAdmin || userInfo.id == scope.row.founder_id)">消息状态</el-button>
                                 </el-dropdown-item>
                               <!--<el-dropdown-item>
                                 <el-button type="text"  style="width: 100%" @click="operation('setBookList',scope.row)" :disabled="!hasAccessAuthority(0,scope.row)">设置书目录</el-button>
@@ -216,6 +217,8 @@ export default {
              // contactUserName:'',
               product_name:'',
             },
+            isAdmin:false,
+            userInfo:'',
             totalNum:0,
             selectValue: 1,
             selectOptions: [{
@@ -288,7 +291,17 @@ export default {
        * @param row 该套教材data
        */
       hasAccessAuthority(index,row,endShow){
-        return true;
+        let userInfo = this.$getUserData().userInfo;
+        let isAdmin = userInfo.isAdmin;
+
+        if(isAdmin || row.founder_id == userInfo.id){
+          return true;
+        }else{
+          return false;
+        }
+
+
+
         /*if(!row.isMy){
           return false;
         }
@@ -402,6 +415,8 @@ export default {
      /* if(this.$route.params.productName){
         this.searchForm.productName=this.$route.params.productName;
       }*/
+      this.userInfo = this.$getUserData().userInfo;
+      this.isAdmin = this.$getUserData().userInfo.isAdmin;
       this.getTableData();
     }
 }

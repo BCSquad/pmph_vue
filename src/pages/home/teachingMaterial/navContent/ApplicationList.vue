@@ -11,7 +11,7 @@
             <el-select v-model="searchForm.state" class="select_input" @change="handleSearchCLick" style="float:none;" placeholder="全部">
                 <el-option label="全部" value=""></el-option>
               <el-option label="未发布" value="未发布"></el-option>
-                <el-option label="已发布" value="已发布"></el-option>
+                <el-option label="申报中" value="申报中"></el-option>
                 <el-option label="报名结束" value="报名结束"></el-option>
               <el-option label="遴选结束" value="遴选结束"></el-option>
             </el-select>
@@ -20,6 +20,14 @@
             <router-link :to="{name:'新建通知',params:{materialId:'new'}}">
                 <el-button class="right_button" type="primary">新建通知</el-button>
             </router-link>
+            <span class="right_button" style="margin-right: 15px;">
+              <excelExport
+                :api_export_excel="'/pmpheep/material/exportExcel'"
+                :params="searchedForm"
+                :disabled = "!tableData.length">
+                导出Excel
+              </excelExport>
+            </span>
         </p>
 
         <el-table :data="tableData" style="width:100%" class="table_list table-wrapper" stripe border>
@@ -112,6 +120,9 @@
                                 <el-dropdown-item>
                                   <el-button type="text"  style="width: 100%" @click="operation('setTopic',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">设置选题号</el-button>
                                 </el-dropdown-item>
+                                <el-dropdown-item>
+                                  <el-button type="text"  style="width: 100%" @click="operation('editProgress',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">编写进度</el-button>
+                                </el-dropdown-item>
                                 <!--<el-dropdown-item>-->
                                   <!--<el-button type="text" @click="operation('exportExcel',scope.row)" :disabled="!hasAccessAuthority(0,scope.row,true)">导出学校(Excel)</el-button>-->
                                 <!--</el-dropdown-item>-->
@@ -167,7 +178,8 @@
     </div>
 </template>
 <script type="text/javascript">
-export default {
+  import excelExport from "components/ExcelExport.vue";
+  export default {
     data() {
         return {
             api_material_list:'/pmpheep/material/list',
@@ -176,6 +188,12 @@ export default {
             searchForm:{
               pageSize:20,
               pageNumber:1,
+              isMy:false,
+              state:'',
+              contactUserName:'',
+              materialName:'',
+            },
+            searchedForm:{
               isMy:false,
               state:'',
               contactUserName:'',
@@ -195,6 +213,7 @@ export default {
           moreContactUserList:[],
         }
     },
+    components:{excelExport},
     methods: {
       /**
        * 获取表格数据
@@ -204,6 +223,7 @@ export default {
           .then(response=>{
             var res = response.data;
             if(res.code==1){
+              this.searchedForm = this.$commonFun.objArrayDeepCopy(this.searchForm);
               this.totalNum = res.data.total;
               res.data.rows.map(iterm=>{
                 iterm.actualDeadline = this.$commonFun.formatDate(iterm.actualDeadline).split(' ')[0];

@@ -67,7 +67,9 @@
         <el-menu-item index="/content/notice" v-if="isShowSide(5)||isShowSide(17)">公告管理</el-menu-item>
         <!-- <el-menu-item index="/content/set" v-if="isShowSide(12)">栏目设置</el-menu-item> -->
         <el-menu-item index="/content/ad" v-if="isShowSide(5)||isShowSide(18)">广告管理</el-menu-item>
+        <el-menu-item index="/content/siteLink" v-if="isShowSide(5)||isShowSide(61)">友情链接管理</el-menu-item>
         <el-menu-item index="/content/sensitive" v-if="isShowSide(5)||isShowSide(40)">敏感词管理</el-menu-item>
+        <el-menu-item index="/content/searchKeyword" v-if="isShowSide(5)||isShowSide(60)">搜索关键词管理</el-menu-item>
         <el-menu-item index="/content/help" v-if="isShowSide(5)||isShowSide(42)">帮助管理</el-menu-item>
       </el-submenu>
       <el-submenu index="/book" v-if="isShowSide(6)||isShowSide(19)||isShowSide(20)">
@@ -76,9 +78,12 @@
           <span slot="title">商品管理</span>
         </template>
         <el-menu-item index="/book/manage" v-if="isShowSide(6)||isShowSide(19)">图书管理</el-menu-item>
+        <el-menu-item index="/book/bookChooseInCourse" v-if="isShowSide(6)||isShowSide(63)">图书选用统计</el-menu-item>
         <el-menu-item index="/book/materialType" v-if="isShowSide(6)||isShowSide(44)">图书分类</el-menu-item>
         <el-menu-item index="/book/comment" v-if="isShowSide(6)||isShowSide(20)">评论审核</el-menu-item>
         <el-menu-item index="/book/video" v-if="isShowSide(6)||isShowSide(41)">微视频管理</el-menu-item>
+        <el-menu-item index="/book/booksource" v-if="isShowSide(6)||isShowSide(62)">资源管理</el-menu-item>
+        <el-menu-item index="/book/booksync" v-if="isShowSide(6)||isShowSide(63)">图书同步管理</el-menu-item>
         <el-menu-item index="/book/feedback" v-if="isShowSide(6)||isShowSide(43)">读者反馈</el-menu-item>
         <el-menu-item index="/bookerror/check" v-if="isShowSide(6)||isShowSide(23)">图书纠错审核</el-menu-item>
         <el-menu-item index="/bookerror/after" v-if="isShowSide(6)||isShowSide(24)">图书纠错跟踪</el-menu-item>
@@ -143,6 +148,7 @@
         <!-- <el-menu-item index="/set/area" v-if="isShowSide(19)">地区</el-menu-item>
         <el-menu-item index="/set/orgs" v-if="isShowSide(20)">院校机构</el-menu-item> -->
         <el-menu-item index="/set/departments" v-if="isShowSide(12)||isShowSide(36)">社内部门</el-menu-item>
+        <el-menu-item index="/set/dataDictionary" v-if="isShowSide(12)||isShowSide(62)">基础数据</el-menu-item>
       </el-submenu>
 
        <el-submenu index="/survey" v-if="isShowSide(13)||isShowSide(37)||isShowSide(38)||isShowSide(39)">

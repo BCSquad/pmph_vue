@@ -4419,7 +4419,7 @@ vjs.SeekBar.prototype.onMouseUp = function(event){
 
   this.player_.scrubbing = false;
   if (this.videoWasPlaying) {
-      debugger
+      //debugger
     this.player_.play();
   }
 };

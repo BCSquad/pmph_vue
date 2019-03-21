@@ -13,6 +13,9 @@
             </el-option>
           </el-select>
         </el-col>
+        <el-col :span="3" class="search-10" style="padding-top:0.5em;">
+          <el-checkbox v-model="manualOnly" class="check" @change="search">仅查看人为发送的</el-checkbox>
+        </el-col>
         <el-button class="btn" type="primary"  icon="search" @click="search">搜索</el-button>
       </el-col>
      <div class="pull-right">
@@ -50,20 +53,24 @@
         <el-table-column
           prop="sendName"
           align="center"
-          label="发送者">
+          label="发送者"
+          width="200">
         </el-table-column>
         <el-table-column
           prop="receiverFilterType"
           align="center"
-          label="发送对象">
+          label="发送对象"
+          width="200">
           <template scope="scope">
-            {{scope.row.receiverFilterType==1?'学校管理员':(
+            {{scope.row.receiverFilterType?
+            (scope.row.receiverFilterType==1?'学校管理员':(
               scope.row.receiverFilterType==2?'所有人':(
               scope.row.receiverFilterType==3?'特定对象':(
-              scope.row.receiverFilterType==4?'教材报名者':''
+              scope.row.receiverFilterType==4?'教材报名者':'')
             )
             )
-            )}}
+            ):'系统生成无需选择'
+            }}
           </template>
         </el-table-column>
         <el-table-column
@@ -83,7 +90,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作"
-        width="300"  align="center">
+        width="250"  align="center">
           <template scope="scope">
             <el-button
               size="small"
@@ -166,6 +173,7 @@
         dataTotal: 0,
         logUserInfo:this.$getUserData().userInfo,
         receiverFilterType:"",
+        manualOnly:true,
         state: [
           {
             value: '',
@@ -217,7 +225,8 @@
             title: this.title,
             pageNumber: this.pageNumber,
             pageSize: this.pageSize,
-            receiverFilterType:this.receiverFilterType
+            receiverFilterType:this.receiverFilterType,
+            manualOnly : this.manualOnly
           }
         }).then((response) => {
           let res = response.data

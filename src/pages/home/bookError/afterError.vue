@@ -18,8 +18,16 @@
             <div class="searchBox-wrapper searchBtn">
                 <el-button  type="primary"  icon="search" @click="search">搜索</el-button>
             </div>
-						<div class="searchBox-wrapper searchBtn">
+						<div class="searchBox-wrapper export">
                 <el-button  type="primary" @click="exportExcel">导出EXCEL</el-button>
+                <wordExport
+                  :type = "'primary'"
+                  :api_export_word_start = "'/pmpheep/word/bookCorrection/listTrack'"
+                  :api_export_word_progress = "'/pmpheep/word/progress'"
+                  :params = "{bookname :title,isEditorReplied:result}"
+                >
+                  导出word
+                </wordExport>
             </div>
         </el-row>
         <el-row>
@@ -37,7 +45,7 @@
                     </el-table-column>
                     <el-table-column prop="dutyName" label="责任编辑" >
                     </el-table-column>
-                    <el-table-column prop="result" label="核查结果" width="95" align="center">
+                    <el-table-column prop="result" label="是否勘误" width="95" align="center">
 											<template scope="scope">
 												<p v-if="scope.row.isEditorReplied">{{scope.row.resultString}}</p>
 											</template>
@@ -45,6 +53,7 @@
 										<el-table-column prop="content" label="纠错信息">
 											<template scope="scope">
 												<p>页码：{{scope.row.page}} 行数：{{scope.row.line}}</p>
+                        <div>{{scope.row.content}}</div>
 											</template>
                     </el-table-column>
 										<el-table-column prop="authorReply" label="主编回复"  align="center">
@@ -53,6 +62,17 @@
 											<template scope="scope">
 												{{scope.row.isEditorRepliedString}}
 											</template>
+                    </el-table-column>
+                    <el-table-column label="前台展示" width="95" align="center">
+                      <template scope="scope">
+                        <el-tooltip :content="scope.row.content" placement="top" effect="light" >
+                          <el-button type="text"  class="btn-text" :class="scope.row.showFront?'deep':''"
+                                     @click="switchFrontShow(scope.row)"
+                          >
+                            {{scope.row.showFrontStr}}
+                          </el-button>
+                        </el-tooltip>
+                      </template>
                     </el-table-column>
                 </el-table>
             </el-col>
@@ -71,9 +91,14 @@
   </div>
 </template>
 <script>
+  import wordExport from "components/WordExport.vue";
 export default {
+  components:{
+    wordExport
+  },
   data() {
     return {
+      switchFrontShowApi:"/pmpheep/bookCorrection/switchFrontShow",
       title: "", // 书名
       result: null, // 是否回复
       currentPage: 1, // 当前页
@@ -136,7 +161,21 @@ export default {
     change(val) {
       this.result = val;
       this.getBooks();
-    }
+    },
+    /**
+     * 切换前台显示
+     * @param id
+     * @param showFront
+     */
+    switchFrontShow(obj){
+      this.$axios.get(this.switchFrontShowApi,{params:{
+          id:obj.id,showFront:obj.showFront
+        }})
+        .then(response => {
+          obj.showFront = response.data.data.showFront;
+          obj.showFrontStr = obj.showFront?"是":"否";
+        })
+    },
   }
 };
 </script>
@@ -158,4 +197,15 @@ export default {
 .link {
   color: blue;
 }
+  .btn-text{
+  color:  rgb(18, 140, 246);
+  }
+  .btn-text.deep{
+    color: blue;
+}
+  .export{
+    width:unset;
+    float: right;
+  }
+
 </style>

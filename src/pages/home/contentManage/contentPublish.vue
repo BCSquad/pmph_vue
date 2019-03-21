@@ -7,6 +7,11 @@
       <el-form-item label="所属来源：" prop="authorname" v-if="$router.currentRoute.query.columnId==1">
         <el-input placeholder="请输入所属来源" class="input" v-model.trim="formData.authorname"></el-input>
       </el-form-item>
+      <el-form-item v-if="formData.authorType==2" label="是否原创：" prop="isOriginal">
+        <el-radio class="radio" v-model="formData.isOriginal" :label="true">是</el-radio>
+        <el-radio class="radio" v-model="formData.isOriginal" :label="false">否</el-radio>
+        <span class="intro">原创文章将按积分规则为提交的作家用户增加积分</span>
+      </el-form-item>
       <el-form-item label="所属栏目：" prop="categoryId">
           <el-cascader
             :options="options"
@@ -118,7 +123,7 @@
           <el-button @click="$router.go(-1)">返回</el-button>
           <el-button type="primary" @click="openPreventDialog">预览</el-button>
           <el-button type="primary" v-if="formData.categoryId==1"  @click="examineContent($router.currentRoute.params.cmsContent,2)">发布</el-button>
-          <el-button type="danger" v-if="formData.categoryId==1&&$router.currentRoute.query.type!='new'" @click="returnReasonFnc">退回</el-button>
+          <el-button type="danger" v-if="formData.categoryId==1&&$router.currentRoute.query.type!='new'&&!formData.isStaging" @click="returnReasonFnc">退回</el-button>
           <el-button type="primary" @click="ContentSubmit(0)" >暂存</el-button>
           <el-button type="primary" @click="publishSubmit(1)"  v-if="formData.categoryId!=1">发布</el-button>
     </div>
@@ -167,7 +172,8 @@ export default {
         path:'0',
         materialId:'',
         returnReason: '',
-        authorname:''
+        authorname:'',
+        isOriginal:false
       },
       applyOptions: [{
         apporpc: 0,
@@ -787,4 +793,8 @@ export default {
    .content_publish .cover_dialog .el-dialog .el-dialog__body{
      padding:0;
    }
+  .intro{
+    color: #0e4def;
+    margin-left: 2em;
+  }
 </style>

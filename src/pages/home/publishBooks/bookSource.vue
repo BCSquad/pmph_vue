@@ -3,6 +3,9 @@
       <p class="header_p">
           <span>图书名称：</span>
           <el-input class="input" v-model="searchParams.bookName" @keyup.enter.native="search" placeholder="请输入图书名称"></el-input>
+        <span>资源名称：</span>
+        <el-input class="input" v-model="searchParams.sourceName" @keyup.enter.native="search" placeholder="请输入图书名称"></el-input>
+
           <span>状态：</span>
             <el-select v-model="searchParams.state" clearable style="width:150px;margin-right:10px;" placeholder="请选择">
               <el-option label="待审核" value="1"></el-option>
@@ -27,29 +30,22 @@
                     >
                 </el-date-picker>
           <el-button icon="search" type="primary" style="margin-bottom:10px;"  @click="search">搜索</el-button>
-          <el-button icon="primary" type="primary" style="margin-bottom:10px;"  @click="exportExcel">导出excel</el-button>
-
-          <el-button type="primary"  style="float:right;" @click="selectBook">添加微视频</el-button>
+          <el-button type="primary"  style="float:right;" @click="selectBook">添加资源</el-button>
       </p>
       <!-- 列表 -->
       <el-table :data="tableData" border style="width:100%;margin-bottom:10px;">
           <el-table-column label="图书名称" prop="bookName">
           </el-table-column>
-          <el-table-column label="微视频" >
+          <el-table-column label="资源名称" >
               <template scope="scope">
-                 <el-button type="text" style="color: #337ab7;" @click="playVideo(scope.row)">{{scope.row.title}}</el-button>
+                <el-button type="text" style="color: #337ab7;" @click="downFile(scope.row)">{{scope.row.sourceName}}</el-button>
               </template>
           </el-table-column>
-          <el-table-column label="上传人" width="130" prop="userName">
+          <el-table-column label="上传人" width="110" prop="userName">
           </el-table-column>
           <el-table-column label="上传时间" width="120" >
               <template scope="scope">
                  {{$commonFun.formatDate(scope.row.gmtCreate,'yyyy-MM-dd')}}
-              </template>
-          </el-table-column>
-          <el-table-column label="文件大小" width="110">
-              <template scope="scope">
-              {{(scope.row.fileSize/1024/1024).toFixed(2)}}M
               </template>
           </el-table-column>
           <el-table-column label="状态" width="90" >
@@ -59,9 +55,9 @@
           </el-table-column>
           <el-table-column label="操作" width="150">
               <template scope="scope">
-               <a  style="color:#337ab7;margin-right:5px;" :href="videoDownLoad(scope.row)">下载</a>
-               <el-button type="text" style="color:#337ab7;" @click="examVideo(scope.row)">审核</el-button>
-               <el-button type="text" style="color:#337ab7;" @click="deleteVideo(scope.row)">删除</el-button>
+                <el-button type="text" style="color:#337ab7;" @click="examVideo(scope.row)">审核</el-button>
+                <el-button type="text" style="color:#337ab7;" @click="deleteVideo(scope.row)">删除</el-button>
+
               </template>
           </el-table-column>
       </el-table>
@@ -114,46 +110,36 @@
             </el-pagination>
             </div>
     </el-dialog>
-    <!-- 上传视频对话框 -->
-    <el-dialog title="添加微视频" :visible.sync="dialogVisible" size="tiny" width="100%">
-       <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules"  label-width="100px" >
-           <el-form-item label="视频名称：" prop="videoName">
-               <el-input v-model="dialogForm.videoName" placeholder="请输入视频名称"></el-input>
-           </el-form-item>
-           <el-form-item label="视频封面：" prop="imgList">
-               <el-upload
-                  action="#"
-                  style="float:left;width:260px;"
-                  name="files"
-                  :on-remove="imgUploadRemove"
-                  :auto-upload="false"
-                  :on-change="imgUploadChange"
-                  :file-list="dialogForm.imgList">
-                  <el-button size="small" type="primary" >点击上传</el-button>
-                </el-upload>
-           </el-form-item>
-           <el-form-item label="视频内容：" prop="videoList">
-               <el-upload
-                  style="float:left;width:260px;"
-                  action="/v/upload"
-                  name="file"
-                  :auto-upload="true"
-                  :on-remove="videoUploadRemove"
-                  :before-upload="videoBeforeUpload"
-                  :on-success="videoUploadSuccess"
-                  :file-list="dialogForm.videoList">
-                  <el-button size="small" type="primary" >点击上传</el-button>
-                </el-upload>
-           </el-form-item>
-       </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="addVideoSubmit" :loading="isUploadVideo" :disabled="isdisabled">{{isUploadVideo?'转码中':'确 定'}}</el-button>
-                <el-button @click="dialogVisible = false">取 消</el-button>
+    <!-- 上传资源对话框 -->
+    <el-dialog class='upload_dialog' title="资源上传" :visible.sync="dialogVisible" size="tiny" width="100%">
+      <el-form ref="dialogForm" :model="dialogForm" :rules="dialogRules" label-width="100px">
+
+        <el-form-item label="资源名称：" required >
+          <div class="col-content file-upload-wrapper" style="padding-left:0;">
+            <my-upload
+              class="upload-demo"
+              style="max-width:300px;"
+              :action="fileUploadUrl"
+              :on-success="upLoadFileSuccess"
+              :on-remove="uploadFileRemove"
+              :before-upload="beforeAvatarUpload"
+              :file-list="fileList">
+                  <span>
+              <i class="fa fa-paperclip fa-lg"></i> 选择文件</span>
+              <div slot="tip" class="el-upload__tip" style="line-height:1;">文件大小不超过200M</div>
+            </my-upload>
+          </div>
+        </el-form-item>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="fileUp">保 存</el-button>
+                <el-button @click="dialogVisible = false">关闭</el-button>
             </span>
     </el-dialog>
     <!-- 审核视频弹框 -->
         <el-dialog title="审核" :visible.sync="examDialogVisible" width="25%" size="tiny">
-        <span style="font-size:15px;">确定审核该视频吗？</span>
+        <span style="font-size:15px;">确定审核该资源吗？</span>
             <span slot="footer" class="dialog-footer">
               <el-button type="primary" @click="examSubmit(true)">通过</el-button>
               <el-button type="danger" @click="examSubmit(false)">不通过</el-button>
@@ -172,12 +158,11 @@
     export default{
         data(){
             return{
-              videoListUrl:'/pmpheep/bookVideo/getVideoList',  //视频列表url
-              deleteVideoUrl:'/pmpheep/bookVideo/deleteBookVideo',   //删除微视频
-              examVideoUrl:'/pmpheep/bookVideo/audit', //  审核视频url
+              souceListUrl:'/pmpheep/bookSource/getSourceList',  //视频列表url
+              deleteSourceUrl:'/pmpheep/bookSource/deleteBookSource',   //删除微视频
+              examSourceUrl:'/pmpheep/bookSource/audit', //  审核视频url
               dialogBookUrl:'/pmpheep/books/list',      //书籍列表
-              addNewVideoUrl:'/pmpheep/bookVideo/addBookVideo',   //添加提交视频url
-
+              addNewSourceUrl:'/pmpheep/bookSource/addBookSource',   //添加提交视频url
               transCodingUrl:"/v/query",   //查询视频转码地址
               tableData:[],
               bookListData:[],
@@ -186,16 +171,19 @@
               dialogVisible:false,
               examDialogVisible:false,
               isUploadVideo:false,
+              fileList: [],
               dialogForm:{
-               videoName:'',
-               videoList:[],
-               imgList:[],
-               transCoding:[]
+                bookId:'',
+                file: [],
+                attachment: [],
+                sourceName: '',
+                fileList: [],
                },
                videoSrc:'',
               isdisabled:false,
               pageTotal:100,
               searchParams:{
+                  sourceName:'',
                   state:'',
                   bookName:'',
                   upLoadTimeStart:'',
@@ -210,6 +198,7 @@
                  pageSize:10,
                  pageNumber:1,
               },
+              fileUploadUrl: this.$config.BASE_URL + 'messages/message/file',
               bookTotal:20,
                 dialogRules:{
                     videoName:[
@@ -231,15 +220,117 @@
         },
         methods:{
 
-          /**导出excel */
-          exportExcel(){
-            console.log(this.title);
-            let url = "/pmpheep/bookMicVideo/exportExcel?bookname=" + this.searchParams.bookName ;
-            this.$commonFun.downloadFile(url);
+
+          /* 文件移除回调 */
+          uploadFileRemove(file, flielist) {
+            this.fileList = flielist;
+            if (!this.isEditContent) {
+              this.dialogForm.file = [];
+              flielist.forEach((i) => {
+                this.dialogForm.file.push(i.response.data);
+              });
+            } else {
+              if (file.attachment) {
+                if (!this.dialogForm.attachment) {
+                  this.dialogForm.attachment = [];
+                }
+                this.dialogForm.attachment.push(file.attachment);
+              }
+            }
+
+          },
+          /* 文件上传成功回调 */
+          upLoadFileSuccess(res, file, filelist) {
+            this.fileList = [];
+            this.dialogForm.file = [];
+
+            if (res.code == 1) {
+              this.dialogForm.sourceName=file.name;
+              this.fileList.push(file) ;
+              if (file.response) {
+                this.dialogForm.file.push(file.response.data);
+              }
+            }
+          },
+          /* 文件上传大小判断 */
+          beforeAvatarUpload(file) {
+            console.log(file);
+            console.log(typeof file);
+            const isLt100M = file.size / 1024 / 1024 <= 200;
+            if (!isLt100M) {
+              this.$confirm('上传文件大小不能超过 200MB!', "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+            }
+            if (file.size == 0) {
+              this.$confirm('请勿上传大小为0kb的空文件', "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+              return false;
+            }
+            /* .com .bat .exe */
+            if ((file.name.indexOf('.bat') != -1 || file.name.indexOf('.exe') != -1 || file.name.indexOf('.com')) != -1) {
+              console.log()
+              this.$confirm('请勿上传可执行文件', "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+              return false;
+            }
+            if (file.name.length > 80) {
+              this.$confirm('附件名称长度过长', "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+              return false;
+            }
+            return isLt100M;
+          },
+          fileUp() {
+            if(this.dialogForm.file.length==0){
+              this.$message.error("文件不能为空");
+              return;
+            }
+            this.$axios
+              .post(this.addNewSourceUrl, this.$commonFun.initPostData(this.dialogForm))
+              .then(res => {
+                console.log(res);
+                if (res.data.code == 1) {
+                  if(res.data.data.code==2){
+                    this.$message.error("已存在相同的文件名称");
+                    return;
+
+                  }
+
+                  this.$message.success("上传资源成功");
+                  this.dialogVisible = false;
+                  this.bookDialogVisible=false;
+                  this.dialogForm=[];
+                  this.getList();
+
+                } else {
+                  this.$confirm(res.data.msg, "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    showCancelButton: false,
+                    type: "error"
+                  });
+                }
+              });
           },
             /* 获取视频列表 */
             getList(){
-             this.$axios.get(this.videoListUrl,{
+             this.$axios.get(this.souceListUrl,{
                  params:this.searchParams
              })
              .then((res)=>{
@@ -302,7 +393,7 @@
             /* 选择一本书籍 */
             openAddVideoDialog(obj){
                  console.log(obj);
-                 this.currentBook=obj;
+                 this.dialogForm.bookId=obj.id;
                  this.dialogVisible=true;
             },
          /* 审核微视频 */
@@ -313,7 +404,7 @@
          },
                   /* 审核 */
          examSubmit(bool){
-          this.$axios.put(this.examVideoUrl,this.$commonFun.initPostData({
+          this.$axios.put(this.examSourceUrl,this.$commonFun.initPostData({
               id:this.currentExamId,
               isAuth:bool
           })).then((res)=>{
@@ -335,12 +426,12 @@
          /* 删除微视频 */
          deleteVideo(obj){
 
-                this.$confirm('确定删除微视频：<'+obj.title+'>?', '提示', {
+                this.$confirm('确定删除资源：('+obj.sourceName+')?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
                 }).then(() => {
-                  this.$axios.put(this.deleteVideoUrl,this.$commonFun.initPostData({
+                  this.$axios.put(this.deleteSourceUrl,this.$commonFun.initPostData({
                       id:obj.id
                   })).then((res)=>{
                       if(res.data.code==1){
@@ -579,7 +670,10 @@
            }
 
           this.isShowVideoPlayer=true;
-         }
+         },
+          downFile(obj){
+            this.$commonFun.downloadFile('/pmpheep/file/download/'+obj.fileId);
+          },
         }
     }
 </script>
