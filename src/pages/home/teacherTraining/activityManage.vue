@@ -16,7 +16,7 @@
 
 
       <el-checkbox style="margin-left: 40px" true-label="1" false-label="" v-model="searchParams.isSetTop" checked="true" @change="search" >
-        <span>是否置顶</span></el-checkbox>
+        <span>置顶</span></el-checkbox>
       <el-button type="primary" style="float:right;margin-right: 50px"
                  @click="$router.push({name:'活动详情',query:{columnId:1,type:'newActivity',isShowCover:true}})">新建活动
       </el-button>
@@ -76,6 +76,9 @@
           </el-button>
           <a  style="color:#337ab7;font-size: 18px" >|</a>
           <el-button type="text" style="color:#337ab7;" @click="openSource(scope.row.id)">活动资源
+          </el-button>
+          <a  style="color:#337ab7;font-size: 18px" >|</a>
+          <el-button type="text" style="color:#337ab7;" @click="delectActivit(scope.row.id)">删除
           </el-button>
         </template>
       </el-table-column>
@@ -231,7 +234,8 @@
       return {
         activityListUrl: '/pmpheep/activity/getActivityList',  //活动列表列表url
         getActivityUrl: '/pmpheep/activity/getActivity/',   //修改活动
-        updateActivityUrl: '/pmpheep/activity/updateActivity',   //修改活动
+        updateActivityUrl: '/pmpheep/activity/updateActivity',
+        delectActivityUrl: '/pmpheep/activity/delectActivity',   //修改活动
         updateActivityStatusUrl: '/pmpheep/activity/updateActivityStatus', // 修改活动状态
         dialogActivityVideoUrl: '/pmpheep/activityVideo/getActivityVideoList',      //活动视频列表
         addActivitySourceUrl: '/pmpheep/activitySource/getActivitySourceList',   //获取活动资源列表
@@ -295,6 +299,23 @@
       this.getList();
     },
     methods: {
+
+      delectActivit(id){
+        this.$axios.get(this.delectActivityUrl, {
+          params:{id:id}
+        })
+          .then((res) => {
+            console.log(res);
+            if (res.data.code == 1) {
+              this.$message.success("删除成功");
+              this.getList();
+
+            }
+          })
+      },
+
+
+
       /*修改状态*/
       setStatus(obj, status) {
         this.upStatusDate.id = obj.id;
