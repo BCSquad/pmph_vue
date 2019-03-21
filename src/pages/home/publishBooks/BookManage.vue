@@ -133,7 +133,7 @@
         </div>
       </div>
       <div class="operation-wrapper">
-        <el-button type="primary" @click="toBookManage(1)">图书畅销榜管理</el-button>
+        <el-button type="primary" style="display: none" @click="toBookManage(1)">图书畅销榜管理</el-button>
         <el-button type="primary" style="display: none" @click="toBookManage(2)">新书推荐管理</el-button>
         <el-button type="primary" style="margin-right: 50px;display: none" @click="toBookManage(3)">重点推荐管理</el-button>
         <el-tooltip class="item" effect="dark" content="请按照模板格式上传!" placement="top">
