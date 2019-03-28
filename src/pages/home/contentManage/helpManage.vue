@@ -74,10 +74,11 @@
          </el-table-column>
          <el-table-column  label="备注" prop="note">
          </el-table-column>
-         <el-table-column  label="操作"  width="80">
+         <el-table-column  label="操作"  width="160">
              <template scope="scope">
                 <!--  <el-button type="text">下载</el-button>
                  <span>|</span> -->
+               <el-button type="text" @click="editHelpFile(scope.row.id)">编辑</el-button>
                  <el-button type="text" @click="deleteOperation(scope.row)">删除</el-button>
              </template>
          </el-table-column>
@@ -97,7 +98,51 @@
         </div>
     </el-tab-pane>
   </el-tabs>
+
+    <el-dialog
+      :visible.sync="editDiaLog"
+      fullscreen = "true"
+      width="100%"
+      title="修改操作手册"
+    >
+
+
+      <!-- 表单 -->
+      <div style="margin-top:20px;padding:0 50px 0 0;">
+        <el-form :model="formData" ref="formData" :rules="rules"  label-width="140px">
+          <el-form-item label="文档名称：" prop="manualName">
+            <el-input  placeholder="请输入问题标题" v-model="formData.manualName" style="width:30%"></el-input>
+          </el-form-item>
+          <el-form-item label="文档附件：" prop="fileList">
+            <el-upload
+              class="upload-demo"
+              style="float:left"
+              action="pmpheep/file/image/upload"
+              :on-success="fileUploadSuccess"
+              :on-remove="fileUploadRemove"
+              :before-upload="fileBeforeUpload"
+              :file-list="formData.fileList"
+            >
+              <el-button size="small" type="primary">选择文件</el-button>
+            </el-upload>
+          </el-form-item >
+          <el-form-item label="备注："  prop="note">
+            <el-input  type="textarea" :rows="4" v-model="formData.note"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="overflow:hidden;">
+        <div class="bottom_button">
+          <el-button type="primary"  style="display:block;margin:0 auto" @click="submit">保存</el-button>
+        </div>
+      </div>
+
+    </el-dialog>
+
   </div>
+
+
+
 </template>
 <script type="text/javascript">
     export default{
@@ -105,8 +150,11 @@
             return{
                commonListUrl:'/pmpheep/help/list',      //常见问题列表url
                operationListUrl:'/pmpheep/cms/manual/list',         //操作手册列表url
-               activeName:'first',
+                getManualUrl:'/pmpheep/cms/manual/getManual',
+              addOperationUrl:'/pmpheep/cms/update/manual',
+              activeName:'first',
                commonTableData:[],
+              editDiaLog:false,
                commonTotal:100,
                commonParams:{
                    pageSize:10,
@@ -114,6 +162,14 @@
                    title:'',
                    username:''
                },
+
+
+              formData:{
+                manualName:'',
+                attachment:'',
+                note:'',
+                fileList:[],
+              },
                operationTableData:[],
                operationTotal:100,
                operationParams:{
@@ -134,6 +190,129 @@
             }
         },
         methods:{
+
+
+          /* 提交 */
+          submit(){
+            this.$refs.formData.validate((valid)=>{
+              var _this=this;
+              if(valid){
+                this.$axios.post(_this.addOperationUrl,_this.$commonFun.initPostData({
+                  id:_this.formData.id,
+                  manualName:_this.formData.manualName,
+                  attachment:this.formData.fileList[0].attachment,
+                  note:_this.formData.note
+                })).then((res)=>{
+                  console.log(2);
+                  if(res.data.code==1){
+                    this.$message.success('修改成功');
+                    this.editDiaLog=false;
+
+                    this.getOperationList();
+                    this.$router.push({name:'帮助管理',params:{activeName:'second'}});
+                  }else{
+                    this.$confirm(res.data.msg.msgTrim(), "提示",{
+                      confirmButtonText: "确定",
+                      cancelButtonText: "取消",
+                      showCancelButton: false,
+                      type: "error"
+                    });
+                  }
+                })
+              }else{
+                return;
+              }
+            })
+          },
+
+          editHelpFile(id) {
+            this.formData.fileList=[];
+            this.formData={};
+            this.editDiaLog=true;
+            this.$axios.get(this.getManualUrl,{
+              params:{id:id}
+            }).then((res)=>{
+              console.log(res.data);
+              if(res.data.code==1){
+
+                this.formData=res.data.data;
+                this.formData.fileList=[];
+                  var obj={};
+                  obj.name=res.data.data.manualName;
+                  obj.url=res.data.data.attachment;
+                  obj.attachment=res.data.data.attachment.split('/').pop();
+                  this.formData.fileList.push(obj);
+                  console.log("fileList")
+
+              }
+            })
+
+          },
+
+
+
+          /* 文件上传 */
+          fileUploadSuccess(res,file,filelist){
+            this.formData.fileList=[];
+            this.formData.manualName=file.name;
+            var obj={};
+            obj.name=file.name;
+            obj.url=file.url;
+            obj.attachment=file.response.data;
+            this.formData.fileList.push(obj);
+            this.$refs.formData.validateField('fileList');
+          },
+          fileUploadRemove(file,filelist){
+            this.formData.fileList=[];
+            this.formData.fileList=filelist;
+            this.$refs.formData.validateField('fileList');
+          },
+          fileBeforeUpload(file){
+            const isLt100M = file.size / 1024 / 1024 <= 100;
+            if (!isLt100M) {
+              this.$confirm('上传文件大小不能超过 100MB!', "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+            }
+            if(file.size==0){
+              this.$confirm('请勿上传大小为0kb的空文件', "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+              return false;
+            }
+            /* .com .bat .exe */
+            if((file.name.indexOf('.bat')!=-1||file.name.indexOf('.exe')!=-1||file.name.indexOf('.com'))!=-1){
+              console.log()
+              this.$confirm('请勿上传可执行文件', "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+              return false;
+            }
+            if(file.name.length>80){
+              this.$confirm('附件名称长度过长', "提示",{
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                showCancelButton: false,
+                type: "error"
+              });
+              return false;
+            }
+            return isLt100M;
+          }
+        ,
+
+
+
+
           /* 获取常见问题列表 */
           getCommonList(){
             this.$axios.get(this.commonListUrl,{

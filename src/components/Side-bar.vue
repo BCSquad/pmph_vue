@@ -115,6 +115,7 @@
         <el-menu-item index="/pointmanage/pointrule" v-if="isShowSide(9)||isShowSide(25)">积分规则管理</el-menu-item>
         <el-menu-item index="/pointmanage/userpoint" v-if="isShowSide(9)||isShowSide(26)">用户积分看板</el-menu-item>
         <el-menu-item index="/pointmanage/convertiblerule" v-if="isShowSide(9)||isShowSide(27)">积分兑换规则</el-menu-item>
+        <el-menu-item index="/pointmanage/pointActivity" v-if="isShowSide(9)||isShowSide(64)">积分兑换活动</el-menu-item>
       </el-submenu>
 
       <el-submenu index="/analysis" v-if="isShowSide(10)||isShowSide(28)||isShowSide(29)||isShowSide(30)||isShowSide(31)">
