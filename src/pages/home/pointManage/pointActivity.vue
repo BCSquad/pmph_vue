@@ -2,17 +2,12 @@
   <div class="point_rule" style="height:100%;">
 		<el-row>
             <div class="searchBox-wrapper">
-                <div class="searchName">积分规则名称:<span></span></div>
+                <div class="searchName">活动规则名称:<span></span></div>
                 <div class="searchInput">
                     <el-input v-model.trim="name" placeholder="请输入" @keyup.enter.native="search"></el-input>
                 </div>
             </div>
-            <div style="display: none;" class="searchBox-wrapper">
-                <div class="searchName">积分规则标识:<span></span></div>
-								<div class="searchInput">
-                	<el-input v-model.trim="tag" placeholder="请输入" @keyup.enter.native="search"></el-input>
-								</div>
-            </div>
+
             <div class="searchBox-wrapper searchBtn">
                 <el-button  type="primary"  icon="search" @click="search">搜索</el-button>
             </div>
@@ -55,7 +50,7 @@
                   <el-table-column  label="操作" >
 
                   <template scope="scope">
-                    <a @click="editActivity(scope.row)">修改</a>
+                    <el-button type="text" style="color:#337ab7;" @click="editActivity(scope.row)">修改</el-button>
 
                   </template>
                 </el-table-column>
@@ -337,8 +332,9 @@ export default {
           sessionId:this.$getUserData().sessionId,
           pageSize: this.pageSize,
           pageNumber: this.pageNumber,
-          ruleName: this.name,
-          ruleCode: this.tag
+          name: this.name,
+          ruleCode: this.tag,
+
         }
       }).then(response => {
         let res = response.data;
