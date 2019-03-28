@@ -32,8 +32,6 @@
           >
           </el-date-picker>
           <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search">搜索</el-button>
-          <el-button type="primary"  @click="syncBook()" :disabled="bookSyncVisible">{{bookSyncVisible?'正在同步中...':'图书全量同步'}}<i v-if="bookSyncVisible" class="fa fa-spinner fa-pulse loading"></i></el-button>
-
 
           <el-button  style="float: right" type="danger" @click="batchDel">批量删除</el-button>
           <el-button  style="float: right" type="primary" @click="batchConfirm">批量导入</el-button>
@@ -738,5 +736,15 @@
     float: left;
     margin-left: 50%;
     transform: translateX(-50%);
+  }
+
+  .shade{
+    position: absolute;
+    z-index:10000;
+    background: rgba(0,0,0,.5);
+    width: 100%;
+    height:100%;
+    top:0;
+    left:0;
   }
 </style>
