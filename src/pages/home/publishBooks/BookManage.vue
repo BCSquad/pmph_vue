@@ -401,7 +401,7 @@
         <!-- <el-button @click="recommendDialogVisible = false">取 消</el-button>-->
         <el-button  @click="sellWellSearch"  type="primary" icon="search" >搜索</el-button>
       </div>
-      <el-table :data="sellWellData" border  >
+      <el-table :data="bookManageData" border  >
         <el-table-column property="bookname" label="书籍名称" width="150" align="center"></el-table-column>
         <el-table-column property="isbn" label="ISBN" width="150" align="center"></el-table-column>
         <el-table-column property="sales" label="销量" width="100" align="center"></el-table-column>
@@ -414,7 +414,7 @@
       <!--分页-->
       <div class="pagination-wrapper" style="padding-top:10px;padding-bottom:10px;margin-top: 15px">
         <el-pagination
-          v-if="sellWellTotalNum "
+          v-if="bookManageTotalNum "
           :page-sizes="[10,20,30,40]"
           :page-size="manageSearchForm.bookManagePageSize"
           :current-page.sync="manageSearchForm.bookManagePageNumber"
@@ -429,7 +429,7 @@
 
       </div>
       <div class="divf" style="width: 50%;margin-left: 50px;margin-top: 55px;margin-bottom: 25px" >
-        <div class="searchBox-wrapper" style="display:inline-block;">
+        <div v-show="activeName=='first'" class="searchBox-wrapper" style="display:inline-block;">
           <div class="searchName">教材畅销榜：<span></span></div>
           <div class="searchInput" >
 
@@ -439,7 +439,7 @@
           <!-- <el-button @click="recommendDialogVisible = false">取 消</el-button>-->
           <el-button    type="primary" icon="save" @click="saveSellWell()" >保存</el-button>
         </div>
-        <el-table :data="sellWelljcList" border  >
+        <el-table v-show="activeName=='first'" :data="sellWelljcList" border  >
           <el-table-column property="bookname" label="书籍名称" width="150" align="center"></el-table-column>
           <el-table-column property="isbn" label="ISBN" width="150" align="center"></el-table-column>
           <el-table-column property="sales" label="销量" width="100" align="center"></el-table-column>
@@ -459,7 +459,7 @@
 
           </div>
         </div>
-        <el-table :data="sellWellksysList" border  >
+        <el-table v-show="activeName=='second'" :data="sellWellksysList" border  >
           <el-table-column property="bookname" label="书籍名称" width="150" align="center"></el-table-column>
           <el-table-column property="isbn" label="ISBN" width="150" align="center"></el-table-column>
           <el-table-column property="sales" label="销量" width="100" align="center"></el-table-column>
