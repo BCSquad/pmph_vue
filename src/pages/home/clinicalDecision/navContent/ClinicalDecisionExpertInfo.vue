@@ -471,7 +471,9 @@
           bankaddress:'',
           declare_name:'',
           expertise:'',
-          unit_advise_online:''
+          unit_advise_online:'',
+          unit_advise:'',
+          remark:''
         },
         btn_Pass:false,
         btn_notPass:false,
