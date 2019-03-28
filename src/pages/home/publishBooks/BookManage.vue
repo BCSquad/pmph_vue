@@ -97,7 +97,7 @@
         </div>
         <!--书名选择框-->
         <div class="searchBox-wrapper">
-          <div class="searchName">是否重磅推荐：<span></span></div>
+          <div class="searchName">是否重点推荐：<span></span></div>
           <div class="searchInput">
             <el-select v-model="searchForm.isPromote" placeholder="请选择" @change="search">
               <el-option
@@ -133,9 +133,9 @@
         </div>
       </div>
       <div class="operation-wrapper">
-        <el-button type="primary" @click="toBookManage(1)">图书畅销榜管理</el-button>
-        <el-button type="primary" style="display: none" @click="toBookManage(2)">新书推荐管理</el-button>
-        <el-button type="primary" style="margin-right: 50px;display: none" @click="toBookManage(3)">重点推荐管理</el-button>
+        <el-button type="primary"  @click="toBookManage(1)">图书畅销榜管理</el-button>
+        <el-button type="primary"  @click="toBookManage(2)">新书推荐管理</el-button>
+        <el-button type="primary" style="margin-right: 50px;" @click="toBookManage(3)">重点推荐管理</el-button>
         <el-tooltip class="item" effect="dark" content="请按照模板格式上传!" placement="top">
           <my-upload
             class="ChatInputFileBtn"
@@ -384,7 +384,6 @@
       fullscreen = "true"
       width="100%"
     >
-
       <span slot="title" class="el-dialog__title">{{dialogName}}</span>
 
       <div class="divf" style="width: 45%" >
@@ -514,6 +513,7 @@
           bookManagePageSize:10,
           bookManagePageNumber:1,
         },
+        flag:1,
 
         nameType:1,
         recommendSearchForm:{
@@ -551,7 +551,7 @@
           {value:3,
             label:'是否新书推荐'},
           {value:4,
-            label:'是否重磅推荐'},
+            label:'是否重点推荐'},
           {value:5,
             label:'是否上架'
           }],
@@ -623,25 +623,52 @@
 
 
       saveSellWell(){
+        var flag=this.flag;
         this.sellWelljcList.forEach((iterm,index)=>{
-          iterm.sortSellWell = index;
-          iterm.isSellWell=true;
+          switch (flag) {
+            case 1:
+              iterm.sortSellWell = index;
+              iterm.isSellWell=true;
+              break;
+            case 2:
+              iterm.sortNewBook=index;
+              iterm.isNewBook=true;
+              break;
+            case 3:
+              iterm.sortHighly=index;
+              iterm.isHighly=true;
+              break;
+          }
+
         });
         this.sellWellksysList.forEach((iterm,index)=>{
-          iterm.sortSellWell = index;
-          iterm.isSellWell=true;
+          switch (flag) {
+            case 1:
+              iterm.sortSellWell = index;
+              iterm.isSellWell=true;
+              break;
+            case 2:
+              iterm.sortNewBook=index;
+              iterm.isNewBook=true;
+              break;
+            case 3:
+              iterm.sortHighly=index;
+              iterm.isHighly=true;
+              break;
+          }
         });
         console.log(this.sellWelljcList);
         console.log(this.sellWellksysList);
         let list=this.sellWelljcList.concat(this.sellWellksysList);
-
+        var data =JSON.stringify(list);
         console.log(list);
 
-
-        this.$axios.post('/pmpheep/books/updataBookByManage',list).then(response => {
+        this.$axios.post('/pmpheep/books/updataBookByManage?type='+flag,{params:data}).then(response => {
           let res = response.data;
           if (res.code == '1') {
-
+            this.$message.success('保存成功');
+            this.activeName='first';
+            this.sellWellDialogVisible=false;
           } else{
             this.$confirm('保存失败,稍后再试!', "提示",{
               confirmButtonText: "确定",
@@ -686,6 +713,7 @@
       },
 
 		  rmbyId(index,row,type){
+        var flag=this.flag;
         if(type==1) {
           this.sellWelljcList.splice(index,1)
 
@@ -693,7 +721,8 @@
           this.sellWellksysList.splice(index,1)
         }
         this.$axios.get('/pmpheep/books/delSellWellById',{params:{
-            id:row.id
+            id:row.id,
+            flag:flag
           }})
           .then(response=>{
             var res = response.data;
@@ -711,10 +740,10 @@
           if(this.sellWellksysList.find((n) => n.id == row.id)){
             this.$message.error('请不要重复添加');
           }else{
-            if(this.sellWellksysList.length<6){
+            if(this.sellWellksysList.length<10){
               this.sellWellksysList.push(row)
             }else{
-              this.$message.error('热销榜最多只能添加6本图书');
+              this.$message.error('最多只能添加10本图书');
             }
 
           }
@@ -722,10 +751,10 @@
           if(this.sellWelljcList.find((n) => n.id == row.id)){
             this.$message.error('请不要重复添加');
           }else{
-            if(this.sellWelljcList.length<6){
+            if(this.sellWelljcList.length<10){
               this.sellWelljcList.push(row)
             }else{
-              this.$message.error('热销榜最多只能添加6本图书');
+              this.$message.error('最多只能添加10本图书');
             }
           }
 
@@ -736,23 +765,31 @@
         this.getSellWellTableDate();
       },
       toBookManage(type){
+        this.flag=type;
         switch (type) {
           case 1:
             this.dialogName="热销列表";
             this.getSellWellList(1,1);
             this.getSellWellList(2,1);
 
+
                 break;
           case 2:
             this.dialogName="新书推荐列表";
+            this.getSellWellList(1,2);
+            this.getSellWellList(2,2);
+
             break;
           case 3:
             this.dialogName="重点推荐";
+            this.getSellWellList(1,3);
+            this.getSellWellList(2,3);
+
             break;
 
         }
         this.sellWellDialogVisible=true;
-        this.getSellWellTableDate();
+        this.getSellWellTableDate(type);
 
 
 
@@ -804,13 +841,14 @@
         this.manageSearchForm.bookManagePageNumber=1;
         this.getSellWellTableDate();
       },
-      getSellWellTableDate(){
+      getSellWellTableDate(flag){
         let _this=this;
         this.$axios.get('/pmpheep/books/getBookListByManage',{params:{
             name:this.manageSearchForm.name,
             pageSize:this. manageSearchForm.bookManagePageSize,
             pageNumber:this. manageSearchForm.bookManagePageNumber,
-            type:this.nameType
+            type:this.nameType,
+            flag:flag
           }})
           .then(response=>{
             var res = response.data;

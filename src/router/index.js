@@ -126,6 +126,7 @@ const Check = () => import('../pages/home/bookError/check');
 import PointRouter from '../pages/home/pointManage/pointRouter';
 
 const PointRule = () => import('../pages/home/pointManage/pointRule');
+const pointActivity = () => import('../pages/home/pointManage/pointActivity');
 const UserPoint = () => import('../pages/home/pointManage/userPoint');
 const ConvertibleRule = () => import('../pages/home/pointManage/convertibleRule');
 
@@ -349,7 +350,10 @@ export default new Router({
           children: [
             {path: 'pointrule', name: '积分管理', component: PointRule, meta: {authorityId: 25}},
             {path: 'userpoint', name: '用户积分', component: UserPoint, meta: {authorityId: 26}},
-            {path: 'convertiblerule', name: '兑换规则', component: ConvertibleRule, meta: {authorityId: 27}}
+            {path: 'convertiblerule', name: '兑换规则', component: ConvertibleRule, meta: {authorityId: 27}},
+            {path: 'pointActivity', name: '积分兑换活动', component: pointActivity, meta: {authorityId: 64}}
+
+
           ]
         },
         {
