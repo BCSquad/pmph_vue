@@ -727,7 +727,7 @@
           .then(response=>{
             var res = response.data;
             if(res.code==1){
-              his.$message.success('删除成功');
+              this.$message.success('删除成功');
             }
           }).catch(e=>{
           console.log(e);
