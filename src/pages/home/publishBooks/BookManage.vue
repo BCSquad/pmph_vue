@@ -383,6 +383,7 @@
       :visible.sync="sellWellDialogVisible"
       fullscreen = "true"
       width="100%"
+      @close="clearForm"
     >
       <span slot="title" class="el-dialog__title">{{dialogName}}</span>
 
@@ -430,8 +431,8 @@
       </div>
       <div class="divf" style="width: 50%;margin-left: 50px;margin-top: 55px;margin-bottom: 25px" >
         <div v-show="activeName=='first'" class="searchBox-wrapper" style="display:inline-block;">
-          <div class="searchName">教材畅销榜：<span></span></div>
-          <div class="searchInput" >
+          <div class="titleName">{{materialName}}：<span></span></div>
+          <div class="searchInput"  >
 
           </div>
         </div>
@@ -454,7 +455,7 @@
           </el-table-column>
         </el-table>
         <div v-show="activeName=='second'" class="searchBox-wrapper" style="display:inline-block;">
-          <div class="searchName">考试用书<span></span></div>
+          <div class="titleName">{{examinationName}}:<span></span></div>
           <div class="searchInput" >
 
           </div>
@@ -493,6 +494,8 @@
 			return {
         activeName:'first',
         dialogName:"",
+        materialName:'',
+        examinationName:'',
         api_upload: '/pmpheep/books/bookExcel',
 			  form:{
 			    bookId:'',
@@ -597,6 +600,16 @@
       }
 		},
     methods:{
+
+      clearForm(){
+        this.manageSearchForm={
+            name:'',
+            bookManagePageSize:10,
+            bookManagePageNumber:1,
+        };
+
+      },
+
       getSellWellList(type,flag){
         let _this=this;
         this.$axios.get('/pmpheep/books/getManageList',{params:{
@@ -769,6 +782,8 @@
         switch (type) {
           case 1:
             this.dialogName="热销列表";
+            this.materialName="教材热销榜";
+            this.examinationName="考试用书热销榜";
             this.getSellWellList(1,1);
             this.getSellWellList(2,1);
 
@@ -776,12 +791,16 @@
                 break;
           case 2:
             this.dialogName="新书推荐列表";
+            this.materialName="教材新书推荐榜";
+            this.examinationName="考试用书新书推荐榜";
             this.getSellWellList(1,2);
             this.getSellWellList(2,2);
 
             break;
           case 3:
-            this.dialogName="重点推荐";
+            this.dialogName="重点推荐列表";
+            this.materialName="教材重点推荐榜";
+            this.examinationName="考试用书重点推荐榜";
             this.getSellWellList(1,3);
             this.getSellWellList(2,3);
 
@@ -1430,5 +1449,14 @@
   }
   .divf{
     float: left;
+  }
+   .titleName {
+    float: left;
+    display: inline-block;
+    line-height: 36px;
+
+    height: 36px;
+    text-align: justify;
+    vertical-align: middle;
   }
 </style>
