@@ -78,7 +78,7 @@
                           @blur="nameChange(scope.row)"
                           @change="nameChange(scope.row)"
                         ></el-input>
-                        <span class="error fontsize-sm table-input-tips" v-if="!scope.row.nameIsOk">请输入1~100个字符</span>
+                        <span class="error fontsize-sm table-input-tips" v-if="!scope.row.nameIsOk">请输入1~200个字符</span>
                       </div>
                     </template>
                   </el-table-column>
@@ -281,7 +281,7 @@ export default {
             temp=false;
           }
         }
-        if(row.textbookName.length>100){
+        if(row.textbookName.length>200){
           temp=false;
         }
         row.nameIsOk = temp;
@@ -334,7 +334,7 @@ export default {
               iterm.sortIsOk=false;
               flag = false;
             }
-            if(!iterm.textbookName||iterm.textbookName.length>100){
+            if(!iterm.textbookName||iterm.textbookName.length>200){
               iterm.nameIsOk=false;
               flag = false;
             }
