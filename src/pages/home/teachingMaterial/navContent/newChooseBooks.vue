@@ -721,7 +721,7 @@ export default {
         ],
         extensionName:[
           {required: true, message: "请填写名称", trigger: "blur" },
-          {min:1,max:100,message:'不能超过100个字符',trigger:'change,blur'}
+          {min:1,max:200,message:'不能超过200个字符',trigger:'change,blur'}
         ],
         noticeFiles:[
           {type:'array',required: false, message: "请至少上传一张图片", trigger: "blur" },
