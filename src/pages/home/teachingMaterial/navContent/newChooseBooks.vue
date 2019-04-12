@@ -245,7 +245,7 @@
               </el-col>
             </el-form-item>
 
-            <el-form-item label="申报通知扫描图片及通知主要内容：" prop="notice">
+            <el-form-item label="申报通知扫描图片及通知主要内容：" prop="notice" :rules="rules">
               <!--<el-col :span="24">
                 <el-input
                   type="textarea"
