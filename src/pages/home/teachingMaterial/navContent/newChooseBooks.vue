@@ -729,10 +729,6 @@ export default {
         noteFiles:[
           {type:'array',required: true, message: "请至少上传一个文件", trigger: "blur" },
         ],
-        notice:[
-          {required: true, message: "请填写主要内容", trigger: "blur" },
-          {min:1,max:2000,message:'内容不能超过2000个字符',trigger:'blur'}
-          ],
         note:[
           {min:1,max:2000,message:'备注不能超过2000个字符',trigger:'blur'}
           ]
@@ -749,8 +745,7 @@ export default {
          disabledDate(time) {
          //  return time.getTime() < Date.now() - 8.64e7;
         }
-      },
-    };
+      },    };
   },
   computed:{
    isCkeckNumEdiotr(){
@@ -762,14 +757,10 @@ export default {
   },
   watch:{
    isCkeckNumEdiotr(val){
-     if(val){
-       this.listTableData[1].usecheck=val;
-     }
+
    },
    isCheckJob(val){
-     if(this.isCkeckNumEdiotr){
-       this.listTableData[1].usecheck=true;
-     }
+
    }
   },
   created() {
@@ -949,12 +940,12 @@ export default {
 
         }
       },
-      /* 选项checkbox改变 */
+    /*  /!* 选项checkbox改变 *!/
       optionChange(obj){
         if(!obj.usecheck){
           obj.needcheck=false;
         }
-      },
+      },*/
       download(url){
         this.$commonFun.downloadFile(url);
       },
@@ -1493,6 +1484,11 @@ export default {
         this.ruleForm.descriptionContent["content"] = this.$refs.editor.getContent();*/
         this.material.note = this.$refs.editorNote.getContent();
         this.material.notice = this.$refs.editor.getContent();
+
+        if(this.$refs.editor.getContent().length>2000){
+          this.$message.error("输入的主要通知内容过长");
+          return
+        }
         this.optionMerge()  //选项合并
         this.mergeForms();   //表单合并
 
