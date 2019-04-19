@@ -440,7 +440,7 @@
         api_info:'/pmpheep/expertation/get',
         api_online_check:'/pmpheep/expertation/onlineProgress',
         materialLevel:['无','国家','省部','协编','校本','其他','教育部规划','卫计委规划','区域规划','创新教材'],
-        degree:['专科','本科','硕士','博士后','博士'],
+        degree:['无','专科','本科','硕士','博士'],
         positionList:['无','主编','副主编','编委'],
         rankList:['无','国际','国家','省部','市级'],
         rankList2:['无','国家','省部','市级'],

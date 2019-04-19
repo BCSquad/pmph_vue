@@ -271,13 +271,13 @@
         detailData:[],
         activeName: 'first',
         treeDataUrl: "/pmpheep/materialType/tree", //获取教材分类树url
-        bookSyncListUrl: '/pmpheep/aiptest/getList',  //视频列表url
-        confirmUrl: '/pmpheep/aiptest/confirmBook', //  审核视频url
-        detailUrl: '/pmpheep/aiptest/showDetail',
-        batchdelUrl:'/pmpheep/aiptest/batchdel',
-        batchConfirmUrl:'/pmpheep/aiptest/batchConfirm',
-        delectUrl: '/pmpheep/aiptest/delectBookSyncConfirm', //  审核视频url
-        revokeUrl: '/pmpheep/aiptest/revokeBookSyncComfirm', //  审核视频url
+        bookSyncListUrl: '/pmpheep/aip/getList',  //视频列表url
+        confirmUrl: '/pmpheep/aip/confirmBook', //  审核视频url
+        detailUrl: '/pmpheep/aip/showDetail',
+        batchdelUrl:'/pmpheep/aip/batchdel',
+        batchConfirmUrl:'/pmpheep/aip/batchConfirm',
+        delectUrl: '/pmpheep/aip/delectBookSyncConfirm', //  审核视频url
+        revokeUrl: '/pmpheep/aip/revokeBookSyncComfirm', //  审核视频url
         tableData: [],
         bookListData: [],
         progresspoint: 0,
@@ -345,7 +345,7 @@
         if (this.progresspoint == 100) {
           return;
         }
-        this.$axios.get('/pmpheep/aiptest/getSpeed')
+        this.$axios.get('/pmpheep/aip/getSpeed')
           .then(response => {
             let res = response.data;
             if (res.code == 1) {
@@ -363,7 +363,7 @@
       syncBook() {
         this.bookSyncVisible = true;
         this.continueSync(this.progresspoint);
-        this.$axios.get('/pmpheep/aiptest/syncFullBooks').then(response => {
+        this.$axios.get('/pmpheep/aip/syncFullBooks').then(response => {
           let res = response.data;
           if (res.code == 1) {
 

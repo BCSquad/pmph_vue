@@ -30,7 +30,6 @@
               <el-input
                 v-if="type!='detail'"
                 type="textarea"
-                :disabled="type=='detail'"
                 :autosize="{ minRows: 4, maxRows: 8}"
                 placeholder="请输入内容"
                 v-model="ruleForm.authorReply">

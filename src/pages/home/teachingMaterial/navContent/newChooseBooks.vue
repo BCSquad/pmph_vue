@@ -730,11 +730,11 @@ export default {
           {type:'array',required: true, message: "请至少上传一个文件", trigger: "blur" },
         ],
         notice:[
-          {required: true, message: "请填写主要内容", trigger: "blur" },
-          {min:1,max:2000,message:'内容不能超过2000个字符',trigger:'blur'}
+          {required: true, message: "请填写主要内容", trigger: "change,blur" },
+          {min:1,max:2000,message:'内容不能超过2000个字符',trigger:'change,blur'}
           ],
         note:[
-          {min:1,max:2000,message:'备注不能超过2000个字符',trigger:'blur'}
+          {min:1,max:2000,message:'备注不能超过2000个字符',trigger:'change,blur'}
           ]
 
       },
