@@ -332,7 +332,7 @@
             </tr>
             <tr v-for="(iterm,index) in decProfessionAwardList">
               <td><div>{{iterm.title}}</div></td>
-              <td><div>{{rankList2[iterm.rank?iterm.rank:0]}}</div></td>
+              <td><div>{{iterm.rank}}</div></td>
               <td><div>{{iterm.note}}</div></td>
             </tr>
           </table>

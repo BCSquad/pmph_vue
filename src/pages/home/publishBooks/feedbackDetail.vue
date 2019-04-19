@@ -28,12 +28,22 @@
             </el-form-item>
             <el-form-item label="回复:" prop="authorReply">
               <el-input
+                v-if="type!='detail'"
                 type="textarea"
                 :disabled="type=='detail'"
                 :autosize="{ minRows: 4, maxRows: 8}"
                 placeholder="请输入内容"
                 v-model="ruleForm.authorReply">
               </el-input>
+
+
+
+              <div class="messageBox" v-if="type=='detail'">
+                <p>{{ruleForm.authorReply}}</p>
+              </div>
+
+
+
             </el-form-item>
             <el-form-item>
               <el-button icon="arrow-left" @click="back">返回</el-button>

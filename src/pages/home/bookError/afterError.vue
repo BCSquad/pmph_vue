@@ -58,7 +58,8 @@
                     </el-table-column>
 										<el-table-column prop="authorReply" label="主编回复"  align="center">
                     </el-table-column>
-										<el-table-column label="是否回复" width="95" align="center">
+                  <el-table-column prop="editorReply" label="策划编辑回复"  align="center">
+                  </el-table-column><el-table-column label="是否回复" width="95" align="center">
 											<template scope="scope">
 												{{scope.row.isEditorRepliedString}}
 											</template>

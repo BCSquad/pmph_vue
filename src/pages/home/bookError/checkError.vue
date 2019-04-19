@@ -49,6 +49,8 @@
                     </el-table-column>
                     <el-table-column prop="authorReply" label="主编回复"  align="center">
                     </el-table-column>
+                  <el-table-column prop="authorReply" label="策划编辑回复"  align="center">
+                  </el-table-column>
                     <!--<el-table-column prop="result" label="核查结果" width="95" align="center">
 											<template scope="scope">
 												<p v-if="scope.row.isEditorReplied">{{scope.row.result == true?'图书勘误':scope.row.result == false?'内容无误':'-'}}</p>
