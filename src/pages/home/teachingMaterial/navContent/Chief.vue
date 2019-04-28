@@ -263,14 +263,14 @@
                 iterm.onlineProgress = onlineProgress[iterm.onlineProgress];
                 iterm.offlineProgress = offlineProgress[iterm.offlineProgress];
 
-                iterm.isZhubian = (iterm.chosenPosition%8)==4;
+                iterm.isZhubian = iterm.chosenPosition==1;
                 iterm.zhubianSort = iterm.isZhubian?iterm.rank:'';
                 iterm.zhubianSortIsOk = true;
-                iterm.isFuzhubian = (iterm.chosenPosition%8)==2;
+                iterm.isFuzhubian = iterm.chosenPosition==2;
                 iterm.fuzhubianSort = iterm.isFuzhubian?iterm.rank:'';
                 iterm.fuzhubianSortIsOk = true;
-                iterm.isBianwei = (iterm.chosenPosition%8)==1;
-                iterm.isDigitalEditor = iterm.chosenPosition>=8;
+                iterm.isBianwei = iterm.chosenPosition>=3;
+
 
 
                 iterm.disabled_zb = this.type=='bw'||iterm.isBianwei;
@@ -324,6 +324,7 @@
        * @param row 数据
        */
       checkboxChange(type,row) {
+        console.log(row);
         this.hasChanged=true;
         let name = row.realname;
         let self = this;
@@ -426,8 +427,9 @@
         })
           .then(()=>{
             let jsonDecPosition = [];
+            console.log(this.tableData);
             for(let i = 0, len = this.tableData.length; i < len; i++){
-              this.tableData[i].chosenPosition = (this.tableData[i].isDigitalEditor?8:0)+(this.tableData[i].isZhubian?4:0)+(this.tableData[i].isFuzhubian?2:0)+(this.tableData[i].isBianwei?1:0);
+              this.tableData[i].chosenPosition = (this.tableData[i].isDigitalEditor?8:0)+(this.tableData[i].isZhubian?1:0)+(this.tableData[i].isFuzhubian?2:0)+(this.tableData[i].isBianwei?3:0);
               let tempObj = {
                 id:this.tableData[i].id,
                 textbookId:this.searchParams.textbookId,
@@ -436,7 +438,7 @@
                 presetPosition:this.tableData[i].presetPosition,
                 syllabusId:this.tableData[i].syllabusId,
                 syllabusName:this.tableData[i].syllabusName,
-                rank:(this.tableData[i].chosenPosition%8)==4?this.tableData[i].zhubianSort:((this.tableData[i].chosenPosition%8)==2?this.tableData[i].fuzhubianSort:'')
+                rank:this.tableData[i].chosenPosition==1?this.tableData[i].zhubianSort:(this.tableData[i].chosenPosition==2?this.tableData[i].fuzhubianSort:'')
               };
               if(this.tableData[i].isZhubian||this.tableData[i].isFuzhubian||this.tableData[i].isBianwei||this.tableData[i].isDigitalEditor){
                 jsonDecPosition.push(tempObj);
