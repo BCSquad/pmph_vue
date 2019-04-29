@@ -407,6 +407,8 @@
               _this.$message.success("批量导入成功");
               this.getList(1);
 
+            }else{
+              _this.$message.error(res.msg);
             }
           })
           .catch(error => {
