@@ -92,7 +92,7 @@ export default {
             message: "请输入回复内容",
             trigger: "blur"
           },
-          { min: 1, max: 500, message: "不能超过500个字符", trigger: "change,blur" }
+          { min: 1, max: 1000, message: "不能超过1000个字符", trigger: "change,blur" }
         ],
         editorReply: [
           {
@@ -101,7 +101,7 @@ export default {
             message: "请输入回复内容",
             trigger: "blur"
           },
-          { min: 1, max: 500, message: "不能超过500个字符", trigger: "change,blur" }
+          { min: 1, max: 1000, message: "不能超过1000个字符", trigger: "change,blur" }
         ],
         result: [
           { type: "boolean", required: true, message: "检查结果", trigger: "blur" }
