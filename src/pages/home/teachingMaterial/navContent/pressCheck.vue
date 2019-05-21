@@ -34,7 +34,14 @@
         <div class="searchBox-wrapper">
           <div class="searchName">职称：<span></span></div>
           <div class="searchInput">
-            <el-input placeholder="请输入" class="searchInputEle" v-model.trim="searchParams.title" @keyup.enter.native="handleSearchCLick"></el-input>
+            <el-select v-model="searchParams.title" placeholder="请选择" @change="handleSearchCLick">
+              <el-option
+                v-for="item in titleValue"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </div>
         </div>
         <!--工作单位搜索-->
@@ -372,6 +379,7 @@
         api_confirm_paper:'/pmpheep/declaration/list/declaration/confirmPaperList',
         api_declaration_list:'/pmpheep/declaration/list/declaration',
         api_book_list:'/pmpheep/textBook/list',
+        api_getAllTitle:"/pmpheep/dataDictionary/getListByCode",
         api_export_excel:'/pmpheep/excel/declaration',
         api_export_word_getid:'/pmpheep/word/identification',
         api_export_word_start:'/pmpheep/word/declaration',
@@ -438,6 +446,10 @@
           value:3,
           label:'编委'
         }],
+        titleValue:[
+          { value: '',
+           label: '全部'}
+        ],
         booksChooseOptions: [],
         onlineProgressList:[{
           value: '',
@@ -520,6 +532,33 @@
      }
     },
     methods:{
+
+      getAllTile(){
+        this.$axios.get(this.api_getAllTitle,{params:{
+            code:'writer_user_title'
+          }})
+          .then(response=>{
+            var res = response.data;
+            if(res.code==1){
+
+
+              res.data.forEach(iterm=>{
+                let item={
+                  value:iterm.code,
+                  label:iterm.name
+                };
+                this.titleValue.push(item);
+                console.log(iterm);
+
+              })
+
+            }
+          })
+          .catch(e=>{
+            console.log(e);
+          })
+      },
+
       hasback(row){
         if(row.onlineProgress=='2'||row.onlineProgress=='4'||row.onlineProgress=='5'){
           return true;
@@ -863,6 +902,7 @@
       }
       this.getTableData();
       this.getBookList();
+      this.getAllTile();
 
       if(window._hmt){
         _hmt.push(['_trackPageview', '/material-application/pressCheck']);
