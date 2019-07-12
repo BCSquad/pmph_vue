@@ -1,4 +1,3 @@
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <template>
   <div class="index">
     <div class="paddingB10 border-dashed-B">
