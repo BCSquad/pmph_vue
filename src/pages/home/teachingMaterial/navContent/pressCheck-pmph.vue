@@ -299,7 +299,7 @@
       </el-dialog>
 
       <el-dialog
-        title="下载word"
+        title="下载Word"
         :visible.sync="downloadWordDialog"
         size="tiny"
       >
@@ -308,7 +308,7 @@
             <el-progress type="circle" :percentage="100" status="success"></el-progress>
           </div>
           <div class="paddingT10">
-            <el-button type="text" class="link" @click="downloadWord">点击此链接下载word</el-button>
+            <el-button type="text" class="link" @click="downloadWord">点击此链接下载Word</el-button>
             <el-button type="text" @click="copyDownloadUrl">
               <i class="fa fa-copy"></i>
             </el-button>

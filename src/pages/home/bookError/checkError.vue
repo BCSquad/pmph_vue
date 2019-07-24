@@ -27,7 +27,7 @@
                 :api_export_word_progress = "'/pmpheep/word/progress'"
                 :params = "{bookname :title,isEditorReplied:result}"
               >
-                导出word
+                导出Word
               </wordExport>
             </div>
         </el-row>

@@ -552,11 +552,11 @@ export default {
       });
     },
     /* 选项checkbox改变 */
-    optionChange(obj){
+   /* optionChange(obj){
       if(!obj.usecheck){
         obj.needcheck=false;
       }
-    },
+    },*/
     download(url){
       console.log("url"+url);
       this.$commonFun.downloadFile(url);

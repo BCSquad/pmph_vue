@@ -60,6 +60,10 @@ import UserRouter from '../pages/home/userManage/userRouter'
 const pmphUser = () => import('../pages/home/userManage/pmphUser')
 const writerUser = () => import('../pages/home/userManage/writerUser')
 const orgUser = () => import('../pages/home/userManage/orgUser')
+const expertRepository = () => import('../pages/home/userManage/expertRepository')
+const expertDeclarationList = () => import('../pages/home/userManage/expertDeclarationList')
+const expertInfo2 = () => import('../pages/home/userManage/expertInfo')
+
 /* 系统消息 */
 import MessageRouter from 'pages/home/systemMessage/MessageRouter'
 
@@ -361,6 +365,10 @@ export default new Router({
             {path: 'pmph', name: '社内用户', component: pmphUser, meta: {authorityId: 32}},
             {path: 'writer', name: '个人用户', component: writerUser, meta: {authorityId: 33}},
             {path: 'org', name: '学校 / 医院用户', component: orgUser, meta: {authorityId: 34}},
+            {path: 'expertRepository', name: '专家档案库', component: expertRepository, meta: {authorityId: 60}},
+            {path: 'expertDeclarationList', name: '专家申报表列表', component: expertDeclarationList, meta: {authorityId: 61}},
+            {path: 'expertInfo2', name: '专家申报表', component: expertInfo2, meta: {authorityId: 62}},
+
           ]
         },
         {

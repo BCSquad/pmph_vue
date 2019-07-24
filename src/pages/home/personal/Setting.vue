@@ -118,7 +118,12 @@
           callback(new Error('请输入密码'));
         } else {
           if (this.formPassword.newPass !== '') {
-            this.$refs.formPassword.validateField('checkPass');
+            if(!/^(?![a-zA-Z]+$)(?![A-Z0-9]+$)(?![A-Z\W_]+$)(?![a-z0-9]+$)(?![a-z\W_]+$)(?![0-9\W_]+$)[a-zA-Z0-9\W_]{8,16}$/.test(this.formPassword.newPass))
+            {
+              callback(new Error('密码必须由 8-16位大写字母，小写字母，数字，字符至少三种组成'));
+            }else{
+              this.$refs.formPassword.validateField('checkPass');
+            }
           }
           callback();
         }

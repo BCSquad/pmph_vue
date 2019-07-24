@@ -1,6 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-
+import 'babel-polyfill';
 import Vue from 'vue'
 import App from './App'
 import router from './router'
@@ -80,7 +80,7 @@ router.beforeEach((to, from, next) => {
       if(config.IS_DEBUG){
         next('/login')
       }else{
-        window.location.href='http://sso.pmph.com/sso/logon/password.jsp'
+        window.location.href='https://sso.pmph.com/logon/password.jsp'
       }
     }
     else if (commonFun.authorityComparison(to.matched, getUserData().permissionIds)) {  //判断当前登录角色是否有即将进入的路由权限
@@ -149,7 +149,7 @@ axios.interceptors.response.use(function (response) {
     if(config.IS_DEBUG){
       router.push({name:'登录',query:{f:currentLocation}});
     }else{
-      window.location.href='http://sso.pmph.com/sso/logon/password.jsp'
+      window.location.href='http://sso.pmph.com/logon/password.jsp'
     }
   }
   if(!commonFun.Empty(loadingInstance2)){

@@ -48,7 +48,7 @@
       </span>
 
       <span class="pull-right" style="padding-top: 10px;">
-           <el-button type="primary" :disabled="uploadLoading"  :loading="uploadLoading" >导出excel</el-button>
+           <el-button type="primary" :disabled="uploadLoading"  :loading="uploadLoading" >导出Excel</el-button>
       </span>
 
     </p>

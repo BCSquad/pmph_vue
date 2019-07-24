@@ -71,8 +71,10 @@
           <template scope="scope">
             <el-button type="text" v-if="!scope.row.isStick" @click="setState(scope.row.id,'isStick')">置顶</el-button>
             <el-button type="text" v-else @click="setState(scope.row.id,'cancel')">取消置顶</el-button>
-            <el-button type="text" :disabled="scope.row.isAuth!=0" @click="audit(scope.row.id,1)">通过</el-button>
-            <el-button type="text" :disabled="scope.row.isAuth!=0" @click="auditReason(scope.row.id,2,scope.row.writerId,scope.row.bookname,scope.row.content)">不通过</el-button>
+            <el-button type="text" v-if="scope.row.isAuth==0" @click="authReply(scope.row.id,1,scope.row.writerId,scope.row.bookname,scope.row.content)">通过</el-button>
+            <el-button type="text" v-if="scope.row.isAuth==0" @click="auditReason(scope.row.id,2,scope.row.writerId,scope.row.bookname,scope.row.content)">不通过</el-button>
+            <el-button type="text" v-if="scope.row.isAuth==1&scope.row.front==false" @click="setFront(scope.row.id,1)">前台展示</el-button>
+            <el-button type="text" v-if="scope.row.isAuth==1&scope.row.front==true" @click="setFront(scope.row.id,0)">取消前台展示</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -97,6 +99,28 @@
                 <el-button @click="authDialogVisible = false">关闭</el-button>
             </span>
     </el-dialog>
+    <el-dialog
+      title="审核回复"
+      :visible.sync="replyDialogVisible"
+      size="tiny"
+      width="150px">
+      <el-form>
+        <el-form-item label="评论内容：">
+          <el-input  type="textarea"  :rows="2" readonly="true"
+                     placeholder="请输入回复内容" v-model.trim="reply.content"></el-input>
+        </el-form-item>
+
+        <el-form-item label="输入回复：">
+          <el-input v-model.trim="reply.id" style="display: none"></el-input>
+          <el-input  type="textarea"  :rows="2"
+                     placeholder="请输入回复内容" v-model.trim="reply.reply"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="audit('',1)">保 存</el-button>
+                <el-button @click="replyDialogVisible = false">关闭</el-button>
+            </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -106,15 +130,51 @@
     data() {
       return {
         authDialogVisible:false,
+        replyDialogVisible:false,
         reason:{
           reason:'',
           id:'',
           num:'',
           writerId:'',
+        },
+        reply:{
+          reply:'',
+          id:'',
+          num:'',
+          writerId:'',
+          content:'',
         }
       }
     },
     methods: {
+      setFront(id,flag){
+        let url = '/pmpheep/bookusercomment/updateFront';
+        this.$axios.put(url, this.$commonFun.initPostData({
+          ids:id,
+          front:flag
+        })) .then(response => {
+          var res = response.data;
+          if (res.code == 1) {
+            this.$emit('stateChange');
+          } else {
+            this.$confirm('操作失败请重试！', "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              showCancelButton: false,
+              type: "error"
+            });
+          }
+
+        })
+      },
+      authReply(id, num,writerId,bookname,content){
+        this.replyDialogVisible=true;
+        this.reply.id=id;
+        this.reply.num=num;
+        this.reply.writerId=writerId;
+        this.reply.bookname=bookname;
+        this.reply.content=content;
+      },
       showCommentDetail(row) {
         this.$emit('show-comment-detail', row)
       },
@@ -219,6 +279,10 @@
       }
       ,
       audit(id, num) {
+        if(id==''){
+          id=this.reply.id;
+        }
+
         var str = '';
         if (num == 1) {
           str = '通过';
@@ -234,14 +298,21 @@
             let url = '/pmpheep/bookusercomment/update';
             this.$axios.put(url,this.$commonFun.initPostData({
               ids:id,
+              reply:this.reply.reply,
               sessionId:this.$getUserData().sessionId,
-              isAuth:num
+              isAuth:num,
+              writerId:this.reply.writerId,
+              bookname:this.reply.bookname,
+              content:this.reply.content
             }))
               .then(response=>{
                 var res = response.data;
                 if(res.code==1){
                   this.$message.success('提交成功');
                   this.$emit('audit');
+                  this.replyDialogVisible=false;
+                  this.reply.reply="";
+
                 }else{
                   this.$confirm(res.msg.msgTrim(), "提示",{
                     confirmButtonText: "确定",

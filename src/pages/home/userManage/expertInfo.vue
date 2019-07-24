@@ -4,22 +4,15 @@
 
       <!--操作按钮-->
       <div class="paddingB10 text-right print-none">
-        <el-button type="primary" @click="showSendMsg=true">发送私信</el-button>
+        <el-button type="primary" @click="openExpertDeclarationList()">上一步</el-button>
+
+        <!--<el-button type="primary" @click="showSendMsg=true">发送私信</el-button>-->
         <!--<el-button type="primary" @click="confirmPaperList" :disabled="expertInfoData.offlineProgress!=0">-->
           <!--{{expertInfoData.offlineProgress==0?'确认收到纸质表':(expertInfoData.offlineProgress==1)?'纸质表已被退回':'已确认收到纸质表'}}-->
         <!--</el-button>expertInfoData.orgId!=0 &&expertInfoData.onlineProgress===1-->
-        <el-button type="primary" :disabled="!onlineProgressBtn_Back" @click="setOnlineCheckPassType(5)" v-if="!(materialInfo.isForceEnd||materialInfo.isAllTextbookPublished)">
-          退回给个人
-        </el-button>
-        <!--||expertInfoData.orgId===0||(expertInfoData.orgId!=0&&expertInfoData.onlineProgress===1)-->
-        <el-button type="primary" :disabled="!onlineProgressBtn_Back||expertInfoData.orgId===0||(expertInfoData.orgId!=0&&expertInfoData.onlineProgress===1)" @click="setOnlineCheckPassType(4)" v-if="(expertInfoData.orgId!=0)&&!(materialInfo.isForceEnd||materialInfo.isAllTextbookPublished)">
-          退回给学校
-        </el-button>
-        <el-button type="primary" :disabled="onlineProgressBtn_Pass" v-if="expertInfoData.orgId===0&&!(materialInfo.isForceEnd||materialInfo.isAllTextbookPublished)" @click="onlineCheckPass(3)">
-          {{'通过'}}
-        </el-button>
-        <el-button type="primary" @click="print">打印</el-button>
-        <el-button type="primary" @click="login">登录</el-button>
+
+       <!-- <el-button type="primary" @click="print">打印</el-button>
+        <el-button type="primary" @click="login">登录</el-button>-->
       </div>
 
       <!--图书选择-->
@@ -74,8 +67,7 @@
                     <span class="link" :title="iterm.syllabusName" v-if="iterm.syllabusName&&!iterm.fileUploading">{{iterm.syllabusName}}</span>
                   </div>
                 </div>
-                <el-button class="print-none" type="danger" size="small" icon="delete" @click="deleteNew(index,false)" v-if="(hasBookListChanged)||!(materialInfo.isForceEnd||materialInfo.isAllTextbookPublished)">删除</el-button>
-              </div>
+                </div>
               <div v-else>
                 <div class="info-iterm-text">
                   <div>图书：<span></span></div>
@@ -92,8 +84,7 @@
                     <span v-else>（无）</span>
                   </div>
                 </div>
-                <el-button class="print-none" type="danger" size="small" icon="delete" @click="deleteNew(index,true,iterm)" v-if="!(materialInfo.isForceEnd||materialInfo.isAllTextbookPublished)">删除</el-button>
-              </div>
+                 </div>
             </div>
             <!--已有书籍-->
             <div v-else>
@@ -122,10 +113,9 @@
               </div>
             </div>
           </div>
-          <div class="expert_info-buttonWrapper print-none">
+          <!--<div class="expert_info-buttonWrapper print-none">
             <el-button type="primary" v-if="expertInfoData.isMultiBooks" @click="addNewBook">添加图书</el-button>
-            <el-button type="primary" @click="saveBook" v-if="((hasNewAddbook||hasBookListChanged)&&addBookList.length)&&!(materialInfo.isForceEnd||materialInfo.isAllTextbookPublished)">保存图书</el-button>
-          </div>
+            </div>-->
         </div>
       </div>
 
@@ -769,6 +759,7 @@
               addBookList:[],
               hasBookListChanged:false,
               showSendMsg:false,
+              userId:null,
               ruleForm2: {
                 inputMsg:'',
               },
@@ -1127,6 +1118,13 @@
           console.log('index',index);
           this.currentUploadFileBookIndex = index;
         },
+
+
+        openExpertDeclarationList(){
+
+          console.log(this.userId);
+          this.$router.push({name:'专家申报表列表',params:{userId:this.userId}});
+        },
         /**
          * 获取专家信息数据
          */
@@ -1459,8 +1457,16 @@
 
       },
       created(){
+        console.log( ":::::::")
+        console.log( this.$route.query.declarationId)
+        console.log( this.$route.query.userId)
+        console.log( this.$route.params.materialId)
+        console.log( this.$route.params.userId)
+        console.log( ":::::::")
         this.searchFormData.declarationId = this.$route.query.declarationId;
+        this.userId=this.$route.query.userId;
         this.searchFormData.materialId = this.$route.params.materialId;
+        this.userId=this.$route.params.userId;
         if(this.$route.query.pageNumber||this.$route.query.pageSize){
           this.fromPageSearchParamsData = this.$route.query;
         }

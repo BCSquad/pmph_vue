@@ -32,7 +32,7 @@
           >
           </el-date-picker>
           <el-button icon="search" type="primary" style="margin-bottom:10px;" @click="search(1)">搜索</el-button>
-          <el-button type="primary" style=""  @click="syncBook()" :disabled="bookSyncVisible">{{bookSyncVisible?'正在同步中...':'图书全量同步'}}<i v-if="bookSyncVisible" class="fa fa-spinner fa-pulse loading"></i></el-button>
+          <el-button type="primary" style="display: none"  @click="syncBook()" :disabled="bookSyncVisible">{{bookSyncVisible?'正在同步中...':'图书全量同步'}}<i v-if="bookSyncVisible" class="fa fa-spinner fa-pulse loading"></i></el-button>
 
 
           <el-button  style="float: right" type="danger" @click="batchDel">批量删除</el-button>
@@ -407,6 +407,8 @@
               _this.$message.success("批量导入成功");
               this.getList(1);
 
+            }else{
+              _this.$message.error(res.msg);
             }
           })
           .catch(error => {

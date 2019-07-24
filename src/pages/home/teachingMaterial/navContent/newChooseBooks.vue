@@ -166,6 +166,14 @@
                 <el-input v-model="material.mailAddress" style="width:600px" @keyup.enter.native="submitForm"></el-input>
               </el-col>
             </el-form-item>
+            <el-form-item label="遴选申报职位："  prop="checkPostions"  style="width: 800px" >
+              <el-col>
+                <el-checkbox-group v-model="checkpositions" class="inline-block marginL20">
+                  <el-checkbox v-for="iterm in positions" :label="iterm.code" :key="iterm.code" checked=""  @change="_handleCheckedTypeChange()">{{iterm.name}}</el-checkbox>
+                </el-checkbox-group>
+
+              </el-col>
+            </el-form-item>
             <div class="clearfix"></div>
             <el-form-item label="选项：">
               <el-col>
@@ -245,7 +253,7 @@
               </el-col>
             </el-form-item>
 
-            <el-form-item label="申报通知扫描图片及通知主要内容：" prop="notice">
+            <el-form-item label="申报通知扫描图片及通知主要内容：" prop="notice" :rules="rules">
               <!--<el-col :span="24">
                 <el-input
                   type="textarea"
@@ -404,6 +412,7 @@ export default {
     return {
       mytest:false,
       materialTypeUrl:'/pmpheep/books/list/materialType',//教材分类url
+      positionsUrl:'/pmpheep/dataDictionary/getListByCode',//教材分类url
       addNewmaterialUrl:'/pmpheep/material/add' ,   //新增教材url
       editMaterialUrl:'/pmpheep/material/get',     //请求教材详细信息URL
       updateMaterialUrl:'/pmpheep/material/update',  //更新教材url
@@ -419,6 +428,8 @@ export default {
       classify: "", // 分类
       projectDirectorData: [], // 项目主任
       checkedTreeData: [],   //教材分类树
+      positions:[],
+      checkpositions:[],
       show_until_save_msg:true,
       msg_save_btn_show:false,
       defaultProps: {
@@ -658,6 +669,7 @@ export default {
         "material.mailAddress": "",
          materialContacts:[],     //联系人
         "material.director": "",   //主任
+         materialCheckPositions:"",
          materialProjectEditors:[], //项目编辑
          materialExtensions:[],   //扩展项
          "materialExtra.notice":'',
@@ -702,6 +714,7 @@ export default {
         materialProjectEditors:[{type:'array', required: true,message:'请至少选择一个项目编辑' ,trigger: "change" }],
         projectEditorPowers:[{type:'array', required: true,message:'请指定至少一个项目编辑权限' ,trigger: "change" }],
         cehuaPowers:[{type:'array', required: true,message:'请指定至少一个策划编辑权限' ,trigger: "change" }],
+
         mailAddress:[
           { required: true, message: "邮寄地址不能为空", trigger: "blur" },
           {min:1,max:100,message:'邮寄地址不能超过100个字符',trigger:'change,blur'}
@@ -749,8 +762,7 @@ export default {
          disabledDate(time) {
          //  return time.getTime() < Date.now() - 8.64e7;
         }
-      },
-    };
+      },    };
   },
   computed:{
    isCkeckNumEdiotr(){
@@ -762,19 +774,16 @@ export default {
   },
   watch:{
    isCkeckNumEdiotr(val){
-     if(val){
-       this.listTableData[1].usecheck=val;
-     }
+
    },
    isCheckJob(val){
-     if(this.isCkeckNumEdiotr){
-       this.listTableData[1].usecheck=true;
-     }
+
    }
   },
   created() {
     this.initEditData();
     this.getBookType();
+    this.getPosition();
   },
   mounted () {
     document.onkeydown = function() {
@@ -784,6 +793,32 @@ export default {
       }
   },
   methods: {
+
+    _handleCheckedTypeChange(iterm){
+      console.log(this.checkpositions);
+      this.ruleForm.materialCheckPositions="";
+      this.ruleForm.materialCheckPositions=this.checkpositions.join(",");
+      console.log(this.ruleForm);
+    },
+
+      getPosition(){
+
+        this.$axios.get(this.positionsUrl,{params:{
+            code:'pmph_position'
+          }})
+          .then((res)=>{
+            if(res.data.code==1){
+              console.log(res);
+              this.positions=res.data.data;
+
+            }
+          })
+          .catch(e=>{
+            console.log(e);
+          })
+
+      },
+
           /**
        * 获取教材分类树数据
        */
@@ -852,6 +887,14 @@ export default {
               this.material.note=res.data.data.materialExtra?res.data.data.materialExtra.note:'';
               //扩展项赋值
               this.ruleForm.materialExtensions=this.stringToArray(res.data.data.materialExtensions);
+              this.ruleForm.materialCheckPositions=res.data.data.materialCheckPositions;
+               var  s=res.data.data.materialCheckPositions.split(',');
+               console.log(222222222222222222222222222);
+               console.log(s);
+              console.log(this.ruleForm.materialCheckPositions);
+              this.checkpositions=[];
+              this.checkpositions=s;
+
               //文件赋值
               var noticeArr=this.stringToArray(res.data.data.materialNoticeAttachments);
               for(var i in noticeArr){
@@ -949,12 +992,12 @@ export default {
 
         }
       },
-      /* 选项checkbox改变 */
+    /*  /!* 选项checkbox改变 *!/
       optionChange(obj){
         if(!obj.usecheck){
           obj.needcheck=false;
         }
-      },
+      },*/
       download(url){
         this.$commonFun.downloadFile(url);
       },
@@ -1493,6 +1536,11 @@ export default {
         this.ruleForm.descriptionContent["content"] = this.$refs.editor.getContent();*/
         this.material.note = this.$refs.editorNote.getContent();
         this.material.notice = this.$refs.editor.getContent();
+
+        if(this.$refs.editor.getContent().length>2000){
+          this.$message.error("输入的主要通知内容过长");
+          return
+        }
         this.optionMerge()  //选项合并
         this.mergeForms();   //表单合并
 

@@ -27,7 +27,7 @@
                     >
                 </el-date-picker>
           <el-button icon="search" type="primary" style="margin-bottom:10px;"  @click="search">搜索</el-button>
-          <el-button icon="primary" type="primary" style="margin-bottom:10px;"  @click="exportExcel">导出excel</el-button>
+          <el-button icon="primary" type="primary" style="margin-bottom:10px;"  @click="exportExcel">导出Excel</el-button>
 
           <el-button type="primary"  style="float:right;" @click="selectBook">添加微视频</el-button>
       </p>

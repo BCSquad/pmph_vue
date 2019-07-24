@@ -129,7 +129,7 @@
         <el-menu-item index="/analysis/book-preference" v-if="isShowSide(10)||isShowSide(31)">用户图书偏好分析</el-menu-item>
       </el-submenu>
 
-      <el-submenu index="/userrouter" v-if="isShowSide(11)||isShowSide(32)||isShowSide(33)||isShowSide(34)">
+      <el-submenu index="/userrouter" v-if="isShowSide(11)||isShowSide(32)||isShowSide(33)||isShowSide(34)||isShowSide(60)">
         <template slot="title">
           <i class="fa fa-user-plus fa-fw"></i>
           <span slot="title">用户管理</span>
@@ -137,6 +137,7 @@
         <el-menu-item index="/user/pmph" v-if="isShowSide(11)||isShowSide(32)">社内用户</el-menu-item>
         <el-menu-item index="/user/writer" v-if="isShowSide(11)||isShowSide(33)">个人用户</el-menu-item>
         <el-menu-item index="/user/org" v-if="isShowSide(11)||isShowSide(34)">学校 / 医院用户</el-menu-item>
+        <el-menu-item index="/user/expertRepository" v-if="isShowSide(11)||isShowSide(60)">专家档案库</el-menu-item>
       </el-submenu>
 
 
